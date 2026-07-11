@@ -3,8 +3,8 @@ type: Contradiction Register
 title: Contradictions and tensions
 description: 숨기지 않고 추적하는 claim 충돌, 철학적 긴장, 현재 해소 방식.
 tags: [contradictions, epistemics, governance]
-timestamp: '2026-07-11T23:40:00+09:00'
-claim_ids: [CLM-6DDD53332A40]
+timestamp: '2026-07-12T18:30:00+09:00'
+claim_ids: [CLM-6DDD53332A40, CLM-F79558D817DF, CLM-EC52C0576A28]
 ---
 
 # Contradictions and tensions
@@ -32,6 +32,12 @@ claim_ids: [CLM-6DDD53332A40]
 - 지속 합성은 반복 재조합 비용을 줄인다.
 - 초기 요약 오류를 장기간 증폭할 수 있다.
 - 해소: synthesis는 evidence가 아니며, claim locator와 dependency-aware 재검증을 통해 raw까지 다시 내려갈 수 있어야 한다.
+
+## 기억 활용과 anchoring
+
+- Wiki-first는 이전 연구를 재사용해 비용을 줄이지만 과거 synthesis에 질문을 맞추는 anchoring을 만들 수 있다.
+- 완전한 fresh-start는 같은 조사 비용을 반복하고 이미 알려진 반증을 놓칠 수 있다.
+- 해소: 모든 모드에서 index는 읽되, `fresh-check`는 기존 결론을 괄호에 둔 독립 조사 뒤 차이를 비교한다. feedback은 이 절차의 결과를 감사할 뿐 ranking·trust를 자동 변경하지 않는다.
 
 # Citations
 

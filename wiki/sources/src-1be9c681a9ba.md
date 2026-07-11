@@ -3,9 +3,10 @@ type: "Reference"
 title: "ai-research-os-workshop"
 description: "code source SRC-1BE9C681A9BA assessed S3."
 resource: "https://github.com/iusztinpaul/ai-research-os-workshop"
-tags: ["source", "code", "S3"]
+tags: ["source", "code", "S3", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-1BE9C681A9BA"
 source_level: "S3"
 ---
@@ -25,6 +26,9 @@ source_level: "S3"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `ai-research-os-authors` |
 | License | MIT |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

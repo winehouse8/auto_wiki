@@ -3,9 +3,10 @@ type: "Reference"
 title: "Collaborative Gym"
 description: "paper source SRC-C7AAE78B0CC4 assessed S3."
 resource: "https://openreview.net/forum?id=GDYueXtKXT"
-tags: ["source", "paper", "S3"]
+tags: ["source", "paper", "S3", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-C7AAE78B0CC4"
 source_level: "S3"
 ---
@@ -25,6 +26,9 @@ source_level: "S3"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `collaborative-gym-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

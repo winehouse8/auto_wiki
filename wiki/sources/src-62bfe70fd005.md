@@ -3,9 +3,10 @@ type: "Reference"
 title: "FactSearch: An Interactive Agentic Fact Search System"
 description: "paper source SRC-62BFE70FD005 assessed S3."
 resource: "https://aclanthology.org/2026.acl-demo.36/"
-tags: ["source", "paper", "S3"]
+tags: ["source", "paper", "S3", "active"]
 timestamp: "2026-07-11T14:29:14+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-62BFE70FD005"
 source_level: "S3"
 ---
@@ -25,6 +26,9 @@ source_level: "S3"
 | Retrieved | 2026-07-11T14:29:14+00:00 |
 | Independence group | `factsearch-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

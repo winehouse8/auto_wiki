@@ -3,8 +3,8 @@ type: Synthesis
 title: 문서 저장소가 아니라 검증 가능한 연구 공동체
 description: Living Wiki가 현재 채택한 전체 설계 종합과 신뢰 경계.
 tags: [living-wiki, synthesis, provenance, governance]
-timestamp: '2026-07-12T12:00:00+09:00'
-claim_ids: [CLM-F6367BFF8F35, CLM-CB6E34C87DA3, CLM-F464CCF0AA1A]
+timestamp: '2026-07-12T18:30:00+09:00'
+claim_ids: [CLM-F6367BFF8F35, CLM-CB6E34C87DA3, CLM-F464CCF0AA1A, CLM-95A38CACF2CD, CLM-F79558D817DF, CLM-EC52C0576A28, CLM-207429D54323, CLM-F5982AA50A01, CLM-0733D26931D2, CLM-F63FA5329493]
 ---
 
 # 현재 종합 — 문서 저장소가 아니라 검증 가능한 연구 공동체
@@ -27,10 +27,13 @@ Karpathy와 AI Research OS의 가장 강한 통찰은 지식을 매 질의마다
 6. 자율 연구는 관심 분야 → gap → counter-search → admission → synthesis → eval의 bounded loop다.
 7. 하네스 자기수정은 콘텐츠 편집과 다르며 RFC, pin된 benchmark, rollback, 통합 release gate가 필요하다.
 8. 외부 실행은 runtime과 분리한다. runtime은 계획만 만들고 외부 결과는 digest가 남는 `unverified_report`로 돌아와 admission/evidence gate를 다시 거친다.
+9. 실패·retrieval outcome·staleness는 조사와 review를 촉발하는 위생 신호다. 자동 trust 승격·ranking·삭제 권한은 없으며 사용자는 Wiki 의존도를 명시적으로 조절한다.
+
+2026-04-01부터 2026-07-12까지 AI Engineer 채널을 전수 재감사한 snapshot은 목록 264개와 완료·시청 가능 영상 262개를 분리하고, 고정 metadata 규칙으로 직접 34·인접 32·제외 196을 기록했다. 직접 후보 34개의 자막은 모두 입수를 시도했지만 보안 allow 31개만 transcript 결론에 사용했다. 이 결과는 [content-addressed audit bundle](sources/src-0800355b8885.md)에 보존했으나 같은 Agent가 열거와 분류를 수행했으므로 coverage·분류 claim은 C1에 머문다. “채널을 많이 봤다”는 사실은 영상의 효능이나 하네스 변경의 진실성을 높이지 않는다.
 
 ## 현재 신뢰 경계
 
-이 종합은 production 인증이 아니다. 35개 source record 중 하나만 local immutable snapshot까지 보존했고, v4 이전 35개 모두 admission 이전 자료라 finite grandfather manifest로만 예외 처리한다. 15건 calibration pilot은 10/13 scorable 정답이라는 관찰값일 뿐 C-level 확률이 아니다. 18개 공격·13개 정상 case의 lexical write/retrieve/activate fixture에서는 자동 공격 허용과 정상 강제 거부가 0이었지만, unseen semantic·multilingual·multimodal·parser 공격을 평가하지 않았다. 독립 claim review, 장기 반복 편집, live registry adapter, 동시 writer signature/locking도 아직 없다. 이 제한을 `production_certified=false`로 고정하는 것이 v4의 품질 기능이다.
+이 종합은 production 인증이 아니다. 47개 source record 중 4개만 local immutable artifact까지 보존했고, v4 이전 35개는 admission 이전 자료라 finite grandfather manifest로만 예외 처리하며 신규 12개는 admission을 거쳤다. 15건 calibration pilot은 10/13 scorable 정답이라는 관찰값일 뿐 C-level 확률이 아니다. 18개 공격·13개 정상 case의 lexical write/retrieve/activate fixture에서는 자동 공격 허용과 정상 강제 거부가 0이었지만, unseen semantic·multilingual·multimodal·parser 공격을 평가하지 않았다. memory-feedback/lifecycle 고정 fixture와 hygiene report도 production memory 품질을 인증하지 않는다. 독립 claim review, 장기 반복 편집, live registry adapter, 동시 writer signature/locking도 아직 없다. 이 제한을 `production_certified=false`로 고정하는 것이 v4.1의 품질 기능이다.
 
 # Citations
 
@@ -40,3 +43,5 @@ Karpathy와 AI Research OS의 가장 강한 통찰은 지식을 매 질의마다
 [4] [FRANQ](https://aclanthology.org/2026.findings-acl.338/)
 [5] [Collaborative Gym](https://openreview.net/forum?id=GDYueXtKXT)
 [6] [A-MemGuard](https://openreview.net/forum?id=udqe7UZUZ6)
+[7] [Memory hygiene and controlled learning](concepts/memory-hygiene-and-controlled-learning.md)
+[8] [AI Engineer channel audit bundle](sources/src-0800355b8885.md)

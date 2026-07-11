@@ -1,0 +1,61 @@
+{
+  "candidate": {
+    "counter_search": {
+      "checks": [
+        "origin",
+        "status",
+        "contradiction"
+      ]
+    },
+    "id": "CAND-AIE-VCL-VIDEO-2026",
+    "provenance_verified": true,
+    "publisher": "AI Engineer",
+    "registry_required": false,
+    "title": "Continual Learning for AI Agents: From Failures to Durable Improvements",
+    "url": "https://www.youtube.com/watch?v=2IxD9OB3XuQ"
+  },
+  "created_at": "2026-07-11T17:15:40+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "candidate_id": "CAND-AIE-VCL-VIDEO-2026",
+    "canonical_identifiers": [
+      "url:https://www.youtube.com/watch?v=2IxD9OB3XuQ"
+    ],
+    "counter_search": {
+      "completed": [
+        "contradiction",
+        "origin",
+        "status"
+      ],
+      "coverage": 1.0,
+      "missing": [],
+      "required": [
+        "contradiction",
+        "origin",
+        "status"
+      ]
+    },
+    "decision": "allow",
+    "independence_cluster": {
+      "cluster_id": "IC-5E192F82A33F",
+      "members": [
+        "CAND-AIE-VCL-VIDEO-2026"
+      ]
+    },
+    "reasons": [
+      {
+        "code": "minimum_gate_satisfied",
+        "detail": "identity, provenance, status policy, and counter-search checks passed"
+      }
+    ],
+    "registry": {
+      "adapter": null,
+      "matches": [],
+      "status": "not_checked"
+    }
+  },
+  "id": "ADM-2A522BA30404",
+  "policy_effect": "advisory_only",
+  "record_digest": "60fd7cc47b5938ceb9093e80bd82780eaa87b6ac288d867489326a33c64d818a",
+  "status": "allow"
+}

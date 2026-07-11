@@ -1,0 +1,11 @@
+{
+  "id": "CAND-AIE-VCL-VIDEO-2026",
+  "title": "Continual Learning for AI Agents: From Failures to Durable Improvements",
+  "url": "https://www.youtube.com/watch?v=2IxD9OB3XuQ",
+  "publisher": "AI Engineer",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

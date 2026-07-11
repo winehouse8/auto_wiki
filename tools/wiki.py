@@ -41,6 +41,8 @@ OKF_BUNDLE = WIKI
 ZERO_HASH = "0" * 64
 SOURCE_GRANDFATHER_MANIFEST = ROOT / "migrations" / "v3.1-source-grandfather.json"
 SOURCE_GRANDFATHER_MANIFEST_SHA256 = "6c7ecd0c7a99a679534de7ca265fb3254b4091720c98f168619c6cf60c792dac"
+MEMORY_FEEDBACK_FIXTURE = EVALUATIONS / "fixtures" / "memory-feedback-scenarios.json"
+MEMORY_FEEDBACK_FIXTURE_SHA256 = "f68d52d6d5544e8763b365c9952f425e6a3636f6ecd92fbe15dd57be179902c9"
 
 STATE_FILES: dict[str, dict[str, Any]] = {
     "actors": {"version": 1, "actors": []},
@@ -52,12 +54,16 @@ STATE_FILES: dict[str, dict[str, Any]] = {
     "collaborations": {"version": 1, "collaborations": []},
     "admissions": {"version": 1, "admissions": []},
     "runs": {"version": 1, "runs": []},
+    "memory_feedback": {"version": 1, "feedback": []},
 }
+
+COLLECTION_KEYS = {"memory_feedback": "feedback"}
 
 SOURCE_LEVELS = {f"S{i}": i for i in range(5)}
 CLAIM_LEVELS = {f"C{i}": i for i in range(5)}
 CLAIM_KINDS = {"fact", "interpretation", "hypothesis", "prediction", "value"}
 RELATIONS = {"supports", "contradicts", "contextualizes"}
+LIFECYCLE_STATUSES = {"active", "deprecated", "superseded", "invalidated", "archived"}
 SOURCE_TYPES = {
     "paper",
     "standard",
@@ -178,14 +184,32 @@ def latest_meaningful_timestamp(*groups: Iterable[dict[str, Any]]) -> str:
     candidates: list[str] = []
     for group in groups:
         for item in group:
-            for key in ("updated_at", "last_verified_at", "retrieved_at", "created_at"):
+            for key in (
+                "updated_at",
+                "lifecycle_updated_at",
+                "last_verified_at",
+                "retrieved_at",
+                "created_at",
+            ):
                 value = item.get(key)
                 if isinstance(value, str) and re.match(r"^\d{4}-\d{2}-\d{2}T", value):
                     candidates.append(value)
             confidence_at = item.get("confidence", {}).get("computed_at") if isinstance(item.get("confidence"), dict) else None
             if isinstance(confidence_at, str):
                 candidates.append(confidence_at)
+            resolution_at = item.get("resolution", {}).get("at") if isinstance(item.get("resolution"), dict) else None
+            if isinstance(resolution_at, str):
+                candidates.append(resolution_at)
     return max(candidates, default="2026-07-11T00:00:00+09:00")
+
+
+def record_latest_timestamp(*values: Any) -> str:
+    timestamps = [
+        value
+        for value in values
+        if isinstance(value, str) and re.match(r"^\d{4}-\d{2}-\d{2}T", value)
+    ]
+    return max(timestamps, default="2026-07-11T00:00:00+09:00")
 
 
 def ensure_layout() -> None:
@@ -325,15 +349,26 @@ def split_okf_frontmatter(text: str) -> tuple[dict[str, str], str, list[str]]:
 def collection(name: str) -> list[dict[str, Any]]:
     ensure_layout()
     payload = load_json(STATE / f"{name}.json")
-    items = payload.get(name)
+    key = COLLECTION_KEYS.get(name, name)
+    items = payload.get(key)
     if not isinstance(items, list):
-        raise WikiError(f"state/{name}.json must contain a '{name}' list")
+        raise WikiError(f"state/{name}.json must contain a '{key}' list")
     return items
 
 
 def save_collection(name: str, items: Iterable[dict[str, Any]]) -> None:
     ordered = sorted(items, key=lambda item: item["id"])
-    atomic_write_json(STATE / f"{name}.json", {"version": 1, name: ordered})
+    key = COLLECTION_KEYS.get(name, name)
+    atomic_write_json(STATE / f"{name}.json", {"version": 1, key: ordered})
+
+
+def lifecycle_status(record: dict[str, Any], *, kind: str) -> str:
+    """Return the additive knowledge lifecycle without confusing claim confidence."""
+
+    value = record.get("lifecycle_status")
+    if value is None and kind == "source":
+        value = record.get("status")
+    return str(value or "active")
 
 
 def find(items: Iterable[dict[str, Any]], item_id: str, kind: str) -> dict[str, Any]:
@@ -627,6 +662,7 @@ def source_add(args: argparse.Namespace) -> None:
             *([security_admission["id"]] if security_admission else []),
         ],
         "status": "active",
+        "lifecycle_status": "active",
     }
     sources.append(item)
     save_collection("sources", sources)
@@ -692,6 +728,7 @@ def claim_add(args: argparse.Namespace) -> None:
         },
         "supersedes": parse_csv(args.supersedes),
         "notes": args.notes,
+        "lifecycle_status": "active",
     }
     claims.append(item)
     save_collection("claims", claims)
@@ -765,7 +802,11 @@ def calculate_confidence(claim: dict[str, Any], sources_by_id: dict[str, dict[st
     contradicting: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for edge in claim.get("evidence", []):
         source = sources_by_id.get(edge.get("source_id"))
-        if not source or source.get("status") != "active":
+        if (
+            not source
+            or source.get("status", "active") != "active"
+            or lifecycle_status(source, kind="source") != "active"
+        ):
             continue
         if edge.get("relation") == "supports":
             supporting.append((edge, source))
@@ -1142,44 +1183,88 @@ def proposal_review(args: argparse.Namespace) -> None:
 
 
 def proposal_implement(args: argparse.Namespace) -> None:
-    """Close an approved RFC only after a passing, non-certifying release report."""
+    """Close or reseal an RFC only after a passing, anchored release report."""
 
     require_actor(args.actor)
     actor = actor_record(args.actor)
     if not ({"maintainer", "policy-approver"} & set(actor.get("roles", []))):
         raise WikiError("Only a maintainer or policy-approver may mark an approved proposal implemented")
+    proposals = collection("proposals")
+    proposal = find(proposals, args.proposal, "proposal")
+    already_implemented = proposal.get("status") == "implemented"
+    if proposal.get("status") not in {"approved", "implemented"}:
+        raise WikiError("Only an approved or already implemented proposal can bind release evidence")
     report_path = Path(args.release_report).expanduser().resolve()
+    try:
+        report_path.relative_to(EVALUATION_REPORTS.resolve())
+    except ValueError as exc:
+        raise WikiError("Release report must be inside evaluations/reports") from exc
     report = load_json(report_path)
+    expected_component = digest_text(canonical_json(report.get("gates", [])))
+    expected_report_digest = digest_text(
+        canonical_json({key: value for key, value in report.items() if key != "report_digest"})
+    )
+    memory_gate = next(
+        (gate for gate in report.get("gates", []) if gate.get("name") == "memory_feedback_lifecycle_hygiene"),
+        None,
+    )
+    current_harness_manifest = harness_component_manifest()
+    current_harness_digest = digest_text(canonical_json(current_harness_manifest))
     if (
         report.get("release_id") != "living-wiki-v4"
         or report.get("passed") is not True
         or report.get("production_certified") is not False
+        or report.get("harness_version") != load_json(ROOT / "config" / "wiki.json").get("harness_version")
+        or report.get("component_fingerprint") != expected_component
+        or report.get("report_digest") != expected_report_digest
+        or report.get("harness_manifest_sha256") != current_harness_digest
+        or report.get("harness_file_count") != len(current_harness_manifest)
+        or not isinstance(memory_gate, dict)
+        or memory_gate.get("passed") is not True
     ):
-        raise WikiError("Proposal implementation requires a passing truthful v4 release report")
-    proposals = collection("proposals")
-    proposal = find(proposals, args.proposal, "proposal")
-    if proposal.get("status") == "implemented":
-        print(args.proposal)
-        return
-    if proposal.get("status") != "approved":
-        raise WikiError("Only an approved proposal can be marked implemented")
-    proposal["status"] = "implemented"
-    proposal["implemented_by"] = args.actor
-    proposal["implemented_at"] = utc_now()
-    proposal["updated_at"] = proposal["implemented_at"]
+        raise WikiError("Proposal implementation requires a fresh, integrity-checked v4.1 release report")
+    approval_times = [
+        item.get("at")
+        for item in proposal.get("approvals", [])
+        if item.get("decision") == "approve" and isinstance(item.get("at"), str)
+    ]
+    approved_at = max(approval_times, default=proposal.get("created_at", ""))
+    anchored = any(
+        event.get("action") == "release.evaluate"
+        and event.get("subject") == "living-wiki-v4"
+        and event.get("details", {}).get("component_fingerprint") == report.get("component_fingerprint")
+        and event.get("details", {}).get("report_digest") == report.get("report_digest")
+        and str(event.get("at", "")) >= str(approved_at)
+        for event in event_lines()
+    )
+    if not anchored:
+        raise WikiError("Release report is not anchored by a post-approval release event")
     archived_report = EVALUATION_REPORTS / f"v4-release-{report['component_fingerprint'][:16]}.json"
     if not archived_report.exists():
         atomic_write_json(archived_report, report)
-    proposal["implementation_evidence"] = {
+    evidence = {
         "release_report": archived_report.relative_to(ROOT).as_posix(),
         "component_fingerprint": report["component_fingerprint"],
         "production_certified": False,
     }
+    if already_implemented and proposal.get("implementation_evidence") == evidence:
+        print(args.proposal)
+        return
+    now = utc_now()
+    proposal["status"] = "implemented"
+    if not already_implemented:
+        proposal["implemented_by"] = args.actor
+        proposal["implemented_at"] = now
+    else:
+        proposal["revalidated_by"] = args.actor
+        proposal["revalidated_at"] = now
+    proposal["updated_at"] = now
+    proposal["implementation_evidence"] = evidence
     save_collection("proposals", proposals)
     render_proposal_record(proposal)
     append_event(
         args.actor,
-        "proposal.implement",
+        "proposal.implementation.reseal" if already_implemented else "proposal.implement",
         args.proposal,
         {"component_fingerprint": report["component_fingerprint"]},
     )
@@ -1456,11 +1541,198 @@ def collaboration_transition(args: argparse.Namespace) -> None:
     print(args.record)
 
 
+def _reference_exists(reference: str, known_ids: set[str]) -> bool:
+    if reference in known_ids:
+        return True
+    if not reference.startswith("wiki/"):
+        return False
+    candidate = (ROOT / reference).resolve()
+    try:
+        candidate.relative_to(WIKI.resolve())
+    except ValueError:
+        return False
+    return candidate.is_file()
+
+
+def _known_reference_ids() -> set[str]:
+    names = (
+        "actors",
+        "sources",
+        "claims",
+        "reviews",
+        "campaigns",
+        "proposals",
+        "collaborations",
+        "admissions",
+        "runs",
+        "memory_feedback",
+    )
+    identifiers = {str(item["id"]) for name in names for item in collection(name) if item.get("id")}
+    identifiers.update(str(event["id"]) for event in event_lines() if event.get("id"))
+    return identifiers
+
+
+def memory_feedback_add(args: argparse.Namespace) -> None:
+    """Record a retrieval outcome without granting it any automatic trust effect."""
+
+    require_actor(args.actor)
+    import memory_feedback
+
+    targets = parse_csv(args.targets)
+    evidence_refs = parse_csv(args.evidence_refs)
+    known_ids = _known_reference_ids()
+    target_ids = {
+        *(str(item["id"]) for item in collection("claims")),
+        *(str(item["id"]) for item in collection("sources")),
+    }
+    unknown_targets = sorted(
+        reference for reference in targets if not _reference_exists(reference, target_ids)
+    )
+    unknown_evidence = sorted(
+        reference for reference in evidence_refs if not _reference_exists(reference, known_ids)
+    )
+    unknown = [*unknown_targets, *unknown_evidence]
+    if unknown:
+        raise WikiError("Unknown feedback reference(s): " + ", ".join(unknown))
+    try:
+        record = memory_feedback.make_retrieval_feedback(
+            actor_id=args.actor,
+            targets=targets,
+            outcome=args.outcome,
+            task_ref=args.task_ref,
+            rationale=args.rationale,
+            evidence_refs=evidence_refs,
+            created_at=args.at or utc_now(),
+        )
+    except memory_feedback.MemoryFeedbackError as exc:
+        raise WikiError(str(exc)) from exc
+    records = collection("memory_feedback")
+    prior = next((item for item in records if item.get("id") == record["id"]), None)
+    if prior is not None:
+        try:
+            memory_feedback.validate_retrieval_feedback(prior)
+        except memory_feedback.MemoryFeedbackError as exc:
+            raise WikiError(f"Existing feedback is invalid: {exc}") from exc
+        print(record["id"])
+        return
+    records.append(record)
+    save_collection("memory_feedback", records)
+    append_event(
+        args.actor,
+        "memory.feedback.add",
+        record["id"],
+        {
+            "identity_digest": memory_feedback.feedback_digest(record),
+            "state_digest": memory_feedback.feedback_state_digest(record),
+            "trust_effect": "none",
+            "automatic_action": False,
+        },
+    )
+    print(record["id"])
+
+
+def memory_feedback_resolve(args: argparse.Namespace) -> None:
+    require_actor(args.actor)
+    import memory_feedback
+
+    records = collection("memory_feedback")
+    record = find(records, args.feedback, "memory feedback")
+    try:
+        resolved = memory_feedback.resolve_retrieval_feedback(
+            record,
+            actor_id=args.actor,
+            rationale=args.rationale,
+            at=args.at or utc_now(),
+        )
+    except memory_feedback.MemoryFeedbackError as exc:
+        raise WikiError(str(exc)) from exc
+    if resolved == record:
+        print(args.feedback)
+        return
+    records = [resolved if item.get("id") == args.feedback else item for item in records]
+    save_collection("memory_feedback", records)
+    append_event(
+        args.actor,
+        "memory.feedback.resolve",
+        args.feedback,
+        {
+            "state_digest": memory_feedback.feedback_state_digest(resolved),
+            "trust_effect": "none",
+            "automatic_action": False,
+        },
+    )
+    print(args.feedback)
+
+
+def knowledge_lifecycle(args: argparse.Namespace) -> None:
+    """Apply one attributed, non-destructive source/claim lifecycle transition."""
+
+    require_actor(args.actor)
+    actor = actor_record(args.actor)
+    if not ({"maintainer", "policy-approver"} & set(actor.get("roles", []))):
+        raise WikiError("Knowledge lifecycle transitions require maintainer or policy-approver role")
+    import memory_feedback
+
+    collection_name = "claims" if args.kind == "claim" else "sources"
+    records = collection(collection_name)
+    subject = find(records, args.id, args.kind)
+    if args.replacement:
+        replacement = find(records, args.replacement, f"replacement {args.kind}")
+        if lifecycle_status(replacement, kind=args.kind) != "active":
+            raise WikiError("Replacement must have active lifecycle status")
+    try:
+        updated, transition = memory_feedback.transition_lifecycle(
+            subject,
+            to_status=args.status,
+            actor_id=args.actor,
+            reason=args.reason,
+            replacement_ref=args.replacement,
+            created_at=args.at or utc_now(),
+        )
+    except memory_feedback.MemoryFeedbackError as exc:
+        raise WikiError(str(exc)) from exc
+    records = [updated if item.get("id") == args.id else item for item in records]
+    save_collection(collection_name, records)
+    append_event(
+        args.actor,
+        "knowledge.lifecycle.transition",
+        transition["id"],
+        {
+            "kind": args.kind,
+            "target": args.id,
+            "from": transition["from_status"],
+            "to": transition["to_status"],
+            "replacement": transition["replacement_ref"],
+            "transition_digest": memory_feedback.lifecycle_transition_digest(transition),
+            "automatic_action": False,
+            "destructive_action": False,
+        },
+    )
+    print(transition["id"])
+
+
+def memory_hygiene_cmd(args: argparse.Namespace) -> None:
+    """Print a fixed-time, read-only memory hygiene observation."""
+
+    import memory_hygiene
+
+    try:
+        report = memory_hygiene.evaluate_repository(ROOT, now=args.now)
+    except memory_hygiene.MemoryHygieneError as exc:
+        raise WikiError(str(exc)) from exc
+    print(memory_hygiene.canonical_json(report, pretty=not args.compact), end="")
+
+
 def search_cmd(args: argparse.Namespace) -> None:
     import runtime
 
     try:
-        results = runtime.lexical_search(args.query, root=ROOT, limit=args.limit)
+        results = runtime.lexical_search(
+            args.query,
+            root=ROOT,
+            limit=args.limit,
+            include_inactive=args.include_inactive,
+        )
     except runtime.RuntimeErrorBase as exc:
         raise WikiError(str(exc)) from exc
     print(json.dumps(results, ensure_ascii=False, indent=2, sort_keys=True))
@@ -1703,6 +1975,26 @@ def _run_rollback_rehearsal(timeout_seconds: int) -> dict[str, Any]:
     """Exercise committed v3.1 against current core state in an isolated tree."""
 
     base_commit = "d18213a78376c0543a0aa590a3db7fcf7022c187"
+    inactive = [
+        item.get("id")
+        for kind, items in (("claim", collection("claims")), ("source", collection("sources")))
+        for item in items
+        if lifecycle_status(item, kind=kind) != "active"
+    ]
+    if inactive:
+        result = {
+            "passed": False,
+            "base_commit": base_commit,
+            "live_workspace_unchanged": True,
+            "commands_passed": 0,
+            "evidence": digest_text(canonical_json(sorted(inactive))),
+            "error": (
+                "v3.1 rollback would lose inactive lifecycle semantics; an explicit "
+                "migration or v4.1-compatible rollback reader is required"
+            ),
+        }
+        atomic_write_json(EVALUATION_REPORTS / "rollback-rehearsal-latest.json", result)
+        return result
     live_paths = [STATE / "events.jsonl", WIKI / "index.md", ROOT / "config" / "wiki.json"]
     before = {path.relative_to(ROOT).as_posix(): digest_file(path) for path in live_paths}
     command_outputs: list[str] = []
@@ -1772,6 +2064,132 @@ def _run_rollback_rehearsal(timeout_seconds: int) -> dict[str, Any]:
     return result
 
 
+def _memory_control_release_gate() -> dict[str, Any]:
+    """Exercise the pinned v4.1 feedback/lifecycle fixture and live hygiene observer."""
+
+    import memory_feedback
+    import memory_hygiene
+
+    errors: list[str] = []
+    warnings = ["memory feedback is selectively observed diagnostic data, not epistemic ground truth"]
+    summary: dict[str, Any] = {}
+    try:
+        fixture_hash = digest_file(MEMORY_FEEDBACK_FIXTURE)
+        if fixture_hash != MEMORY_FEEDBACK_FIXTURE_SHA256:
+            errors.append("memory_feedback_fixture_hash_drift")
+        fixture = load_json(MEMORY_FEEDBACK_FIXTURE)
+        if fixture.get("version") != 1:
+            errors.append("unexpected_memory_feedback_fixture_version")
+        records = [memory_feedback.make_retrieval_feedback(**item) for item in fixture.get("feedback_inputs", [])]
+        aggregate = memory_feedback.aggregate_feedback_report(
+            [*records, *records[:1]],
+            generated_at="2026-07-12T03:00:00+00:00",
+        )
+        expected = fixture.get("expected_aggregate", {})
+        for field in (
+            "input_records",
+            "unique_records",
+            "duplicate_records",
+            "outcome_counts",
+            "status_counts",
+            "evidence",
+        ):
+            if aggregate.get(field) != expected.get(field):
+                errors.append(f"memory_feedback_aggregate_mismatch:{field}")
+        for scenario in fixture.get("lifecycle_scenarios", []):
+            subject = scenario["subject"]
+            updated, transition = memory_feedback.transition_lifecycle(
+                subject,
+                to_status=scenario["to_status"],
+                actor_id=scenario["actor_id"],
+                reason=scenario["reason"],
+                replacement_ref=scenario.get("replacement_ref"),
+                created_at=scenario["created_at"],
+            )
+            if transition.get("automatic_action") is not False or transition.get("destructive_action") is not False:
+                errors.append("lifecycle_transition_is_automatic_or_destructive")
+            for protected in ("confidence", "source_level", "statement", "title"):
+                if protected in subject and updated.get(protected) != subject.get(protected):
+                    errors.append(f"lifecycle_mutated_protected_field:{protected}")
+        first = memory_hygiene.evaluate_repository(
+            ROOT,
+            now="2026-08-11T00:00:00+00:00",
+        )
+        second = memory_hygiene.evaluate_repository(
+            ROOT,
+            now="2026-08-11T00:00:00+00:00",
+        )
+        deterministic = memory_hygiene.canonical_json(first) == memory_hygiene.canonical_json(second)
+        if not deterministic:
+            errors.append("memory_hygiene_report_not_deterministic")
+        required_false = (
+            "trust_mutated",
+            "lifecycle_mutated",
+            "status_mutated",
+            "content_deleted",
+            "feedback_changes_ranking_or_trust",
+            "wall_clock_used",
+        )
+        if first.get("invariants", {}).get("read_only") is not True:
+            errors.append("memory_hygiene_not_read_only")
+        for field in required_false:
+            if first.get("invariants", {}).get(field) is not False:
+                errors.append(f"memory_hygiene_invariant_failed:{field}")
+        harness_manifest = harness_component_manifest()
+        summary = {
+            "fixture_sha256": fixture_hash,
+            "aggregate_report_digest": aggregate.get("report_digest"),
+            "hygiene_report_sha256": digest_text(memory_hygiene.canonical_json(first)),
+            "deterministic": deterministic,
+            "feedback_records": first.get("summary", {}).get("feedback"),
+            "active_stale_claims": first.get("summary", {}).get("active_stale_claims"),
+            "metadata_only_sources": first.get("summary", {}).get("metadata_only_sources"),
+            "automatic_action": False,
+            "trust_effect": "none",
+            "content_deleted": False,
+            "harness_file_count": len(harness_manifest),
+            "harness_manifest_sha256": digest_text(canonical_json(harness_manifest)),
+        }
+    except (OSError, KeyError, TypeError, WikiError, memory_feedback.MemoryFeedbackError, memory_hygiene.MemoryHygieneError) as exc:
+        errors.append(f"memory_control_evaluation_failed:{type(exc).__name__}:{exc}")
+    return {
+        "name": "memory_feedback_lifecycle_hygiene",
+        "passed": not errors,
+        "status": "fixed_fixture_and_live_read_only_observation",
+        "production_memory_certified": False,
+        "errors": sorted(set(errors)),
+        "warnings": warnings,
+        "summary": summary,
+    }
+
+
+def harness_component_manifest() -> dict[str, str]:
+    """Hash release-relevant harness inputs without mutable state or generated views."""
+
+    files: list[Path] = []
+    for folder in ("tools", "tests", "config", "prompts", "docs", "evolution"):
+        base = ROOT / folder
+        if base.is_dir():
+            files.extend(path for path in base.rglob("*") if path.is_file())
+    files.extend(
+        path
+        for path in (
+            ROOT / "AGENTS.md",
+            ROOT / "README.md",
+            ROOT / "pyproject.toml",
+            ROOT / "governance" / "constitution.md",
+            ROOT / "governance" / "decision-log.md",
+        )
+        if path.is_file()
+    )
+    manifest: dict[str, str] = {}
+    for path in sorted(set(files), key=lambda item: item.as_posix()):
+        if "__pycache__" in path.parts or path.name.endswith((".pyc", ".tmp")):
+            continue
+        manifest[path.relative_to(ROOT).as_posix()] = digest_file(path)
+    return manifest
+
+
 def release_check(args: argparse.Namespace) -> None:
     """Orchestrate validators, tests, and fixed fixtures into a truthful v4 gate."""
 
@@ -1800,6 +2218,23 @@ def release_check(args: argparse.Namespace) -> None:
         )
     except release_gate.ReleaseGateError as exc:
         raise WikiError(f"Release gate failed closed: {exc}") from exc
+    memory_gate = _memory_control_release_gate()
+    report["gates"].append(memory_gate)
+    report["passed"] = all(gate.get("passed") is True for gate in report["gates"])
+    report["readiness"] = (
+        "closed_loop_harness_fixed_fixture_passed" if report["passed"] else "not_ready"
+    )
+    report["component_fingerprint"] = release_gate.digest(report["gates"])
+    report["harness_version"] = load_json(ROOT / "config" / "wiki.json").get("harness_version")
+    report["memory_hygiene_status"] = memory_gate["status"]
+    report["harness_manifest_sha256"] = memory_gate.get("summary", {}).get("harness_manifest_sha256")
+    report["harness_file_count"] = memory_gate.get("summary", {}).get("harness_file_count")
+    report["scope"] += ", pinned memory-feedback lifecycle fixture, and fixed-time hygiene observation"
+    report.setdefault("claims", {})["production_memory_certified"] = False
+    report.setdefault("limitations", []).append(
+        "Memory feedback is selection-biased diagnostic data; the fixed fixture and hygiene report do not certify production memory quality."
+    )
+    report["report_digest"] = digest_text(canonical_json(report))
     json_path = EVALUATION_REPORTS / "v4-release-report.json"
     atomic_write_json(json_path, report)
     archived_json_path = EVALUATION_REPORTS / f"v4-release-{report['component_fingerprint'][:16]}.json"
@@ -1819,7 +2254,11 @@ def release_check(args: argparse.Namespace) -> None:
 - Production certified: **{str(report.get('production_certified')).lower()}**
 - Calibration: `{report.get('calibration_status')}`
 - Security: `{report.get('security_status')}`
+- Memory hygiene: `{report.get('memory_hygiene_status')}`
+- Harness version: `{report.get('harness_version')}`
+- Harness manifest: `{report.get('harness_manifest_sha256')}` ({report.get('harness_file_count')} files)
 - Component fingerprint: `{report.get('component_fingerprint')}`
+- Report digest: `{report.get('report_digest')}`
 
 | Gate | Result | Errors | Warnings |
 |---|---|---:|---:|
@@ -1839,6 +2278,7 @@ def release_check(args: argparse.Namespace) -> None:
             "component_fingerprint": report["component_fingerprint"],
             "production_certified": False,
             "test_count": regression["test_count"],
+            "report_digest": report["report_digest"],
         },
     )
     print(json_path.relative_to(ROOT))
@@ -1945,6 +2385,7 @@ def okf_profile_findings() -> tuple[list[str], list[str]]:
         "collaborations": len(collection("collaborations")),
         "admissions": len(collection("admissions")),
         "runs": len(collection("runs")),
+        "feedback": len(collection("memory_feedback")),
     }
     actual = {
         "sources": len(list((OKF_BUNDLE / "sources").glob("src-*.md"))),
@@ -1956,6 +2397,7 @@ def okf_profile_findings() -> tuple[list[str], list[str]]:
         "collaborations": len(list((OKF_BUNDLE / "collaborations").glob("col-*.md"))),
         "admissions": len(list((OKF_BUNDLE / "admissions").glob("adm-*.md"))),
         "runs": len(list((OKF_BUNDLE / "runs").glob("run-*.md"))),
+        "feedback": len(list((OKF_BUNDLE / "feedback").glob("mfb-*.md"))),
     }
     for kind in expected:
         if actual[kind] != expected[kind]:
@@ -1998,6 +2440,7 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         collaborations = collection("collaborations")
         admissions = collection("admissions")
         runs = collection("runs")
+        feedback_records = collection("memory_feedback")
     except WikiError as exc:
         return [str(exc)], [], {}
     try:
@@ -2020,11 +2463,13 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
     duplicate_ids(collaborations, "collaboration")
     duplicate_ids(admissions, "admission")
     duplicate_ids(runs, "run")
+    duplicate_ids(feedback_records, "memory feedback")
 
     actor_ids = {a.get("id") for a in actors}
     source_ids = {s.get("id") for s in sources}
     claim_ids = {c.get("id") for c in claims}
     campaign_ids = {c.get("id") for c in campaigns}
+    feedback_ids = {item.get("id") for item in feedback_records}
     admission_by_id = {item.get("id"): item for item in admissions}
     try:
         ledger_events = event_lines()
@@ -2103,6 +2548,146 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
             warnings.append(f"{claim.get('id')}: no evidence")
         if claim.get("confidence", {}).get("status") == "contested":
             warnings.append(f"{claim.get('id')}: contested claim")
+
+    try:
+        import memory_feedback
+    except ImportError as exc:
+        errors.append(f"memory feedback validation unavailable: {exc}")
+    else:
+        try:
+            memory_feedback.validate_feedback_collection(
+                load_json(STATE / "memory_feedback.json")
+            )
+        except (memory_feedback.MemoryFeedbackError, WikiError) as exc:
+            errors.append(f"memory feedback ledger invalid: {exc}")
+
+        known_reference_ids = {
+            *actor_ids,
+            *source_ids,
+            *claim_ids,
+            *campaign_ids,
+            *feedback_ids,
+            *(item.get("id") for item in reviews),
+            *(item.get("id") for item in proposals),
+            *(item.get("id") for item in collaborations),
+            *(item.get("id") for item in admissions),
+            *(item.get("id") for item in runs),
+            *(item.get("id") for item in ledger_events),
+        }
+        known_reference_ids.discard(None)
+        feedback_target_ids = {str(item) for item in {*source_ids, *claim_ids} if item is not None}
+        for record in feedback_records:
+            if record.get("actor_id") not in actor_ids:
+                errors.append(f"{record.get('id')}: unknown feedback actor")
+            resolution = record.get("resolution")
+            if isinstance(resolution, dict) and resolution.get("actor_id") not in actor_ids:
+                errors.append(f"{record.get('id')}: unknown feedback resolution actor")
+            for reference in record.get("targets", []):
+                if not _reference_exists(str(reference), feedback_target_ids):
+                    errors.append(f"{record.get('id')}: unknown feedback target {reference}")
+            for reference in record.get("evidence_refs", []):
+                if not _reference_exists(str(reference), {str(item) for item in known_reference_ids}):
+                    errors.append(f"{record.get('id')}: unknown feedback evidence reference {reference}")
+            try:
+                state_digest = memory_feedback.feedback_state_digest(record)
+            except memory_feedback.MemoryFeedbackError:
+                continue
+            if not any(
+                event.get("subject") == record.get("id")
+                and event.get("details", {}).get("state_digest") == state_digest
+                for event in ledger_events
+            ):
+                errors.append(f"{record.get('id')}: current feedback state digest is not anchored")
+
+        def validate_lifecycle_records(items: list[dict[str, Any]], kind: str) -> None:
+            item_ids = {item.get("id") for item in items}
+            for item in items:
+                item_id = item.get("id")
+                status_value = lifecycle_status(item, kind=kind)
+                if status_value not in LIFECYCLE_STATUSES:
+                    errors.append(f"{item_id}: invalid lifecycle status {status_value}")
+                    continue
+                history = item.get("lifecycle_history", [])
+                if not isinstance(history, list):
+                    errors.append(f"{item_id}: lifecycle_history must be a list")
+                    continue
+                if not history:
+                    if status_value != "active":
+                        errors.append(f"{item_id}: inactive lifecycle lacks transition history")
+                    if any(
+                        key in item
+                        for key in ("lifecycle_reason", "lifecycle_updated_at", "lifecycle_updated_by", "replaced_by")
+                    ):
+                        errors.append(f"{item_id}: lifecycle projection fields lack transition history")
+                    continue
+                projection: dict[str, Any] = {
+                    "id": item_id,
+                    "lifecycle_status": "active",
+                    "lifecycle_history": [],
+                }
+                previous_at: str | None = None
+                failed = False
+                for transition in history:
+                    try:
+                        memory_feedback.validate_lifecycle_transition(transition)
+                        normalized_at = memory_feedback.normalize_timestamp(transition["created_at"])
+                        if previous_at is not None and normalized_at < previous_at:
+                            raise memory_feedback.MemoryFeedbackError(
+                                "lifecycle history timestamps must be monotonic"
+                            )
+                        previous_at = normalized_at
+                        if transition.get("actor_id") not in actor_ids:
+                            raise memory_feedback.MemoryFeedbackError(
+                                f"unknown transition actor {transition.get('actor_id')}"
+                            )
+                        replacement = transition.get("replacement_ref")
+                        if replacement is not None and replacement not in item_ids:
+                            raise memory_feedback.MemoryFeedbackError(
+                                f"unknown same-kind replacement {replacement}"
+                            )
+                        transition_digest = memory_feedback.lifecycle_transition_digest(transition)
+                        if not any(
+                            event.get("subject") == transition.get("id")
+                            and event.get("details", {}).get("transition_digest") == transition_digest
+                            for event in ledger_events
+                        ):
+                            raise memory_feedback.MemoryFeedbackError(
+                                f"transition {transition.get('id')} is not anchored"
+                            )
+                        projection = memory_feedback.apply_lifecycle_transition(projection, transition)
+                    except memory_feedback.MemoryFeedbackError as exc:
+                        errors.append(f"{item_id}: invalid lifecycle history: {exc}")
+                        failed = True
+                        break
+                if failed:
+                    continue
+                for field in (
+                    "lifecycle_status",
+                    "lifecycle_reason",
+                    "lifecycle_updated_at",
+                    "lifecycle_updated_by",
+                    "replaced_by",
+                    "lifecycle_history",
+                ):
+                    if projection.get(field) != item.get(field):
+                        errors.append(f"{item_id}: lifecycle projection mismatch for {field}")
+
+        validate_lifecycle_records(claims, "claim")
+        validate_lifecycle_records(sources, "source")
+
+        lifecycle_transition_ids = {
+            transition.get("id")
+            for item in [*claims, *sources]
+            for transition in item.get("lifecycle_history", [])
+            if isinstance(transition, dict)
+        }
+        for event in ledger_events:
+            action = event.get("action")
+            subject = event.get("subject")
+            if action in {"memory.feedback.add", "memory.feedback.resolve"} and subject not in feedback_ids:
+                errors.append(f"{event.get('id')}: orphan memory feedback event for {subject}")
+            if action == "knowledge.lifecycle.transition" and subject not in lifecycle_transition_ids:
+                errors.append(f"{event.get('id')}: orphan lifecycle event for {subject}")
 
     for review in reviews:
         if review.get("actor_id") not in actor_ids:
@@ -2260,6 +2845,7 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         "collaborations": len(collaborations),
         "admissions": len(admissions),
         "runs": len(runs),
+        "memory_feedback": len(feedback_records),
         "events": event_count,
         "okf_concepts": okf_count,
     }
@@ -2284,14 +2870,14 @@ def render_epistemic_dashboard(claims: list[dict[str, Any]], sources: list[dict[
         statement = claim.get("statement", "").replace("|", "\\|")
         confidence = claim.get("confidence", {})
         claim_rows.append(
-            f"| `{claim['id']}` | {confidence.get('level', 'C0')} | {confidence.get('status', 'open')} | "
+            f"| `{claim['id']}` | {confidence.get('level', 'C0')} | {confidence.get('status', 'open')} | {lifecycle_status(claim, kind='claim')} | "
             f"{statement} | {confidence.get('supporting_groups', 0)} | {confidence.get('contradicting_groups', 0)} |"
         )
     source_rows = []
     for source in sorted(sources, key=lambda s: (-SOURCE_LEVELS.get(s.get("source_level", "S0"), 0), s["id"])):
         title = source.get("title", "").replace("|", "\\|")
         source_rows.append(
-            f"| `{source['id']}` | {source.get('source_level', 'S0')} | {source.get('publication_status') or '-'} | "
+            f"| `{source['id']}` | {source.get('source_level', 'S0')} | {lifecycle_status(source, kind='source')} | {source.get('publication_status') or '-'} | "
             f"{title} | `{source.get('independence_group', '-')}` |"
         )
     timestamp = latest_meaningful_timestamp(claims, sources)
@@ -2311,20 +2897,26 @@ generated: true
 
 ## Claims
 
-| ID | Level | Status | Statement | Supporting groups | Contradicting groups |
-|---|---:|---|---|---:|---:|
-""" + ("\n".join(claim_rows) if claim_rows else "| - | - | - | 아직 등록된 주장 없음 | - | - |") + """
+| ID | Level | Evidence status | Lifecycle | Statement | Supporting groups | Contradicting groups |
+|---|---:|---|---|---|---:|---:|
+""" + ("\n".join(claim_rows) if claim_rows else "| - | - | - | - | 아직 등록된 주장 없음 | - | - |") + """
 
 ## Sources
 
-| ID | Level | Publication status | Title | Independence group |
-|---|---:|---|---|---|
-""" + ("\n".join(source_rows) if source_rows else "| - | - | - | 아직 등록된 출처 없음 | - |") + "\n"
+| ID | Level | Lifecycle | Publication status | Title | Independence group |
+|---|---:|---|---|---|---|
+""" + ("\n".join(source_rows) if source_rows else "| - | - | - | - | 아직 등록된 출처 없음 | - |") + "\n"
     atomic_write_text(WIKI / "epistemic-dashboard.md", body)
 
 
-def render_index(claims: list[dict[str, Any]], sources: list[dict[str, Any]], campaigns: list[dict[str, Any]]) -> None:
-    timestamp = latest_meaningful_timestamp(claims, sources, campaigns)
+def render_index(
+    claims: list[dict[str, Any]],
+    sources: list[dict[str, Any]],
+    campaigns: list[dict[str, Any]],
+    feedback_records: list[dict[str, Any]] | None = None,
+) -> None:
+    feedback_records = feedback_records or []
+    timestamp = latest_meaningful_timestamp(claims, sources, campaigns, feedback_records)
     body = f"""<!-- AUTOGENERATED by tools/wiki.py. Do not edit manually. -->
 # Living Wiki index
 
@@ -2345,6 +2937,7 @@ Knowledge state timestamp: {timestamp}
 * [Campaigns](campaigns/index.md) - bounded autonomous research queue.
 * [Admissions](admissions/index.md) - source/security admission decisions without automatic promotion.
 * [Runs](runs/index.md) - bounded plans and attributed external-work receipts.
+* [Memory feedback](feedback/index.md) - privacy-minimal retrieval outcomes with no automatic trust effect.
 * [Trust policy](trust/index.md) - S0-S4/C0-C4 producer profile.
 * [Governance](governance/index.md) - 헌장과 결정 기록.
 
@@ -2354,6 +2947,7 @@ Knowledge state timestamp: {timestamp}
 - Claims: {len(claims)}
 - Research campaigns: {len(campaigns)}
 - Active/queued campaigns: {sum(c.get('status') in {'active', 'queued'} for c in campaigns)}
+- Memory feedback records: {len(feedback_records)}
 
 ## Source pages
 
@@ -2377,6 +2971,7 @@ def render_okf_state_projection() -> None:
     collaborations = collection("collaborations")
     admissions = collection("admissions")
     runs = collection("runs")
+    feedback_records = collection("memory_feedback")
     source_by_id = {source["id"]: source for source in sources}
     claims_by_source: dict[str, list[str]] = {}
     for claim in claims:
@@ -2418,14 +3013,20 @@ This document records identity and operating role. Actor kind does not itself in
     for source in sources:
         assessment = source.get("assessment", {})
         rationale = re.sub(r"\s+", " ", str(assessment.get("rationale") or "Unassessed source."))
+        source_lifecycle = lifecycle_status(source, kind="source")
         metadata: dict[str, Any] = {
             "type": "Reference",
             "title": source.get("title") or source["id"],
             "description": f"{source.get('source_type', 'unknown')} source {source['id']} assessed {source.get('source_level', 'S0')}.",
-            "tags": ["source", source.get("source_type", "unknown"), source.get("source_level", "S0")],
-            "timestamp": assessment.get("assessed_at") or source.get("retrieved_at") or "2026-07-11T00:00:00+09:00",
+            "tags": ["source", source.get("source_type", "unknown"), source.get("source_level", "S0"), source_lifecycle],
+            "timestamp": record_latest_timestamp(
+                assessment.get("assessed_at"),
+                source.get("retrieved_at"),
+                source.get("lifecycle_updated_at"),
+            ),
             "source_id": source["id"],
             "source_level": source.get("source_level", "S0"),
+            "lifecycle_status": source_lifecycle,
             "generated": True,
         }
         if source.get("url"):
@@ -2447,6 +3048,9 @@ This document records identity and operating role. Actor kind does not itself in
 | Retrieved | {md_cell(source.get('retrieved_at'))} |
 | Independence group | `{source.get('independence_group', source['id'])}` |
 | License | {md_cell(source.get('license'))} |
+| Lifecycle | **{source_lifecycle}** |
+| Lifecycle reason | {md_cell(source.get('lifecycle_reason'))} |
+| Replaced by | {md_cell(source.get('replaced_by'))} |
 
 ## Scoped assessment
 
@@ -2471,14 +3075,20 @@ This document records identity and operating role. Actor kind does not itself in
 
     for claim in claims:
         confidence = claim.get("confidence", {})
+        claim_lifecycle = lifecycle_status(claim, kind="claim")
         creator_path = f"../actors/{actor_page_name(claim.get('created_by', 'unknown'))}"
         metadata = {
             "type": "Claim",
             "title": claim["id"],
             "description": claim.get("statement", "")[:300],
-            "tags": ["claim", claim.get("kind", "unknown"), confidence.get("level", "C0"), confidence.get("status", "open")],
-            "timestamp": claim.get("last_verified_at") or claim.get("created_at") or "2026-07-11T00:00:00+09:00",
+            "tags": ["claim", claim.get("kind", "unknown"), confidence.get("level", "C0"), confidence.get("status", "open"), claim_lifecycle],
+            "timestamp": record_latest_timestamp(
+                claim.get("last_verified_at"),
+                claim.get("created_at"),
+                claim.get("lifecycle_updated_at"),
+            ),
             "claim_id": claim["id"],
+            "lifecycle_status": claim_lifecycle,
             "generated": True,
         }
         evidence_rows: list[str] = []
@@ -2509,6 +3119,9 @@ This document records identity and operating role. Actor kind does not itself in
 | Scope | {md_cell(claim.get('scope'))} |
 | Valid at | {md_cell(claim.get('valid_at'))} |
 | Freshness class | `{claim.get('freshness', '-')}` |
+| Lifecycle | **{claim_lifecycle}** |
+| Lifecycle reason | {md_cell(claim.get('lifecycle_reason'))} |
+| Replaced by | {md_cell(claim.get('replaced_by'))} |
 | Created by | [{claim.get('created_by', '-')}]({creator_path}) |
 | Created at | `{claim.get('created_at', '-')}` |
 | Last verified | `{claim.get('last_verified_at') or 'not verified'}` |
@@ -2818,6 +3431,57 @@ The runtime only planned external work. Any reported execution is attributed sep
             body,
         )
 
+    def feedback_reference_link(reference: str) -> str:
+        if reference.startswith("CLM-"):
+            return f"[{reference}](../claims/{reference.lower()}.md)"
+        if reference.startswith("SRC-"):
+            return f"[{reference}](../sources/{reference.lower()}.md)"
+        if reference.startswith("wiki/"):
+            return f"[{reference}](../{reference.removeprefix('wiki/')})"
+        return f"`{reference}`"
+
+    for feedback in feedback_records:
+        targets = [feedback_reference_link(str(item)) for item in feedback.get("targets", [])]
+        evidence_refs = [feedback_reference_link(str(item)) for item in feedback.get("evidence_refs", [])]
+        resolution = feedback.get("resolution") if isinstance(feedback.get("resolution"), dict) else {}
+        body = f"""<!-- AUTOGENERATED privacy-minimal projection from state/memory_feedback.json. -->
+# {feedback['id']}
+
+| Field | Value |
+|---|---|
+| Actor | [{feedback.get('actor_id', '-')}](../actors/{actor_page_name(feedback.get('actor_id', 'unknown'))}) |
+| Outcome | **{feedback.get('outcome', '-')}** |
+| Status | **{feedback.get('status', '-')}** |
+| Created | `{feedback.get('created_at', '-')}` |
+| Trust effect | `{feedback.get('trust_effect', '-')}` |
+| Automatic action | `{feedback.get('automatic_action', '-')}` |
+| Resolved by | {feedback_reference_link(str(resolution.get('actor_id')) ) if resolution else '-'} |
+| Resolved at | `{resolution.get('at', '-') if resolution else '-'}` |
+
+## Targets
+
+{chr(10).join(f'- {item}' for item in targets) or '- None'}
+
+## Evidence references
+
+{chr(10).join(f'- {item}' for item in evidence_refs) or '- None'}
+
+Free-text rationale, task reference, and resolution rationale remain in the control plane and are intentionally omitted from this portable projection. Feedback is diagnostic and cannot automatically change ranking, C-level, S-level, lifecycle, or delete content.
+"""
+        write_okf_concept(
+            WIKI / "feedback" / f"{feedback['id'].lower()}.md",
+            {
+                "type": "Memory Feedback",
+                "title": feedback["id"],
+                "description": "Privacy-minimal retrieval outcome with no automatic trust or deletion effect.",
+                "tags": ["memory-feedback", feedback.get("outcome", "unknown"), feedback.get("status", "open")],
+                "timestamp": resolution.get("at") or feedback.get("created_at") or "2026-07-11T00:00:00+09:00",
+                "lifecycle_status": feedback.get("status", "open"),
+                "generated": True,
+            },
+            body,
+        )
+
     trust = load_json(ROOT / "config" / "trust-policy.json")
     source_rows = "\n".join(f"| {level} | {md_cell(text)} |" for level, text in trust.get("source_levels", {}).items())
     claim_rows = "\n".join(f"| {level} | {md_cell(text)} |" for level, text in trust.get("claim_levels", {}).items())
@@ -2887,6 +3551,7 @@ def render_okf_subindexes() -> None:
         ("collaborations", "Collaboration Records"),
         ("admissions", "Admission Decisions"),
         ("runs", "Runtime Receipts"),
+        ("feedback", "Memory Feedback"),
         ("trust", "Trust Policies"),
         ("governance", "Governance"),
     ]:
@@ -2926,12 +3591,18 @@ def render_all(actor: str, log: bool = True) -> None:
     claims = collection("claims")
     sources = collection("sources")
     campaigns = collection("campaigns")
+    feedback_records = collection("memory_feedback")
     render_epistemic_dashboard(claims, sources)
     render_okf_state_projection()
-    render_index(claims, sources, campaigns)
+    render_index(claims, sources, campaigns, feedback_records)
     render_okf_subindexes()
     if log:
-        append_event(actor, "wiki.render", "derived-views", {"sources": len(sources), "claims": len(claims)})
+        append_event(
+            actor,
+            "wiki.render",
+            "derived-views",
+            {"sources": len(sources), "claims": len(claims), "memory_feedback": len(feedback_records)},
+        )
     render_okf_log()
 
 
@@ -3052,6 +3723,7 @@ def status(args: argparse.Namespace) -> None:
     collaborations = collection("collaborations")
     admissions = collection("admissions")
     runs = collection("runs")
+    feedback_records = collection("memory_feedback")
     events = event_lines()
     levels = {level: 0 for level in CLAIM_LEVELS}
     for claim in claims:
@@ -3061,7 +3733,14 @@ def status(args: argparse.Namespace) -> None:
     print(f"Actors: {len(actors)} | Sources: {len(sources)} | Claims: {len(claims)} | Events: {len(events)}")
     print(
         f"Reviews: {len(reviews)} | Collaborations: {len(collaborations)} | "
-        f"Admissions: {len(admissions)} | Runs: {len(runs)}"
+        f"Admissions: {len(admissions)} | Runs: {len(runs)} | Memory feedback: {len(feedback_records)}"
+    )
+    inactive_claims = sum(lifecycle_status(item, kind="claim") != "active" for item in claims)
+    inactive_sources = sum(lifecycle_status(item, kind="source") != "active" for item in sources)
+    unresolved_feedback = sum(item.get("status") != "resolved" for item in feedback_records)
+    print(
+        f"Inactive lifecycle: claims={inactive_claims} sources={inactive_sources} | "
+        f"Unresolved feedback={unresolved_feedback}"
     )
     print("Claim levels: " + " ".join(f"{level}={count}" for level, count in levels.items()))
     print("Campaigns: " + ", ".join(f"{state}={sum(c.get('status') == state for c in campaigns)}" for state in ["active", "queued", "blocked", "completed"]))
@@ -3256,9 +3935,42 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--reason", required=True)
     p.set_defaults(func=collaboration_transition)
 
+    p = sub.add_parser("memory-feedback-add", help="record an audit-only retrieval outcome")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--task-ref", required=True, help="opaque task identifier; never paste the raw query")
+    p.add_argument("--targets", required=True, help="comma-separated claim/source/wiki references")
+    p.add_argument("--outcome", required=True, choices=["helpful", "harmful", "irrelevant", "unknown"])
+    p.add_argument("--rationale", required=True)
+    p.add_argument("--evidence-refs")
+    p.add_argument("--at", help="explicit timezone-aware timestamp for replayable writes")
+    p.set_defaults(func=memory_feedback_add)
+
+    p = sub.add_parser("memory-feedback-resolve", help="resolve one feedback observation with attribution")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--feedback", required=True)
+    p.add_argument("--rationale", required=True)
+    p.add_argument("--at", help="explicit timezone-aware timestamp for replayable writes")
+    p.set_defaults(func=memory_feedback_resolve)
+
+    p = sub.add_parser("knowledge-lifecycle", help="transition claim/source lifecycle without deletion")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--kind", required=True, choices=["claim", "source"])
+    p.add_argument("--id", required=True)
+    p.add_argument("--status", required=True, choices=sorted(LIFECYCLE_STATUSES))
+    p.add_argument("--reason", required=True)
+    p.add_argument("--replacement", help="same-kind active replacement; required for superseded")
+    p.add_argument("--at", help="explicit timezone-aware timestamp for replayable writes")
+    p.set_defaults(func=knowledge_lifecycle)
+
+    p = sub.add_parser("memory-hygiene", help="print a deterministic read-only staleness/lifecycle report")
+    p.add_argument("--now", required=True, help="explicit timezone-aware evaluation time")
+    p.add_argument("--compact", action="store_true")
+    p.set_defaults(func=memory_hygiene_cmd)
+
     p = sub.add_parser("search", help="run deterministic lexical retrieval across canonical state and wiki")
     p.add_argument("query")
     p.add_argument("--limit", type=int, default=10)
+    p.add_argument("--include-inactive", action="store_true", help="include deprecated/superseded/invalidated/archived records")
     p.set_defaults(func=search_cmd)
 
     p = sub.add_parser("impact", help="preview dependency impact and possible semantic conflicts")

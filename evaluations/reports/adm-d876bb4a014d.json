@@ -1,0 +1,96 @@
+{
+  "candidate": {
+    "id": "CAND-06FB3449D204",
+    "quarantine_artifact": {
+      "media_type": "text/plain",
+      "path": "raw/quarantine/67f92465fe26d3d82249fbfac95f20d09cb0455d1438463d6302d89aeae02e34/artifact.vtt",
+      "sha256": "67f92465fe26d3d82249fbfac95f20d09cb0455d1438463d6302d89aeae02e34",
+      "size_bytes": 2560821
+    },
+    "source_ref": "https://www.youtube.com/watch?v=DeM_u2Ik0sk"
+  },
+  "created_at": "2026-07-11T18:15:44+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "reject",
+    "reasons": [
+      "CONTENT_OVERSIZE"
+    ],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE"
+          ],
+          "risk_score": 5,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE"
+          ],
+          "risk_score": 5,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE"
+          ],
+          "risk_score": 5,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "67f92465fe26d3d82249fbfac95f20d09cb0455d1438463d6302d89aeae02e34",
+        "declared_media_type": null,
+        "detected_media_type": "text/plain",
+        "hash_algorithm": "sha256",
+        "media_type": "text/plain",
+        "size_bytes": 2560821,
+        "source_ref": "https://www.youtube.com/watch?v=DeM_u2Ik0sk"
+      },
+      "normalized": {
+        "content_sha256": "eed5903f7b7a5ede780878ed6f27fca686b37c672574a72b0513626e3106dc9d",
+        "length_chars": 1000000,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "utf8_decode",
+        "replacement_characters": 0,
+        "truncated": true
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": [
+        {
+          "category": "content_integrity",
+          "description": "Content exceeds deterministic scan limit of 1000000 bytes.",
+          "excerpt": "",
+          "risk": 5,
+          "rule_id": "CONTENT_OVERSIZE",
+          "severity": "critical",
+          "span": null
+        }
+      ]
+    },
+    "stage": "write"
+  },
+  "id": "ADM-D876BB4A014D",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "4bd4496decee9de67f1d6e1e943bb050d95b5227aa8a4ea3067b8e1a5b5c255f",
+  "status": "reject"
+}

@@ -1,6 +1,41 @@
 {
   "sources": [
     {
+      "admission_ids": [
+        "ADM-45F7560DEB33"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:11+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "speaker represents the product being evaluated"
+        ],
+        "quality_markers": [
+          "holdout described",
+          "production failure disclosures",
+          "public auto-caption"
+        ],
+        "rationale": "Concrete first-party production account with holdout, stale-context pruning, failure clustering, and human review details; efficacy and scale claims are not independently reproduced."
+      },
+      "authors": [
+        "Benjamin Verbeek"
+      ],
+      "id": "SRC-03641BCFC467",
+      "independence_group": "lovable-self-improvement",
+      "license": "YouTube Standard License",
+      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-C95B1F24DC12.",
+      "publication_status": "published video",
+      "published_at": "2026-06-02",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T17:17:11+00:00",
+      "source_level": "S2",
+      "source_type": "video",
+      "status": "active",
+      "title": "How Lovable self-improves every hour",
+      "url": "https://www.youtube.com/watch?v=KA5kPbdkK2E"
+    },
+    {
       "artifact": null,
       "assessment": {
         "assessed_at": "2026-07-11T14:55:15+00:00",
@@ -29,6 +64,52 @@
       "status": "active",
       "title": "How the Open Knowledge Format can improve data sharing",
       "url": "https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing"
+    },
+    {
+      "admission_ids": [
+        "ADM-B2D78C43D6CC",
+        "ADM-2647D2FF2111"
+      ],
+      "artifact": {
+        "bytes": 479443,
+        "media_type": "application/json",
+        "path": "raw/sources/SRC-0800355B8885/ai-engineer-memory-wiki-audit-bundle-2026-07-12.json",
+        "sha256": "bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980"
+      },
+      "assessment": {
+        "assessed_at": "2026-07-11T18:23:21+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "channel metadata can change",
+          "same agent performed enumeration and semantic classification"
+        ],
+        "quality_markers": [
+          "content hash",
+          "explicit classification rules",
+          "full-period manifest",
+          "per-candidate security receipts",
+          "public metadata"
+        ],
+        "rationale": "A content-addressed, full-period audit over public channel metadata with explicit mutually exclusive rules, per-video hashes, tab receipts, caption admission receipts, and all direct-candidate dispositions. It is suitable for coverage and screening claims, but semantic classification was performed once by the same agent, public YouTube state is mutable, and deleted/private/unlisted videos are unobservable."
+      },
+      "authors": [
+        "AI Engineer channel",
+        "agent:codex"
+      ],
+      "id": "SRC-0800355B8885",
+      "independence_group": "youtube-ai-engineer-channel-audit-2026-07-12",
+      "license": "public metadata compilation; caption bodies excluded because redistribution rights were not verified",
+      "lifecycle_status": "active",
+      "notes": "Bundle SHA-256 bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980. Manifest SHA-256 15c1ba8fe98eecb2224bc68c9576929f3e0ac83d33606b0eda3e3a7176509807; review SHA-256 9a9df8415e9a2aeb8eede2348e72bdcdf5beaab6f98a65dedfe8dc1d5ff6e16d. 264 listed rows include 2 upcoming premieres; completed/viewable denominator 262. Caption bodies were screened but not preserved or promoted.",
+      "publication_status": "derived audit snapshot",
+      "published_at": "2026-07-12",
+      "publisher": "AI Engineer / YouTube",
+      "retrieved_at": "2026-07-11T18:23:21+00:00",
+      "source_level": "S2",
+      "source_type": "dataset",
+      "status": "active",
+      "title": "AI Engineer channel memory/wiki audit bundle, 2026-04-01 to 2026-07-12",
+      "url": "https://www.youtube.com/@aiDotEngineer"
     },
     {
       "artifact": null,
@@ -298,6 +379,76 @@
       "url": "https://aclanthology.org/2026.acl-long.609/"
     },
     {
+      "admission_ids": [
+        "ADM-FB033F63E1C2"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:11+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "speaker is CEO of the agent infrastructure vendor"
+        ],
+        "quality_markers": [
+          "explicit architecture",
+          "known event-sourcing analogy",
+          "public auto-caption"
+        ],
+        "rationale": "First-party architecture argument connecting append-only logs to agent continuity and portability; the strong claim that the log alone reconstructs an agent is not independently established and omits external state."
+      },
+      "authors": [
+        "Ishaan Sehgal"
+      ],
+      "id": "SRC-2E2EA9C214C1",
+      "independence_group": "omnara-log-agent",
+      "license": "YouTube Standard License",
+      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-C9258A24D50D.",
+      "publication_status": "published video",
+      "published_at": "2026-06-25",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T17:17:11+00:00",
+      "source_level": "S2",
+      "source_type": "video",
+      "status": "active",
+      "title": "The Log Is The Agent",
+      "url": "https://www.youtube.com/watch?v=UPwGaM2MKHY"
+    },
+    {
+      "admission_ids": [
+        "ADM-8C55C903E730"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:12+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "speaker represents Arize and its agent product"
+        ],
+        "quality_markers": [
+          "production lessons",
+          "public video",
+          "timestamped chapters"
+        ],
+        "rationale": "Specific first-party failure report on truncation, summarization, retrievable memory, and long-session evaluation; code and comparative benchmark are not public."
+      },
+      "authors": [
+        "Sally-Ann DeLucia"
+      ],
+      "id": "SRC-3F8E6D0FDE7E",
+      "independence_group": "arize-alyx-context",
+      "license": "YouTube Standard License",
+      "notes": "Metadata-only. Automated caption retrieval was blocked without browser authentication; no credentials were used.",
+      "publication_status": "published video",
+      "published_at": "2026-05-10",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T17:17:12+00:00",
+      "source_level": "S2",
+      "source_type": "video",
+      "status": "active",
+      "title": "How we solved Context Management in Agents",
+      "url": "https://www.youtube.com/watch?v=esY99nYXxR4"
+    },
+    {
       "artifact": null,
       "assessment": {
         "assessed_at": "2026-07-11T14:29:14+00:00",
@@ -426,6 +577,43 @@
       "status": "active",
       "title": "GitHub REST API endpoints for commits",
       "url": "https://docs.github.com/en/rest/commits/commits"
+    },
+    {
+      "admission_ids": [
+        "ADM-B0B19D4B8C5D"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:12+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "authors created and promote the method"
+        ],
+        "quality_markers": [
+          "limitations stated",
+          "primary preprint",
+          "public implementation",
+          "worked example"
+        ],
+        "rationale": "Primary methodological preprint with an explicit worked example, hypotheses, limitations, and public code; it is not peer-reviewed and the convergence claim lacks independent replication."
+      },
+      "authors": [
+        "Raj Navakoti",
+        "Saideep Navakoti"
+      ],
+      "id": "SRC-54D07435EB56",
+      "independence_group": "ddc-authors",
+      "license": "reuse license not verified",
+      "notes": "Metadata-only because redistribution license was not established. PDF security-screened as ADM-9036402A59C2.",
+      "publication_status": "preprint",
+      "published_at": "2026-03-14",
+      "publisher": "arXiv",
+      "retrieved_at": "2026-07-11T17:17:12+00:00",
+      "source_level": "S2",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Demand-Driven Context: A Methodology for Building Enterprise Knowledge Bases Through Agent Failure",
+      "url": "https://arxiv.org/abs/2603.14057"
     },
     {
       "artifact": null,
@@ -594,6 +782,41 @@
       "url": "https://arxiv.org/abs/2606.04329"
     },
     {
+      "admission_ids": [
+        "ADM-B6AAFD3ECAC0"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:12+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "speaker and company sell context tooling"
+        ],
+        "quality_markers": [
+          "explicit lifecycle",
+          "public auto-caption",
+          "timestamped chapters"
+        ],
+        "rationale": "First-party practitioner framing of context as a versioned generate-evaluate-distribute-observe lifecycle; no independent evidence that the branded lifecycle improves outcomes."
+      },
+      "authors": [
+        "Patrick Debois"
+      ],
+      "id": "SRC-7409811C56EB",
+      "independence_group": "tessl-context-lifecycle",
+      "license": "YouTube Standard License",
+      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-449094B37139.",
+      "publication_status": "published video",
+      "published_at": "2026-05-03",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T17:17:12+00:00",
+      "source_level": "S2",
+      "source_type": "video",
+      "status": "active",
+      "title": "Context Is the New Code",
+      "url": "https://www.youtube.com/watch?v=bSG9wUYaHWU"
+    },
+    {
       "artifact": null,
       "assessment": {
         "assessed_at": "2026-07-11T14:28:47+00:00",
@@ -713,6 +936,83 @@
       "url": "https://www.crossref.org/documentation/retrieve-metadata/retraction-watch/"
     },
     {
+      "admission_ids": [
+        "ADM-8F7ADCECFA0E"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:12+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "no material product conflict identified"
+        ],
+        "quality_markers": [
+          "explicit operations",
+          "official proceedings",
+          "peer-reviewed",
+          "primary benchmark"
+        ],
+        "rationale": "Peer-reviewed primary paper operationalizing store, retrieve, update, summarize, and discard as explicit memory actions; its learned policy and dialogue benchmarks do not directly validate Wiki lifecycle automation."
+      },
+      "authors": [
+        "Jiaqi Feng",
+        "Libing Wu",
+        "Liuyi Yao",
+        "Qingquan Tan",
+        "Yaliang Li",
+        "Yi Yu",
+        "Yuexiang Xie"
+      ],
+      "id": "SRC-9639A8245BE8",
+      "independence_group": "agemem-authors",
+      "license": "CC BY 4.0",
+      "notes": "Metadata-only. PDF and extracted text were quarantined but rejected by the security gate; no override was used (ADM-CDEAF3837B3E, ADM-9AC73CEF6FCB).",
+      "publication_status": "peer-reviewed ACL 2026 main conference",
+      "published_at": "2026-07",
+      "publisher": "Association for Computational Linguistics",
+      "retrieved_at": "2026-07-11T17:17:12+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Agentic Memory: Learning Unified Long-Term and Short-Term Memory Management for Large Language Model Agents",
+      "url": "https://aclanthology.org/2026.acl-long.981/"
+    },
+    {
+      "admission_ids": [
+        "ADM-CCA31F4879DB"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:20:15+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "speaker is CEO and co-founder of the proposed retrieval product"
+        ],
+        "quality_markers": [
+          "explicit failure modes",
+          "live demo",
+          "public auto-caption"
+        ],
+        "rationale": "First-party proposal to feed outcome signals back into memory retrieval; it clearly discloses cold-start, noisy-label, drift, and hyperparameter limitations, but utility-ranking efficacy is a vendor claim without independent benchmark."
+      },
+      "authors": [
+        "Sonam Pankaj"
+      ],
+      "id": "SRC-9BADA4274C74",
+      "independence_group": "starlight-utility-memory",
+      "license": "YouTube Standard License",
+      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-8137C33990B2. Outcome feedback is recorded as diagnostic data only and must not auto-change trust.",
+      "publication_status": "published video",
+      "published_at": "2026-06-28",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T17:20:15+00:00",
+      "source_level": "S2",
+      "source_type": "video",
+      "status": "active",
+      "title": "User Signal Dies at the Retrieval Boundary",
+      "url": "https://www.youtube.com/watch?v=Jx4ZFEAq6bY"
+    },
+    {
       "artifact": null,
       "assessment": {
         "assessed_at": "2026-07-11T14:28:47+00:00",
@@ -739,6 +1039,91 @@
       "status": "active",
       "title": "A-MemGuard",
       "url": "https://openreview.net/forum?id=udqe7UZUZ6"
+    },
+    {
+      "admission_ids": [
+        "ADM-2A522BA30404"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:11+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "speaker founded RELAI and presents its approach"
+        ],
+        "quality_markers": [
+          "expert speaker",
+          "explicit limitations",
+          "linked first-party article",
+          "public auto-caption"
+        ],
+        "rationale": "Direct technical presentation by a relevant academic and product founder; architectural principles and timestamps are usable, while product gains lack an independent public benchmark."
+      },
+      "authors": [
+        "Soheil Feizi"
+      ],
+      "id": "SRC-AD0B1D50C531",
+      "independence_group": "relai-vcl",
+      "license": "YouTube Standard License",
+      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-CCD996E9A34D. YouTube/Pacific publishDate can appear as 2026-07-04.",
+      "publication_status": "published video",
+      "published_at": "2026-07-05",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T17:17:11+00:00",
+      "source_level": "S2",
+      "source_type": "video",
+      "status": "active",
+      "title": "Continual Learning for AI Agents: From Failures to Durable Improvements",
+      "url": "https://www.youtube.com/watch?v=2IxD9OB3XuQ"
+    },
+    {
+      "admission_ids": [
+        "ADM-AD34DBB10F1D",
+        "ADM-60528FD1163A"
+      ],
+      "artifact": {
+        "bytes": 78236,
+        "media_type": "text/plain",
+        "path": "raw/sources/SRC-AF06BCDC1ED2/xiong-memory-2026-acl-long.27.txt",
+        "sha256": "bf6ee8af1755260b5a13b6dfbf54f8f96806078d16b98ba205cdf39651c0e1f3"
+      },
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:12+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "no material product conflict identified"
+        ],
+        "quality_markers": [
+          "controlled memory operations",
+          "official proceedings",
+          "peer-reviewed",
+          "primary experiments"
+        ],
+        "rationale": "Peer-reviewed primary empirical study directly testing memory addition and deletion, error propagation, misaligned replay, and future outcome labels; applicability beyond its agent tasks remains bounded."
+      },
+      "authors": [
+        "Himabindu Lakkaraju",
+        "Jiliang Tang",
+        "Pengfei He",
+        "Wenya Xie",
+        "Yuping Lin",
+        "Zhen Xiang",
+        "Zidi Xiong",
+        "Zirui Liu"
+      ],
+      "id": "SRC-AF06BCDC1ED2",
+      "independence_group": "xiong-memory-management",
+      "license": "CC BY 4.0",
+      "notes": "Artifact is pypdf 5.9.0 extracted text with page markers; original PDF was quarantined but rejected by size gate. Original official PDF hash is preserved in the rejected security receipt ADM-64F8C03D0241.",
+      "publication_status": "peer-reviewed ACL 2026 main conference",
+      "published_at": "2026-07",
+      "publisher": "Association for Computational Linguistics",
+      "retrieved_at": "2026-07-11T17:17:12+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "How Memory Management Impacts LLM Agents: An Empirical Study of Experience-Following Behavior",
+      "url": "https://aclanthology.org/2026.acl-long.27/"
     },
     {
       "artifact": null,
@@ -993,6 +1378,42 @@
       "url": "https://aclanthology.org/2026.acl-long.1134/"
     },
     {
+      "admission_ids": [
+        "ADM-DF2E75056B85"
+      ],
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:11+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "speaker is the method author and promoter"
+        ],
+        "quality_markers": [
+          "date verified",
+          "linked implementation",
+          "linked preprint",
+          "public video"
+        ],
+        "rationale": "First-party practitioner workshop with a linked preprint and public implementation, useful for design facts; convergence and efficacy remain author-reported and non-independent."
+      },
+      "authors": [
+        "Raj Navakoti"
+      ],
+      "id": "SRC-F55FED177366",
+      "independence_group": "ddc-authors",
+      "license": "YouTube Standard License",
+      "notes": "Metadata-only. Public automatic captions could not be retrieved without authentication and are not treated as preserved evidence.",
+      "publication_status": "published video",
+      "published_at": "2026-05-05",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T17:17:11+00:00",
+      "source_level": "S2",
+      "source_type": "video",
+      "status": "active",
+      "title": "Demand-Driven Context: A Methodology for Coherent Knowledge Bases Through Agent Failure",
+      "url": "https://www.youtube.com/watch?v=_QAVExf_1uw"
+    },
+    {
       "artifact": null,
       "assessment": {
         "assessed_at": "2026-07-11T14:29:14+00:00",
@@ -1018,6 +1439,57 @@
       "status": "active",
       "title": "Vector RAG vs LLM-Compiled Wiki",
       "url": "https://arxiv.org/abs/2605.18490"
+    },
+    {
+      "admission_ids": [
+        "ADM-5307A69225D3",
+        "ADM-AF2E6A76010A"
+      ],
+      "artifact": {
+        "bytes": 75579,
+        "media_type": "text/plain",
+        "path": "raw/sources/SRC-F9BA839FA59D/steem-2026-acl-long.670.txt",
+        "sha256": "2189778555f781e47b2df4adf68f18e5f16d0af26843529c01b3ae556fdc9bd3"
+      },
+      "assessment": {
+        "assessed_at": "2026-07-11T17:17:12+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "no material product conflict identified"
+        ],
+        "quality_markers": [
+          "comparative experiments",
+          "official proceedings",
+          "peer-reviewed",
+          "user-controllable intervention"
+        ],
+        "rationale": "Peer-reviewed primary study showing that all-or-nothing memory use can anchor or underuse history and testing explicit user control; personalization benchmarks do not directly establish factual Wiki quality."
+      },
+      "authors": [
+        "Changze Lv",
+        "Jiakang Yuan",
+        "Jingwen Xu",
+        "Kaitao Song",
+        "Muzhao Tian",
+        "Qi Qian",
+        "Xiaohua Wang",
+        "Xiaoqing Zheng",
+        "Zhengkang Guo",
+        "Zisu Huang"
+      ],
+      "id": "SRC-F9BA839FA59D",
+      "independence_group": "steem-memory-control",
+      "license": "CC BY 4.0",
+      "notes": "Artifact is pypdf 5.9.0 extracted text with page markers; original PDF was rejected by size gate and was not promoted (ADM-630AF6D54A6B).",
+      "publication_status": "peer-reviewed ACL 2026 main conference",
+      "published_at": "2026-07",
+      "publisher": "Association for Computational Linguistics",
+      "retrieved_at": "2026-07-11T17:17:12+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Controllable Memory Usage: Balancing Anchoring and Innovation in Long-Term Human-Agent Interaction",
+      "url": "https://aclanthology.org/2026.acl-long.670/"
     }
   ],
   "version": 1

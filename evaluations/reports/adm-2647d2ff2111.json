@@ -1,0 +1,78 @@
+{
+  "candidate": {
+    "id": "CAND-0800355B8885",
+    "quarantine_artifact": {
+      "media_type": "application/json",
+      "path": "raw/quarantine/bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980/artifact.json",
+      "sha256": "bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980",
+      "size_bytes": 479443
+    },
+    "source_ref": "https://www.youtube.com/@aiDotEngineer"
+  },
+  "created_at": "2026-07-11T18:22:34+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "allow",
+    "reasons": [],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980",
+        "declared_media_type": "application/json",
+        "detected_media_type": "application/json",
+        "hash_algorithm": "sha256",
+        "media_type": "application/json",
+        "size_bytes": 479443,
+        "source_ref": "https://www.youtube.com/@aiDotEngineer"
+      },
+      "normalized": {
+        "content_sha256": "3d32bde714b7e578038cca55b98e61226762b665c2a5e2b7c96d228b9e672215",
+        "length_chars": 478620,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "utf8_decode",
+        "replacement_characters": 0,
+        "truncated": false
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": []
+    },
+    "stage": "write"
+  },
+  "id": "ADM-2647D2FF2111",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "4bddaeec0a4f2849b13ff5e5958b7175ea2528ca57a0818a8adcb36275f07043",
+  "status": "allow"
+}

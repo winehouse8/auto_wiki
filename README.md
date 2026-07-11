@@ -1,4 +1,4 @@
-# Living Wiki v4.0 — Codex 초기 설정과 운영
+# Living Wiki v4.1 — Codex 초기 설정과 운영
 
 사람과 Agent가 같은 종류의 **기여 행위자(actor)** 로 참여하고, Agent가 일상적인 조사·정리·검증·합성을 수행하는 로컬 우선 연구 위키입니다. 이 저장소는 Codex가 매 사용자 요청마다 `wiki/index.md`를 먼저 읽고, 관련 위키 지식을 우선 검토하도록 루트 `AGENTS.md`에 부트스트랩 계약을 포함합니다.
 
@@ -11,9 +11,9 @@ codex -C "$WIKI_ROOT"
 
 정확한 파일명은 **`AGENTS.md`** 입니다. `Agent.md`, `agent.md`, `AGENT.md`는 기본 자동 탐색 대상이 아닙니다. 이 `README.md`도 사람을 위한 설치 설명서일 뿐 자동으로 context에 들어가지 않습니다.
 
-## v4의 닫힌 루프
+## v4.1의 닫힌 루프
 
-v4는 기존 claim/source/event 원장과 OKF bundle 위에 다음 control loop를 연결합니다.
+v4.1은 기존 claim/source/event 원장과 OKF bundle 위에 다음 control loop를 연결합니다.
 
 ```text
 human/Agent direction
@@ -22,6 +22,7 @@ human/Agent direction
   → quarantine security gate
   → source admission과 counter-search
   → source → atomic claim → exact evidence
+  → retrieval outcome feedback와 staleness/lifecycle hygiene
   → impact/review/evaluate/render
   → structural + OKF + calibration + security + runtime + test release gate
   → RFC evidence와 rollback snapshot
@@ -29,7 +30,7 @@ human/Agent direction
 
 사람과 Agent는 `state/collaborations.json`의 같은 envelope로 direction, lead, correction, objection을 남깁니다. actor kind는 사실성이나 고위험 권한을 자동 부여하지 않습니다. 외부 콘텐츠는 항상 data이며 instruction으로 승격되지 않습니다.
 
-이 릴리스의 `PASS`는 **로컬 bounded harness와 고정 회귀 fixture가 통과했다**는 뜻입니다. 15건 calibration pilot, lexical security corpus, hash receipt는 production 신뢰·보안 인증이 아닙니다. 따라서 release report는 성공해도 항상 `production_certified=false`입니다.
+이 릴리스의 `PASS`는 **로컬 bounded harness와 고정 회귀 fixture가 통과했다**는 뜻입니다. report는 release-relevant tools/tests/config/docs manifest hash도 묶지만 mutable state/raw 전체의 서명이나 production attestation은 아닙니다. 15건 calibration pilot, lexical security corpus, hash receipt는 production 신뢰·보안 인증이 아니므로 성공해도 항상 `production_certified=false`입니다.
 
 Python 3.10 이상이 지원 범위입니다. macOS의 오래된 system Python 대신 명시적인 최신 interpreter를 권장합니다.
 
@@ -205,6 +206,16 @@ AGENTS.md가 run 시작 시 context에 들어옴
 
 질문에 답만 해 달라는 요청은 읽기 권한이지 자동적인 Wiki 변경 권한이 아닙니다. 반대로 조사·구축·발전을 요청받으면 정상 작업 범위 안에서 source, claim, evidence, campaign을 갱신하고 품질 게이트를 실행합니다.
 
+## Wiki 의존도 UX
+
+별도 설정 파일을 바꾸지 않고 요청에 모드 이름을 붙이면 됩니다. 명시하지 않으면 `wiki-first`입니다.
+
+- `wiki-first로 답해줘`: 기존 Wiki를 출발점으로 공백·노후·모순만 새 원자료로 보완합니다.
+- `fresh-check로 다시 조사해줘`: index는 읽되 기존 합성 결론을 잠시 괄호에 두고 독립 조사한 뒤 Wiki와 차이를 비교합니다. 모델의 기억을 실제로 지우는 모드는 아닙니다.
+- `strict-evidence로 답해줘`: 정확한 locator가 있는 C2 이상 사실만 단정하고 나머지는 근거 부족으로 표시합니다.
+
+어느 모드도 `AGENTS.md` 부트스트랩, source/security admission, C-level 계산, 쓰기 권한을 우회하지 않습니다. 특히 `fresh-check`는 기존 Wiki를 삭제하거나 무시하는 명령이 아니라 anchoring을 줄이기 위한 비교 절차입니다.
+
 ## 자주 실패하는 경우
 
 - **파일명을 `Agent.md`로 만듦**: 기본 탐색에서 무시됩니다. `AGENTS.md`를 사용합니다.
@@ -226,11 +237,32 @@ python3 tools/wiki.py next-task
 python3 tools/wiki.py run-plan --max-campaigns 1 --max-actions 1
 python3 tools/wiki.py calibration-run
 python3 tools/wiki.py security-evaluate
+python3 tools/wiki.py memory-hygiene --now 2026-07-12T00:00:00+09:00
 python3 tools/wiki.py okf-validate
 python3 tools/wiki.py validate
 python3 -m unittest discover -s tests -v
 python3 tools/wiki.py release-check
 ```
+
+retrieval 결과가 실제 작업에 도움이 됐는지는 raw query 없이 기록할 수 있습니다.
+
+```bash
+python3 tools/wiki.py memory-feedback-add \
+  --task-ref TASK-2026-001 \
+  --targets CLM-EXAMPLE \
+  --outcome helpful \
+  --rationale '해당 claim과 locator가 질문 범위에 직접 적용됐다.'
+```
+
+obsolete 지식은 삭제하지 않고 역할 권한이 있는 actor가 이유와 replacement를 남겨 전환합니다.
+
+```bash
+python3 tools/wiki.py knowledge-lifecycle \
+  --kind claim --id CLM-OLD --status superseded \
+  --replacement CLM-NEW --reason '새 claim이 적용 시점과 범위를 교정했다.'
+```
+
+기본 `search`는 inactive claim/source와 inactive frontmatter 문서를 제외하며 감사할 때만 `--include-inactive`를 사용합니다. 다만 수동 synthesis에 남은 과거 문장까지 완전히 제거하는 의미는 아니므로 답변 시 원 claim의 lifecycle을 확인해야 합니다.
 
 새 관심 분야는 `config/interests.json`에 추가합니다. 사람이 링크나 아이디어를 던질 때는 `python3 tools/wiki.py campaign-add ...`로 연구 큐에 넣거나 `research/inbox.md`에 기록합니다. Agent는 `AGENTS.md`와 `prompts/research-cycle.md`를 따라 한 사이클씩 실행합니다.
 
@@ -269,12 +301,12 @@ research/            관심 분야, 큐, 캠페인, 조사 메모
 governance/          헌장, 결정, 하네스 변경 제안
 migrations/          hash-pinned additive migration과 grandfather manifest
 evaluations/         품질 게이트와 회귀평가
-evolution/           v1→v2→v3.1→v4 진화·migration·rollback 기록
+evolution/           v1→v2→v3.1→v4→v4.1 진화·migration·rollback 기록
 reports/             lint·상태·연구 보고서
 tools/wiki.py         의존성 없는 결정론적 CLI
 ```
 
-자세한 설계와 비판적 자료 분석은 [자가진화 Wiki 연구 보고서](docs/SELF_EVOLVING_WIKI_REPORT.md)를 참고하세요. v4의 실행 경계는 [calibration/admission](docs/CALIBRATION_AND_ADMISSION.md), [security](docs/SECURITY_GATE.md), [collaboration/runtime](docs/COLLABORATION_RUNTIME.md), [release gate](docs/RELEASE_GATE.md), [evolution/migration](evolution/v4-closed-loop-harness.md)에 분리해 기록했습니다.
+자세한 설계와 비판적 자료 분석은 [자가진화 Wiki 연구 보고서](docs/SELF_EVOLVING_WIKI_REPORT.md)를 참고하세요. v4.1의 연구 근거와 전수 범위는 [AI Engineer memory/Wiki 감사 보고서](docs/AI_ENGINEER_MEMORY_WIKI_RESEARCH_2026.md)와 [34개 직접 후보 감사표](docs/AI_ENGINEER_DIRECT_VIDEO_AUDIT_2026.md)에 있습니다. v4의 실행 경계는 [calibration/admission](docs/CALIBRATION_AND_ADMISSION.md), [security](docs/SECURITY_GATE.md), [collaboration/runtime](docs/COLLABORATION_RUNTIME.md), [release gate](docs/RELEASE_GATE.md), [evolution/migration](evolution/v4-closed-loop-harness.md)에 분리해 기록했습니다.
 
 ## 지속 실행
 

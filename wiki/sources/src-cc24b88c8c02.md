@@ -3,9 +3,10 @@ type: "Reference"
 title: "STORM: Assisting in Writing Wikipedia-like Articles From Scratch"
 description: "paper source SRC-CC24B88C8C02 assessed S4."
 resource: "https://aclanthology.org/2024.naacl-long.347/"
-tags: ["source", "paper", "S4"]
+tags: ["source", "paper", "S4", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-CC24B88C8C02"
 source_level: "S4"
 ---
@@ -25,6 +26,9 @@ source_level: "S4"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `storm-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

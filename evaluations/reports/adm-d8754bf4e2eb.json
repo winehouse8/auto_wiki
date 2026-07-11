@@ -1,0 +1,78 @@
+{
+  "candidate": {
+    "id": "CAND-A135A60EDEAA",
+    "quarantine_artifact": {
+      "media_type": "text/plain",
+      "path": "raw/quarantine/85e428b3437063960efe9e5e88193fdc96e01e2439787a4052e8823e29adc11b/artifact.vtt",
+      "sha256": "85e428b3437063960efe9e5e88193fdc96e01e2439787a4052e8823e29adc11b",
+      "size_bytes": 168551
+    },
+    "source_ref": "https://www.youtube.com/watch?v=ohKt066uFhg"
+  },
+  "created_at": "2026-07-11T18:15:47+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "allow",
+    "reasons": [],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "85e428b3437063960efe9e5e88193fdc96e01e2439787a4052e8823e29adc11b",
+        "declared_media_type": null,
+        "detected_media_type": "text/plain",
+        "hash_algorithm": "sha256",
+        "media_type": "text/plain",
+        "size_bytes": 168551,
+        "source_ref": "https://www.youtube.com/watch?v=ohKt066uFhg"
+      },
+      "normalized": {
+        "content_sha256": "85e428b3437063960efe9e5e88193fdc96e01e2439787a4052e8823e29adc11b",
+        "length_chars": 168551,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "utf8_decode",
+        "replacement_characters": 0,
+        "truncated": false
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": []
+    },
+    "stage": "write"
+  },
+  "id": "ADM-D8754BF4E2EB",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "a2e53449e03184a48293a20420b32539a9c4121fa8a70eec575d28489b88b1fa",
+  "status": "allow"
+}

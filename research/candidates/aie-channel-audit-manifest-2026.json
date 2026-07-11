@@ -1,0 +1,15 @@
+{
+  "id": "CAND-AIE-CHANNEL-AUDIT-2026-04-01-2026-07-12",
+  "title": "AI Engineer channel memory/wiki audit manifest, 2026-04-01 to 2026-07-12",
+  "url": "https://www.youtube.com/@aiDotEngineer",
+  "publisher": "AI Engineer / derived audit by agent:codex",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": [
+      "origin",
+      "status",
+      "contradiction"
+    ]
+  }
+}

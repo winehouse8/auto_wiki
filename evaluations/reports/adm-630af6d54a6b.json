@@ -1,0 +1,96 @@
+{
+  "candidate": {
+    "id": "CAND-36045B5CE5EC",
+    "quarantine_artifact": {
+      "media_type": "application/pdf",
+      "path": "raw/quarantine/cd68d108d075b2ff4f56dc5f1b4ec0aa53452b658fad4d3cf7ad698100da106d/artifact.pdf",
+      "sha256": "cd68d108d075b2ff4f56dc5f1b4ec0aa53452b658fad4d3cf7ad698100da106d",
+      "size_bytes": 2615191
+    },
+    "source_ref": "https://aclanthology.org/2026.acl-long.670.pdf"
+  },
+  "created_at": "2026-07-11T17:14:08+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "reject",
+    "reasons": [
+      "CONTENT_OVERSIZE"
+    ],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE"
+          ],
+          "risk_score": 5,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE"
+          ],
+          "risk_score": 5,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE"
+          ],
+          "risk_score": 5,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "cd68d108d075b2ff4f56dc5f1b4ec0aa53452b658fad4d3cf7ad698100da106d",
+        "declared_media_type": "application/pdf",
+        "detected_media_type": "application/pdf",
+        "hash_algorithm": "sha256",
+        "media_type": "application/pdf",
+        "size_bytes": 2615191,
+        "source_ref": "https://aclanthology.org/2026.acl-long.670.pdf"
+      },
+      "normalized": {
+        "content_sha256": "75fff6c7037707513ef7809e00ec535e476f9921caf8a0a84cfcedd63a75e570",
+        "length_chars": 74680,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "sandboxed_extraction",
+        "replacement_characters": 0,
+        "truncated": false
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": [
+        {
+          "category": "content_integrity",
+          "description": "Content exceeds deterministic scan limit of 1000000 bytes.",
+          "excerpt": "",
+          "risk": 5,
+          "rule_id": "CONTENT_OVERSIZE",
+          "severity": "critical",
+          "span": null
+        }
+      ]
+    },
+    "stage": "write"
+  },
+  "id": "ADM-630AF6D54A6B",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "5f5d78bf4b866d23966a224eeb56815e7de2fd9bf0e4dca0a6646fe05ffa84e9",
+  "status": "reject"
+}

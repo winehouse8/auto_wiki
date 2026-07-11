@@ -1,0 +1,12 @@
+{
+  "id": "CAND-AGEMEM-ACL-2026",
+  "title": "Agentic Memory: Learning Unified Long-Term and Short-Term Memory Management for Large Language Model Agents",
+  "doi": "10.18653/v1/2026.acl-long.981",
+  "url": "https://aclanthology.org/2026.acl-long.981/",
+  "publisher": "Association for Computational Linguistics",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

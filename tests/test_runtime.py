@@ -145,6 +145,37 @@ class RetrievalTests(unittest.TestCase):
             self.assertIn("wiki:wiki/page.md", ids)
             self.assertFalse(any("raw" in item for item in ids))
 
+    def test_repository_corpus_excludes_inactive_knowledge_by_default(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "state").mkdir()
+            (root / "wiki").mkdir()
+            (root / "state" / "claims.json").write_text(
+                json.dumps(
+                    {
+                        "claims": [
+                            {"id": "CLM-A", "statement": "active needle", "lifecycle_status": "active"},
+                            {"id": "CLM-B", "statement": "inactive needle", "lifecycle_status": "deprecated"},
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (root / "wiki" / "inactive.md").write_text(
+                "---\ntype: Concept\nlifecycle_status: archived\n---\ninactive wiki needle\n",
+                encoding="utf-8",
+            )
+            default_ids = {item.doc_id for item in runtime.build_search_documents(root)}
+            all_ids = {
+                item.doc_id
+                for item in runtime.build_search_documents(root, include_inactive=True)
+            }
+            self.assertIn("claim:CLM-A", default_ids)
+            self.assertNotIn("claim:CLM-B", default_ids)
+            self.assertNotIn("wiki:wiki/inactive.md", default_ids)
+            self.assertIn("claim:CLM-B", all_ids)
+            self.assertIn("wiki:wiki/inactive.md", all_ids)
+
 
 class ImpactPreviewTests(unittest.TestCase):
     def setUp(self):

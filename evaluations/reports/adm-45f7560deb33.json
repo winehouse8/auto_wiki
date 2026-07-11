@@ -1,0 +1,61 @@
+{
+  "candidate": {
+    "counter_search": {
+      "checks": [
+        "origin",
+        "status",
+        "contradiction"
+      ]
+    },
+    "id": "CAND-AIE-LOVABLE-VIDEO-2026",
+    "provenance_verified": true,
+    "publisher": "AI Engineer",
+    "registry_required": false,
+    "title": "How Lovable self-improves every hour",
+    "url": "https://www.youtube.com/watch?v=KA5kPbdkK2E"
+  },
+  "created_at": "2026-07-11T17:15:40+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "candidate_id": "CAND-AIE-LOVABLE-VIDEO-2026",
+    "canonical_identifiers": [
+      "url:https://www.youtube.com/watch?v=KA5kPbdkK2E"
+    ],
+    "counter_search": {
+      "completed": [
+        "contradiction",
+        "origin",
+        "status"
+      ],
+      "coverage": 1.0,
+      "missing": [],
+      "required": [
+        "contradiction",
+        "origin",
+        "status"
+      ]
+    },
+    "decision": "allow",
+    "independence_cluster": {
+      "cluster_id": "IC-E57DFBECE06A",
+      "members": [
+        "CAND-AIE-LOVABLE-VIDEO-2026"
+      ]
+    },
+    "reasons": [
+      {
+        "code": "minimum_gate_satisfied",
+        "detail": "identity, provenance, status policy, and counter-search checks passed"
+      }
+    ],
+    "registry": {
+      "adapter": null,
+      "matches": [],
+      "status": "not_checked"
+    }
+  },
+  "id": "ADM-45F7560DEB33",
+  "policy_effect": "advisory_only",
+  "record_digest": "1233aacee8de8404ef3356560508751ae72896ed576b9283d6c7789cd929e105",
+  "status": "allow"
+}

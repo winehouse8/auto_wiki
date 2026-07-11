@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "feedback_inputs": [
+    {
+      "actor_id": "human:owner",
+      "targets": [
+        "CLM-MEMORY",
+        "SRC-PRIMARY"
+      ],
+      "outcome": "helpful",
+      "task_ref": "task:run-001",
+      "rationale": "The retrieved claim and primary source directly answered the bounded task.",
+      "evidence_refs": [
+        "EVT-001",
+        "RUN-001"
+      ],
+      "created_at": "2026-07-12T01:00:00+00:00"
+    },
+    {
+      "actor_id": "agent:reviewer",
+      "targets": [
+        "CLM-STALE"
+      ],
+      "outcome": "harmful",
+      "task_ref": "task:run-002",
+      "rationale": "The retrieved item was stale for the requested validity date; manual review is required.",
+      "evidence_refs": [
+        "REVIEW-002"
+      ],
+      "created_at": "2026-07-12T01:05:00+00:00"
+    },
+    {
+      "actor_id": "agent:researcher",
+      "targets": [
+        "SRC-CONTEXT"
+      ],
+      "outcome": "irrelevant",
+      "task_ref": "task:run-003",
+      "rationale": "The source was valid but outside the task scope.",
+      "evidence_refs": [],
+      "created_at": "2026-07-12T01:10:00+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "targets": [
+        "CLM-UNCERTAIN"
+      ],
+      "outcome": "unknown",
+      "task_ref": "task:run-004",
+      "rationale": "The task ended before usefulness could be determined.",
+      "evidence_refs": [],
+      "created_at": "2026-07-12T01:15:00+00:00"
+    }
+  ],
+  "expected_aggregate": {
+    "input_records": 5,
+    "unique_records": 4,
+    "duplicate_records": 1,
+    "outcome_counts": {
+      "harmful": 1,
+      "helpful": 1,
+      "irrelevant": 1,
+      "unknown": 1
+    },
+    "status_counts": {
+      "open": 4,
+      "resolved": 0
+    },
+    "evidence": {
+      "attached": 2,
+      "missing": 2
+    }
+  },
+  "lifecycle_scenarios": [
+    {
+      "subject": {
+        "id": "CLM-OLD",
+        "statement": "A version-sensitive statement.",
+        "confidence": {
+          "level": "C2"
+        }
+      },
+      "to_status": "superseded",
+      "actor_id": "human:owner",
+      "reason": "A newer claim narrows the validity period.",
+      "replacement_ref": "CLM-NEW",
+      "created_at": "2026-07-12T02:00:00+00:00"
+    },
+    {
+      "subject": {
+        "id": "SRC-STALE",
+        "title": "Version-sensitive documentation",
+        "source_level": "S3"
+      },
+      "to_status": "deprecated",
+      "actor_id": "agent:reviewer",
+      "reason": "The publisher released a newer version.",
+      "replacement_ref": null,
+      "created_at": "2026-07-12T02:05:00+00:00"
+    }
+  ],
+  "invalid_field_examples": [
+    "raw_query",
+    "query",
+    "rank_delta",
+    "claim_level",
+    "source_level",
+    "delete",
+    "promotion"
+  ]
+}

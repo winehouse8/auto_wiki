@@ -1,0 +1,11 @@
+{
+  "id": "CAND-AIE-UTILITY-MEMORY-VIDEO-2026",
+  "title": "User Signal Dies at the Retrieval Boundary",
+  "url": "https://www.youtube.com/watch?v=Jx4ZFEAq6bY",
+  "publisher": "AI Engineer",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

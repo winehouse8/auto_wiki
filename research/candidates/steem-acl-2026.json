@@ -1,0 +1,12 @@
+{
+  "id": "CAND-STEEM-ACL-2026",
+  "title": "Controllable Memory Usage: Balancing Anchoring and Innovation in Long-Term Human-Agent Interaction",
+  "doi": "10.18653/v1/2026.acl-long.670",
+  "url": "https://aclanthology.org/2026.acl-long.670/",
+  "publisher": "Association for Computational Linguistics",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

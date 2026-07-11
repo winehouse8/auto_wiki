@@ -1,7 +1,7 @@
 # Living Wiki 헌장
 
 Version: 1.0
-Harness: 4.0.0
+Harness: 4.1.0
 Adopted: 2026-07-11
 
 ## 1. 목적

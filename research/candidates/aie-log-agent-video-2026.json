@@ -1,0 +1,11 @@
+{
+  "id": "CAND-AIE-LOG-AGENT-VIDEO-2026",
+  "title": "The Log Is The Agent",
+  "url": "https://www.youtube.com/watch?v=UPwGaM2MKHY",
+  "publisher": "AI Engineer",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

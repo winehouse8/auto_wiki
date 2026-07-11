@@ -3,7 +3,7 @@ type: Research Queue
 title: Open questions
 description: 정보 이득과 위험을 기준으로 정렬한 Living Wiki의 미해결 연구 질문.
 tags: [research-queue, open-questions]
-timestamp: '2026-07-12T12:00:00+09:00'
+timestamp: '2026-07-12T18:30:00+09:00'
 ---
 
 # Open questions
@@ -46,6 +46,13 @@ baseline 결과: `CMP-088A51571084` 완료. fixed corpus 통과는 production se
 - 어떤 규모와 query 패턴에서 JSON/Markdown index가 병목이 되는가?
 - BM25, dense retrieval, citation graph, temporal graph를 어떤 router로 조합하는가?
 - compiled Wiki가 raw retrieval보다 실제로 비용과 정확도에서 우수한 query 유형은 무엇인가?
+
+## P1 — Memory hygiene와 사용자 의존도
+
+- `fast|normal|slow` review warning이 실제 outdated claim을 찾는 precision/recall은 얼마인가?
+- helpful/harmful feedback의 selection bias와 credit assignment를 어떤 no-op control로 측정할 것인가?
+- `wiki-first|fresh-check|strict-evidence`가 anchoring, 사실 오류, 시간, 비용에 미치는 영향을 어떻게 비교할 것인가?
+- inactive lifecycle을 보존하면서 v3.1 rollback reader의 silent reactivation을 막는 migration은 무엇인가?
 
 ## P1 — Executor와 multi-writer 운영 경계
 

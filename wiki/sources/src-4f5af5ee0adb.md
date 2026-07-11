@@ -3,9 +3,10 @@ type: "Reference"
 title: "GitHub REST API endpoints for commits"
 description: "official-doc source SRC-4F5AF5EE0ADB assessed S4."
 resource: "https://docs.github.com/en/rest/commits/commits"
-tags: ["source", "official-doc", "S4"]
+tags: ["source", "official-doc", "S4", "active"]
 timestamp: "2026-07-11T15:57:39+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-4F5AF5EE0ADB"
 source_level: "S4"
 ---
@@ -25,6 +26,9 @@ source_level: "S4"
 | Retrieved | 2026-07-11T15:57:39+00:00 |
 | Independence group | `github-rest-commit-official` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

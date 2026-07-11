@@ -1,0 +1,63 @@
+{
+  "candidate": {
+    "counter_search": {
+      "checks": [
+        "origin",
+        "status",
+        "contradiction"
+      ]
+    },
+    "doi": "10.18653/v1/2026.acl-long.27",
+    "id": "CAND-XIONG-MEMORY-ACL-2026",
+    "provenance_verified": true,
+    "publisher": "Association for Computational Linguistics",
+    "registry_required": false,
+    "title": "How Memory Management Impacts LLM Agents: An Empirical Study of Experience-Following Behavior",
+    "url": "https://aclanthology.org/2026.acl-long.27/"
+  },
+  "created_at": "2026-07-11T17:15:41+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "candidate_id": "CAND-XIONG-MEMORY-ACL-2026",
+    "canonical_identifiers": [
+      "doi:10.18653/v1/2026.acl-long.27",
+      "url:https://aclanthology.org/2026.acl-long.27"
+    ],
+    "counter_search": {
+      "completed": [
+        "contradiction",
+        "origin",
+        "status"
+      ],
+      "coverage": 1.0,
+      "missing": [],
+      "required": [
+        "contradiction",
+        "origin",
+        "status"
+      ]
+    },
+    "decision": "allow",
+    "independence_cluster": {
+      "cluster_id": "IC-5090F827CA3A",
+      "members": [
+        "CAND-XIONG-MEMORY-ACL-2026"
+      ]
+    },
+    "reasons": [
+      {
+        "code": "minimum_gate_satisfied",
+        "detail": "identity, provenance, status policy, and counter-search checks passed"
+      }
+    ],
+    "registry": {
+      "adapter": null,
+      "matches": [],
+      "status": "not_checked"
+    }
+  },
+  "id": "ADM-AD34DBB10F1D",
+  "policy_effect": "advisory_only",
+  "record_digest": "0a8d9fe49917ccb8a1496742c746080fdf5a4ac10dbeeacddd156c0de1c80cee",
+  "status": "allow"
+}

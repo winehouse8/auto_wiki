@@ -3,9 +3,10 @@ type: "Reference"
 title: "LLM Wiki"
 description: "article source SRC-CFB88DDE3FF1 assessed S2."
 resource: "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
-tags: ["source", "article", "S2"]
+tags: ["source", "article", "S2", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-CFB88DDE3FF1"
 source_level: "S2"
 ---
@@ -25,6 +26,9 @@ source_level: "S2"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `karpathy-llm-wiki` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

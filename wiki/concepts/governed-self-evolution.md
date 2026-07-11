@@ -4,7 +4,7 @@ title: Governed self-evolution
 description: Benchmark-gated, reversible harness evolution through attributed RFCs.
 tags: [self-evolution, evaluation, rollback, governance]
 timestamp: '2026-07-12T12:00:00+09:00'
-claim_ids: [CLM-F464CCF0AA1A, CLM-1EB8BD726482, CLM-FC9028899EE0]
+claim_ids: [CLM-F464CCF0AA1A, CLM-1EB8BD726482, CLM-FC9028899EE0, CLM-95A38CACF2CD]
 ---
 
 # Governed self-evolution
@@ -13,12 +13,14 @@ claim_ids: [CLM-F464CCF0AA1A, CLM-1EB8BD726482, CLM-FC9028899EE0]
 
 새 파일을 계속 추가하는 것은 진화가 아니다. 반복 작업의 실패를 관찰하고, 변경 가설을 만들고, 고정 평가에서 비교하며, 회귀 없이 유용성이 유지될 때 하네스를 승격하는 과정이다.
 
-관련 claim: `CLM-F464CCF0AA1A`, `CLM-1EB8BD726482`, `CLM-FC9028899EE0`
+관련 claim: `CLM-F464CCF0AA1A`, `CLM-1EB8BD726482`, `CLM-FC9028899EE0`, `CLM-95A38CACF2CD`
 
 ## 안전한 루프
 
 ```text
-failure/event
+observed failure/event
+→ replayable environment와 success criterion
+→ model / harness / memory / content 중 최소 change layer 선택
 → minimal RFC
 → candidate branch/snapshot
 → fixed benchmark + red team
@@ -27,6 +29,8 @@ failure/event
 → approval
 → release tag
 ```
+
+실패는 다음 조사나 평가의 수요를 정하지만, Agent의 실패 원인 설명 자체가 새 사실의 evidence는 아니다. 새 context나 memory가 문제를 해결했다는 사실과 과거 능력을 회귀시키지 않았다는 사실을 같은 replay set에서 분리해 확인한다.
 
 ## 금지
 
@@ -44,3 +48,5 @@ failure/event
 [2] [Beyond Single-shot Writing](https://aclanthology.org/2026.acl-long.609/)
 [3] [LEDGER](https://aclanthology.org/2026.findings-acl.515/)
 [4] [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+[5] [Continual Learning for AI Agents](../sources/src-ad0b1d50c531.md)
+[6] [Demand-Driven Context](../sources/src-54d07435eb56.md)

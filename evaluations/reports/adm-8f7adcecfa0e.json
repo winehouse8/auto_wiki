@@ -1,0 +1,63 @@
+{
+  "candidate": {
+    "counter_search": {
+      "checks": [
+        "origin",
+        "status",
+        "contradiction"
+      ]
+    },
+    "doi": "10.18653/v1/2026.acl-long.981",
+    "id": "CAND-AGEMEM-ACL-2026",
+    "provenance_verified": true,
+    "publisher": "Association for Computational Linguistics",
+    "registry_required": false,
+    "title": "Agentic Memory: Learning Unified Long-Term and Short-Term Memory Management for Large Language Model Agents",
+    "url": "https://aclanthology.org/2026.acl-long.981/"
+  },
+  "created_at": "2026-07-11T17:15:41+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "candidate_id": "CAND-AGEMEM-ACL-2026",
+    "canonical_identifiers": [
+      "doi:10.18653/v1/2026.acl-long.981",
+      "url:https://aclanthology.org/2026.acl-long.981"
+    ],
+    "counter_search": {
+      "completed": [
+        "contradiction",
+        "origin",
+        "status"
+      ],
+      "coverage": 1.0,
+      "missing": [],
+      "required": [
+        "contradiction",
+        "origin",
+        "status"
+      ]
+    },
+    "decision": "allow",
+    "independence_cluster": {
+      "cluster_id": "IC-EA12D30D9E9D",
+      "members": [
+        "CAND-AGEMEM-ACL-2026"
+      ]
+    },
+    "reasons": [
+      {
+        "code": "minimum_gate_satisfied",
+        "detail": "identity, provenance, status policy, and counter-search checks passed"
+      }
+    ],
+    "registry": {
+      "adapter": null,
+      "matches": [],
+      "status": "not_checked"
+    }
+  },
+  "id": "ADM-8F7ADCECFA0E",
+  "policy_effect": "advisory_only",
+  "record_digest": "6b8e2b403e3eb5addffadf0d4315dd532a42413b83d11eb28531a76889d3f36d",
+  "status": "allow"
+}

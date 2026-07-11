@@ -3,9 +3,10 @@ type: "Reference"
 title: "A Mechanistic View of Authority Hierarchy in LLM Sycophancy"
 description: "paper source SRC-8DAAC6D75C2C assessed S2."
 resource: "https://arxiv.org/abs/2607.00415"
-tags: ["source", "paper", "S2"]
+tags: ["source", "paper", "S2", "active"]
 timestamp: "2026-07-11T14:31:40+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-8DAAC6D75C2C"
 source_level: "S2"
 ---
@@ -25,6 +26,9 @@ source_level: "S2"
 | Retrieved | 2026-07-11T14:31:40+00:00 |
 | Independence group | `authority-sycophancy-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

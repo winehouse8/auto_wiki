@@ -1,0 +1,11 @@
+{
+  "id": "CAND-AIE-DDC-VIDEO-2026",
+  "title": "Demand-Driven Context: A Methodology for Coherent Knowledge Bases Through Agent Failure",
+  "url": "https://www.youtube.com/watch?v=_QAVExf_1uw",
+  "publisher": "AI Engineer",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

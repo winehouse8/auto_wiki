@@ -3,9 +3,10 @@ type: "Reference"
 title: "BadScientist"
 description: "paper source SRC-E42CA8C4BD30 assessed S4."
 resource: "https://aclanthology.org/2026.acl-long.1134/"
-tags: ["source", "paper", "S4"]
+tags: ["source", "paper", "S4", "active"]
 timestamp: "2026-07-11T14:29:14+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-E42CA8C4BD30"
 source_level: "S4"
 ---
@@ -25,6 +26,9 @@ source_level: "S4"
 | Retrieved | 2026-07-11T14:29:14+00:00 |
 | Independence group | `badscientist-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

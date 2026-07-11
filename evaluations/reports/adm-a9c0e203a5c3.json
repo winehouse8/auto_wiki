@@ -1,0 +1,112 @@
+{
+  "candidate": {
+    "id": "CAND-46F2F9541E13",
+    "quarantine_artifact": {
+      "media_type": "text/plain",
+      "path": "raw/quarantine/322103b232054951767e6571f3f9d7e20b1ec01b489368f22627bea65d036d44/artifact.vtt",
+      "sha256": "322103b232054951767e6571f3f9d7e20b1ec01b489368f22627bea65d036d44",
+      "size_bytes": 3704946
+    },
+    "source_ref": "https://www.youtube.com/watch?v=_xQnSNlBP_w"
+  },
+  "created_at": "2026-07-11T18:15:46+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "reject",
+    "reasons": [
+      "CONTENT_OVERSIZE",
+      "SECRET_READ_OR_SEND"
+    ],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE",
+            "SECRET_READ_OR_SEND"
+          ],
+          "risk_score": 10,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE",
+            "SECRET_READ_OR_SEND"
+          ],
+          "risk_score": 10,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE",
+            "SECRET_READ_OR_SEND"
+          ],
+          "risk_score": 10,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "322103b232054951767e6571f3f9d7e20b1ec01b489368f22627bea65d036d44",
+        "declared_media_type": null,
+        "detected_media_type": "text/plain",
+        "hash_algorithm": "sha256",
+        "media_type": "text/plain",
+        "size_bytes": 3704946,
+        "source_ref": "https://www.youtube.com/watch?v=_xQnSNlBP_w"
+      },
+      "normalized": {
+        "content_sha256": "501abe31dc687a9ebab163cde98e3bc9971dd95ee6edce31fbad958143725da0",
+        "length_chars": 1000000,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "utf8_decode",
+        "replacement_characters": 0,
+        "truncated": true
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": [
+        {
+          "category": "content_integrity",
+          "description": "Content exceeds deterministic scan limit of 1000000 bytes.",
+          "excerpt": "",
+          "risk": 5,
+          "rule_id": "CONTENT_OVERSIZE",
+          "severity": "critical",
+          "span": null
+        },
+        {
+          "category": "secret_exfiltration",
+          "description": "Requests reading, revealing, or transmitting secrets or privileged prompts.",
+          "excerpt": "art position:0% button to approve or to send it to testing,<01:21:22.480><c> it</c><01:21:22.719><c> uses</c><01:21:22.960><c> their</c><01:21:23.199><c> credentials.</c><01:21:...",
+          "risk": 5,
+          "rule_id": "SECRET_READ_OR_SEND",
+          "severity": "critical",
+          "span": {
+            "end": 337412,
+            "start": 337288
+          }
+        }
+      ]
+    },
+    "stage": "write"
+  },
+  "id": "ADM-A9C0E203A5C3",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "b3f80b203c37064fc3644cb454b64517a28a335a65ef2ce89771619b3acaaef5",
+  "status": "reject"
+}

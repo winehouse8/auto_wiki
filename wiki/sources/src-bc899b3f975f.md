@@ -3,9 +3,10 @@ type: "Reference"
 title: "Faithfulness-Aware Uncertainty Quantification for Fact-Checking RAG Output"
 description: "paper source SRC-BC899B3F975F assessed S4."
 resource: "https://aclanthology.org/2026.findings-acl.338/"
-tags: ["source", "paper", "S4"]
+tags: ["source", "paper", "S4", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-BC899B3F975F"
 source_level: "S4"
 ---
@@ -25,6 +26,9 @@ source_level: "S4"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `franq-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

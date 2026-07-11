@@ -1,0 +1,139 @@
+{
+  "candidate": {
+    "id": "CAND-9684A2F9A197",
+    "quarantine_artifact": {
+      "media_type": "text/plain",
+      "path": "raw/quarantine/fb721762e4a40e90025fd04d6bcb93c3c0d0c08e797bcf878eae56ab5e5e6902/artifact.txt",
+      "sha256": "fb721762e4a40e90025fd04d6bcb93c3c0d0c08e797bcf878eae56ab5e5e6902",
+      "size_bytes": 116864
+    },
+    "source_ref": "https://aclanthology.org/2026.acl-long.981.pdf#pypdf-5.9.0-extracted-text"
+  },
+  "created_at": "2026-07-11T17:14:27+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "reject",
+    "reasons": [
+      "OBFUSCATED_BASE64_BLOB",
+      "PERSIST_MEMORY_WRITE"
+    ],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "reject",
+          "max_risk": 4,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "OBFUSCATED_BASE64_BLOB",
+            "PERSIST_MEMORY_WRITE"
+          ],
+          "risk_score": 13,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "reject",
+          "max_risk": 4,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "OBFUSCATED_BASE64_BLOB",
+            "PERSIST_MEMORY_WRITE"
+          ],
+          "risk_score": 13,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "reject",
+          "max_risk": 4,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "OBFUSCATED_BASE64_BLOB",
+            "PERSIST_MEMORY_WRITE"
+          ],
+          "risk_score": 13,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "fb721762e4a40e90025fd04d6bcb93c3c0d0c08e797bcf878eae56ab5e5e6902",
+        "declared_media_type": "text/plain",
+        "detected_media_type": "text/plain",
+        "hash_algorithm": "sha256",
+        "media_type": "text/plain",
+        "size_bytes": 116864,
+        "source_ref": "https://aclanthology.org/2026.acl-long.981.pdf#pypdf-5.9.0-extracted-text"
+      },
+      "normalized": {
+        "content_sha256": "064efe52c4f381fff47f2add0d7a7a8f134c94f752dba4b35e9341356998f05d",
+        "length_chars": 116124,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "utf8_decode",
+        "replacement_characters": 0,
+        "truncated": false
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": [
+        {
+          "category": "obfuscation",
+          "description": "Contains a long base64-like blob that this lexical scanner cannot inspect semantically.",
+          "excerpt": "d memory operations lead to more selec- /uni0000002f/uni00000044/uni00000051/uni0000004a/uni00000030/uni00000048/uni00000050/uni00000024/uni00000010/uni00000030/uni00000048/uni0...",
+          "risk": 3,
+          "rule_id": "OBFUSCATED_BASE64_BLOB",
+          "severity": "medium",
+          "span": {
+            "end": 30204,
+            "start": 29880
+          }
+        },
+        {
+          "category": "obfuscation",
+          "description": "Contains a long base64-like blob that this lexical scanner cannot inspect semantically.",
+          "excerpt": "048/uni00000030/uni00000048/uni00000050 /uni0000000b/uni00000044/uni0000000c/uni00000003/uni00000034/uni0000005a/uni00000048/uni00000051/uni00000015/uni00000011/uni00000018/uni0...",
+          "risk": 3,
+          "rule_id": "OBFUSCATED_BASE64_BLOB",
+          "severity": "medium",
+          "span": {
+            "end": 30615,
+            "start": 30339
+          }
+        },
+        {
+          "category": "obfuscation",
+          "description": "Contains a long base64-like blob that this lexical scanner cannot inspect semantically.",
+          "excerpt": "17 /uni00000013/uni00000011/uni00000018 /uni00000013/uni00000011/uni00000019/uni00000030/uni00000048/uni00000050/uni00000052/uni00000055/uni0000005c/uni00000003/uni00000034/uni0...",
+          "risk": 3,
+          "rule_id": "OBFUSCATED_BASE64_BLOB",
+          "severity": "medium",
+          "span": {
+            "end": 30991,
+            "start": 30727
+          }
+        },
+        {
+          "category": "persistence",
+          "description": "Attempts to persist a directive into long-lived memory.",
+          "excerpt": "DD.The ADDoperation allows the agent to store new information in long-term memory for future use. This operation is essen",
+          "risk": 4,
+          "rule_id": "PERSIST_MEMORY_WRITE",
+          "severity": "high",
+          "span": {
+            "end": 60509,
+            "start": 60468
+          }
+        }
+      ]
+    },
+    "stage": "write"
+  },
+  "id": "ADM-9AC73CEF6FCB",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "c00ad3aa04a5393bdf47f7f48d74c0497561401e29544255c25030ff47194264",
+  "status": "reject"
+}

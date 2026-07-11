@@ -1,0 +1,12 @@
+{
+  "id": "CAND-XIONG-MEMORY-ACL-2026",
+  "title": "How Memory Management Impacts LLM Agents: An Empirical Study of Experience-Following Behavior",
+  "doi": "10.18653/v1/2026.acl-long.27",
+  "url": "https://aclanthology.org/2026.acl-long.27/",
+  "publisher": "Association for Computational Linguistics",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

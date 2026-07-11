@@ -3,9 +3,10 @@ type: "Reference"
 title: "LiveResearchBench"
 description: "paper source SRC-25318FE73DEB assessed S3."
 resource: "https://openreview.net/forum?id=ghwbZ3uhEd"
-tags: ["source", "paper", "S3"]
+tags: ["source", "paper", "S3", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-25318FE73DEB"
 source_level: "S3"
 ---
@@ -25,6 +26,9 @@ source_level: "S3"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `liveresearchbench-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

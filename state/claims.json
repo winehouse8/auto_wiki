@@ -3,6 +3,58 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T18:24:04+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C1",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "content hash",
+          "explicit classification rules",
+          "full-period manifest",
+          "per-candidate security receipts",
+          "public metadata"
+        ],
+        "rationale": "at least one traceable supporting source",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T18:23:51+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T18:24:04+00:00",
+          "added_by": "agent:codex",
+          "locator": "JSON: $.manifest.classification_method; $.manifest.rule_definitions; $.manifest.counts.completed_viewable_classification; $.manifest.rows[*].{video_id,classification,classification_rule,classification_reason,title,description_sha256}",
+          "note": "Single-agent semantic adjudication with frozen metadata hashes and explicit rules; no independent classification review.",
+          "relation": "supports",
+          "source_id": "SRC-0800355B8885",
+          "strength": 3
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-0733D26931D2",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T18:24:04+00:00",
+      "lifecycle_status": "active",
+      "notes": "This is an auditable single-agent classification, not a claim that any video is true or high quality.",
+      "scope": "Agent-performed semantic screening of the AI Engineer public-channel snapshot, 2026-04-01 through 2026-07-12",
+      "statement": "고정한 제목·설명과 명시적 상호배타 규칙으로 완료·시청 가능 영상 262개를 의미 선별하면 memory·wiki·second-brain 직접 관련 34개, 인접 32개, 제외 196개로 분류된다.",
+      "supersedes": [],
+      "tags": [
+        "ai-engineer",
+        "classification",
+        "memory",
+        "second-brain",
+        "wiki"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
         "computed_at": "2026-07-11T14:32:40+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
@@ -55,6 +107,63 @@
         "regression"
       ],
       "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T17:44:43+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C1",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "explicit architecture",
+          "known event-sourcing analogy",
+          "public auto-caption"
+        ],
+        "rationale": "at least one traceable supporting source",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T17:18:47+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "PROV-O derivation, generation, invalidation, and entity/activity provenance vocabulary",
+          "note": "Standards-level context for keeping event lineage distinct from mutable external entities.",
+          "relation": "contextualizes",
+          "source_id": "SRC-08654E066049",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "01:39-04:25 append-only event history and projections; 04:43-05:32 compaction is lossy; 05:36-06:32 external side effects and world state are outside the log",
+          "note": "The speaker explicitly states the limitation that motivates separate snapshots and receipts.",
+          "relation": "supports",
+          "source_id": "SRC-2E2EA9C214C1",
+          "strength": 3
+        }
+      ],
+      "freshness": "normal",
+      "id": "CLM-207429D54323",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T17:44:43+00:00",
+      "notes": "The talk itself acknowledges external state and irreversible effects; log-only identity is not adopted literally.",
+      "scope": "Living Wiki agent runtime durability",
+      "statement": "append-only Agent log는 감사와 재투영의 권위 있는 기록이어야 하지만 외부 파일·서비스·side effect의 전체 상태는 아니므로 재개와 rollback에는 별도 snapshot, version, digest와 side-effect receipt가 필요하다.",
+      "supersedes": [],
+      "tags": [
+        "durability",
+        "event-log",
+        "receipt",
+        "snapshot"
+      ],
+      "valid_at": "2026-07-12"
     },
     {
       "confidence": {
@@ -580,6 +689,77 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T17:44:43+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "controlled memory operations",
+          "limitations stated",
+          "official proceedings",
+          "peer-reviewed",
+          "primary experiments",
+          "primary preprint",
+          "public implementation",
+          "worked example"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T17:18:47+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T17:19:32+00:00",
+          "added_by": "agent:codex",
+          "locator": "pp. 1-2: failure as primary curation signal; §3 pp. 5-7: human validation and graduation; §3.5 pp. 7-8: convergence explicitly remains an unvalidated hypothesis",
+          "note": "Supports failure-driven prioritization while explicitly limiting convergence evidence.",
+          "relation": "supports",
+          "source_id": "SRC-54D07435EB56",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T17:19:32+00:00",
+          "added_by": "agent:codex",
+          "locator": "pp. 623-625: experience-following, error propagation, and evaluator feedback; pp. 627-630: misaligned replay and downstream outcome labels",
+          "note": "Independent empirical evidence that unverified memory reuse can amplify errors.",
+          "relation": "supports",
+          "source_id": "SRC-AF06BCDC1ED2",
+          "strength": 4
+        },
+        {
+          "added_at": "2026-07-11T17:19:32+00:00",
+          "added_by": "agent:codex",
+          "locator": "video description and linked preprint; published 2026-05-05",
+          "note": "Same author group as the preprint; not independent corroboration.",
+          "relation": "contextualizes",
+          "source_id": "SRC-F55FED177366",
+          "strength": 2
+        }
+      ],
+      "freshness": "normal",
+      "id": "CLM-95A38CACF2CD",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T17:44:43+00:00",
+      "notes": "DDC의 problem-first 장점과 memory error-propagation 연구를 함께 반영한 제한적 설계 결론.",
+      "scope": "Living Wiki failure-driven knowledge acquisition",
+      "statement": "Agent 실패는 어떤 지식 공백을 조사할지 우선순위화하는 신호가 될 수 있지만, 실패 원인이나 새 지식의 사실성을 스스로 증명하지 않으므로 독립 근거 검증과 재현 가능한 재시도 뒤에만 Wiki 지식으로 승격해야 한다.",
+      "supersedes": [],
+      "tags": [
+        "admission",
+        "demand-driven-context",
+        "failure",
+        "replay"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
         "computed_at": "2026-07-11T15:58:03+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
@@ -871,12 +1051,30 @@
       "created_by_group": "openai-codex-session",
       "evidence": [
         {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "10:27-11:02 context becomes stale after model and feature changes and deprecated entries create context rot",
+          "note": "Production self-report that supports operational staleness scanning, not a universal decay interval.",
+          "relation": "contextualizes",
+          "source_id": "SRC-03641BCFC467",
+          "strength": 2
+        },
+        {
           "added_at": "2026-07-11T14:32:27+00:00",
           "added_by": "agent:codex",
           "locator": "PROV-O derivation and invalidation vocabulary",
           "note": null,
           "relation": "contextualizes",
           "source_id": "SRC-08654E066049",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "03:04-03:41 generate-test-distribute-observe loop; 06:16-06:59 context changes require impact tests and evals",
+          "note": "Practitioner lifecycle framing; no independent outcome benchmark.",
+          "relation": "contextualizes",
+          "source_id": "SRC-7409811C56EB",
           "strength": 2
         },
         {
@@ -1098,6 +1296,55 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T17:44:43+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "comparative experiments",
+          "official proceedings",
+          "peer-reviewed",
+          "user-controllable intervention"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T17:18:47+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "pp. 14699-14701: user-controllable memory dependence from fresh-start to high-fidelity; pp. 14705-14707: comparison and limitations",
+          "note": "Direct peer-reviewed evidence in long-term personalized interactions; generalized only to a Wiki UX principle.",
+          "relation": "supports",
+          "source_id": "SRC-F9BA839FA59D",
+          "strength": 4
+        }
+      ],
+      "freshness": "normal",
+      "id": "CLM-EC52C0576A28",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T17:44:43+00:00",
+      "notes": "ACL 2026 SteeM의 personalized-agent 결과를 factual Wiki에 직접 일반화하지 않고 user-control principle만 채택한다.",
+      "scope": "Living Wiki answer and research UX",
+      "statement": "사용자는 장기 Wiki 기억에 의존하는 정도를 명시적으로 조절할 수 있어야 하며, fresh-start 모드는 과거 기록 삭제가 아니라 독립 재조사 후 기존 Wiki와 비교하는 retrieval policy로 구현해야 한다.",
+      "supersedes": [],
+      "tags": [
+        "fresh-start",
+        "human-steering",
+        "memory-control",
+        "ux"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
         "computed_at": "2026-07-11T15:58:03+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
@@ -1147,20 +1394,24 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-11T17:44:43+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
         "positive_independent_reviews": 0,
         "quality_markers": [
           "benchmark",
+          "expert speaker",
+          "explicit limitations",
+          "linked first-party article",
           "peer-reviewed",
-          "primary-study"
+          "primary-study",
+          "public auto-caption"
         ],
         "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
         "status": "supported",
         "strong_contradiction": false,
-        "supporting_groups": 2
+        "supporting_groups": 3
       },
       "created_at": "2026-07-11T14:31:10+00:00",
       "created_by": "agent:codex",
@@ -1201,12 +1452,21 @@
           "relation": "supports",
           "source_id": "SRC-660F983C8346",
           "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "04:27-04:37 replayable learning environment; 07:24-07:36 smallest durable layer; 09:26-11:44 hidden regression and before/after tests; 13:26-14:17 lifelong regression control",
+          "note": "Direct architecture argument; RELAI product efficacy remains self-reported.",
+          "relation": "supports",
+          "source_id": "SRC-AD0B1D50C531",
+          "strength": 3
         }
       ],
       "freshness": "slow",
       "id": "CLM-F464CCF0AA1A",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-11T17:44:43+00:00",
       "notes": null,
       "scope": "Living Wiki harness governance",
       "statement": "하네스의 자기진화는 고정된 평가, 최소 변경, 회귀 검사와 rollback을 통과한 제안으로만 승격해야 한다.",
@@ -1279,6 +1539,57 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T18:24:04+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C1",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "content hash",
+          "explicit classification rules",
+          "full-period manifest",
+          "per-candidate security receipts",
+          "public metadata"
+        ],
+        "rationale": "at least one traceable supporting source",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T18:23:51+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T18:24:04+00:00",
+          "added_by": "agent:codex",
+          "locator": "JSON: $.manifest.date_filter; $.manifest.scope_rule; $.manifest.counts.date_range_listed_rows; $.manifest.counts.completed_viewable_rows; $.manifest.counts.completed_viewable_types; $.manifest.counts.date_range_types; $.manifest.rows[*].{video_id,upload_date,video_type,completed_and_viewable}",
+          "note": "Content-addressed snapshot coverage; public channel state can later change.",
+          "relation": "supports",
+          "source_id": "SRC-0800355B8885",
+          "strength": 3
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-F5982AA50A01",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T18:24:04+00:00",
+      "lifecycle_status": "active",
+      "notes": "Deleted/private/unlisted videos are outside the observable public-tab scope; YouTube metadata is mutable.",
+      "scope": "AI Engineer public channel tabs, inclusive 2026-04-01 through 2026-07-12, snapshot at 2026-07-12",
+      "statement": "2026-07-12 공개 스냅샷에서 AI Engineer 채널의 2026-04-01~2026-07-12 범위 목록은 264개였으며, 이 중 완료·시청 가능 영상은 262개(일반 영상 251, livestream replay 11, Shorts 0)이고 예약 premiere 2개는 연구 분모에서 제외됐다.",
+      "supersedes": [],
+      "tags": [
+        "ai-engineer",
+        "channel-audit",
+        "coverage",
+        "youtube"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
         "computed_at": "2026-07-11T14:32:40+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
@@ -1318,6 +1629,24 @@
           "strength": 2
         },
         {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "03:27-05:32 full append-only record versus lossy projections and regenerated views",
+          "note": "Session-log analogy reinforces raw-versus-synthesis separation but does not prove Wiki retrieval quality.",
+          "relation": "contextualizes",
+          "source_id": "SRC-2E2EA9C214C1",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "05:16-08:02 chapter map: truncation and summarization failures, head/tail preservation with retrievable memory store",
+          "note": "Specific context-management report; Alyx code and benchmark are not public.",
+          "relation": "contextualizes",
+          "source_id": "SRC-3F8E6D0FDE7E",
+          "strength": 2
+        },
+        {
           "added_at": "2026-07-11T14:32:26+00:00",
           "added_by": "agent:codex",
           "locator": "The core idea; Architecture; Operations",
@@ -1350,6 +1679,142 @@
         "retrieval"
       ],
       "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T18:24:04+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C1",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "content hash",
+          "explicit classification rules",
+          "full-period manifest",
+          "per-candidate security receipts",
+          "public metadata"
+        ],
+        "rationale": "at least one traceable supporting source",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T18:23:51+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T18:24:04+00:00",
+          "added_by": "agent:codex",
+          "locator": "JSON: $.direct_caption_review.{direct_candidates,caption_retrieval_attempted,caption_retrieved,security_decisions,dispositions,review_basis,body_policy}; $.direct_caption_review.reviews[*].{video_id,caption_retrieval_result,caption_security,disposition,review_basis,key_locator}",
+          "note": "All 34 direct candidates have a disposition and security receipt; rejected caption bodies were not used.",
+          "relation": "supports",
+          "source_id": "SRC-0800355B8885",
+          "strength": 3
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-F63FA5329493",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T18:24:04+00:00",
+      "lifecycle_status": "active",
+      "notes": "Caption bodies were not preserved in the canonical source because redistribution rights were not verified; promote means a research lead, not epistemic promotion.",
+      "scope": "AI Engineer direct-candidate caption audit performed for the 2026-04-01 through 2026-07-12 snapshot",
+      "statement": "직접 관련 후보 34개 모두에서 자막 입수와 보안 검사를 시도해 34개를 입수했고, 31개는 allow, 3개는 reject였으며, 검토 처분은 promote 14·defer 17·exclude 3이었다; reject 자막은 transcript 결론에 사용하지 않았다.",
+      "supersedes": [],
+      "tags": [
+        "caption-audit",
+        "memory",
+        "security",
+        "source-admission"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T17:44:43+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "controlled memory operations",
+          "official proceedings",
+          "peer-reviewed",
+          "primary experiments"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T17:18:47+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T17:19:32+00:00",
+          "added_by": "agent:codex",
+          "locator": "08:47-09:24 failure clustering and review; 10:27-11:02 model/feature changes make context stale and create context rot",
+          "note": "First-party production report; pruning efficacy is not independently reproduced.",
+          "relation": "contextualizes",
+          "source_id": "SRC-03641BCFC467",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract: explicit store, retrieve, update, summarize, and discard memory actions",
+          "note": "Shows lifecycle operations are first-class in an evaluated memory system; learned deletion is not adopted.",
+          "relation": "contextualizes",
+          "source_id": "SRC-9639A8245BE8",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T17:20:21+00:00",
+          "added_by": "agent:codex",
+          "locator": "02:21-03:14 eval outcomes do not reach retrieval; 04:29-05:38 proposed outcome-weighted utility; 08:56-09:32 cold-start, drift, noisy-label, and credit limitations",
+          "note": "Vendor proposal motivates an audit-only feedback ledger; automatic utility ranking is not adopted.",
+          "relation": "contextualizes",
+          "source_id": "SRC-9BADA4274C74",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T17:19:32+00:00",
+          "added_by": "agent:codex",
+          "locator": "pp. 623-625 and 627-630: erroneous experiences propagate; history-based downstream evaluation identifies harmful memories",
+          "note": "Supports recording downstream outcomes, not directly auto-deleting Wiki evidence.",
+          "relation": "supports",
+          "source_id": "SRC-AF06BCDC1ED2",
+          "strength": 4
+        },
+        {
+          "added_at": "2026-07-11T17:19:33+00:00",
+          "added_by": "agent:codex",
+          "locator": "pp. 14699-14701: all-or-nothing memory use and memory anchoring; pp. 14705-14707: controllable reliance and limitations",
+          "note": "Shows excessive reliance on retained history can be harmful.",
+          "relation": "contextualizes",
+          "source_id": "SRC-F9BA839FA59D",
+          "strength": 3
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-F79558D817DF",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T17:44:43+00:00",
+      "notes": "Outcome feedback is diagnostic evidence, not epistemic ground truth or deletion authority.",
+      "scope": "Living Wiki memory hygiene and retrieval feedback",
+      "statement": "지속 메모리의 유사성이나 최초 성공만으로 재사용 품질을 판단하면 오류·노후 지식이 반복될 수 있으므로, retrieval 이후 결과와 시간 상태를 감사 가능하게 기록하되 그 신호가 claim 신뢰 승격이나 원문 삭제를 자동 수행해서는 안 된다.",
+      "supersedes": [],
+      "tags": [
+        "feedback",
+        "memory-hygiene",
+        "retrieval",
+        "staleness"
+      ],
+      "valid_at": "2026-07-12"
     },
     {
       "confidence": {

@@ -131,6 +131,15 @@ class ConfidenceTests(unittest.TestCase):
         self.assertEqual(result["status"], "contested")
         self.assertTrue(result["strong_contradiction"])
 
+    def test_inactive_source_does_not_contribute_to_confidence(self):
+        claim = self.base_claim()
+        claim["evidence"] = [edge("SRC-A")]
+        inactive = source("SRC-A", "G1", "S4", ["peer-reviewed"])
+        inactive["lifecycle_status"] = "invalidated"
+        result = wiki.calculate_confidence(claim, {"SRC-A": inactive}, [])
+        self.assertEqual(result["level"], "C0")
+        self.assertEqual(result["supporting_groups"], 0)
+
 
 class EventChainTests(unittest.TestCase):
     def setUp(self):
@@ -190,6 +199,161 @@ class EventChainTests(unittest.TestCase):
         self.assertTrue(any("invalid event_hash" in error for error in errors))
 
 
+class MemoryControlPlaneTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.old = (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        )
+        root = Path(self.temp.name)
+        wiki.ROOT = root
+        wiki.STATE = root / "state"
+        wiki.RAW = root / "raw" / "sources"
+        wiki.QUARANTINE = root / "raw" / "quarantine"
+        wiki.WIKI = root / "wiki"
+        wiki.REPORTS = root / "reports"
+        wiki.EVALUATIONS = root / "evaluations"
+        wiki.EVALUATION_REPORTS = wiki.EVALUATIONS / "reports"
+        wiki.OKF_BUNDLE = wiki.WIKI
+        wiki.ensure_layout()
+        wiki.atomic_write_json(
+            wiki.STATE / "actors.json",
+            {
+                "version": 1,
+                "actors": [
+                    {
+                        "id": "agent:test",
+                        "kind": "agent",
+                        "display_name": "Test agent",
+                        "roles": ["maintainer"],
+                        "status": "active",
+                        "metadata": {"independence_group": "test"},
+                    },
+                    {
+                        "id": "agent:contributor",
+                        "kind": "agent",
+                        "display_name": "Contributor",
+                        "roles": ["contributor"],
+                        "status": "active",
+                        "metadata": {"independence_group": "test-contributor"},
+                    },
+                ],
+            },
+        )
+        wiki.save_collection(
+            "claims",
+            [
+                {"id": "CLM-OLD", "lifecycle_status": "active"},
+                {"id": "CLM-NEW", "lifecycle_status": "active"},
+            ],
+        )
+
+    def tearDown(self):
+        (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        ) = self.old
+        self.temp.cleanup()
+
+    def test_feedback_add_and_resolve_are_attributed_and_audit_only(self):
+        add_args = type(
+            "Args",
+            (),
+            {
+                "actor": "agent:test",
+                "task_ref": "TASK-123",
+                "targets": "CLM-OLD",
+                "outcome": "harmful",
+                "rationale": "The retrieved claim did not apply to this scoped task.",
+                "evidence_refs": "CLM-NEW",
+                "at": "2026-07-12T00:00:00+00:00",
+            },
+        )()
+        wiki.memory_feedback_add(add_args)
+        payload = wiki.load_json(wiki.STATE / "memory_feedback.json")
+        self.assertEqual(set(payload), {"version", "feedback"})
+        record = payload["feedback"][0]
+        self.assertEqual(record["trust_effect"], "none")
+        self.assertFalse(record["automatic_action"])
+        resolve_args = type(
+            "Args",
+            (),
+            {
+                "actor": "agent:test",
+                "feedback": record["id"],
+                "rationale": "Reviewed against the replacement claim.",
+                "at": "2026-07-12T01:00:00+00:00",
+            },
+        )()
+        wiki.memory_feedback_resolve(resolve_args)
+        resolved = wiki.collection("memory_feedback")[0]
+        self.assertEqual(resolved["status"], "resolved")
+        self.assertEqual(resolved["resolution"]["actor_id"], "agent:test")
+        self.assertTrue(
+            any(
+                event["subject"] == record["id"]
+                and event["details"].get("state_digest")
+                for event in wiki.event_lines()
+            )
+        )
+
+    def test_lifecycle_supersession_is_non_destructive_and_anchored(self):
+        args = type(
+            "Args",
+            (),
+            {
+                "actor": "agent:test",
+                "kind": "claim",
+                "id": "CLM-OLD",
+                "status": "superseded",
+                "reason": "A narrower replacement preserves the corrected scope.",
+                "replacement": "CLM-NEW",
+                "at": "2026-07-12T00:00:00+00:00",
+            },
+        )()
+        wiki.knowledge_lifecycle(args)
+        claims = {item["id"]: item for item in wiki.collection("claims")}
+        self.assertEqual(set(claims), {"CLM-OLD", "CLM-NEW"})
+        self.assertEqual(claims["CLM-OLD"]["lifecycle_status"], "superseded")
+        self.assertEqual(claims["CLM-OLD"]["replaced_by"], "CLM-NEW")
+        transition = claims["CLM-OLD"]["lifecycle_history"][0]
+        self.assertFalse(transition["automatic_action"])
+        self.assertFalse(transition["destructive_action"])
+        self.assertTrue(any(event["subject"] == transition["id"] for event in wiki.event_lines()))
+
+    def test_lifecycle_transition_is_role_gated_not_species_gated(self):
+        args = type(
+            "Args",
+            (),
+            {
+                "actor": "agent:contributor",
+                "kind": "claim",
+                "id": "CLM-OLD",
+                "status": "archived",
+                "reason": "Attempt without lifecycle authority.",
+                "replacement": None,
+                "at": "2026-07-12T00:00:00+00:00",
+            },
+        )()
+        with self.assertRaises(wiki.WikiError):
+            wiki.knowledge_lifecycle(args)
+
+
 class ProposalGovernanceTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -239,6 +403,8 @@ class ProposalGovernanceTests(unittest.TestCase):
                 ],
             },
         )
+        (root / "config").mkdir(exist_ok=True)
+        wiki.atomic_write_json(root / "config" / "wiki.json", {"harness_version": "4.1.0"})
         self.proposal = {
             "id": "RFC-1",
             "title": "Test change",
@@ -295,13 +461,27 @@ class ProposalGovernanceTests(unittest.TestCase):
     def test_implemented_requires_passing_non_certifying_release_report(self):
         wiki.proposal_review(self.args())
         report_path = wiki.EVALUATION_REPORTS / "v4-release-report.json"
-        wiki.atomic_write_json(
-            report_path,
+        gates = [{"name": "memory_feedback_lifecycle_hygiene", "passed": True}]
+        harness_manifest = wiki.harness_component_manifest()
+        report = {
+            "release_id": "living-wiki-v4",
+            "passed": True,
+            "production_certified": False,
+            "harness_version": "4.1.0",
+            "component_fingerprint": wiki.digest_text(wiki.canonical_json(gates)),
+            "gates": gates,
+            "harness_manifest_sha256": wiki.digest_text(wiki.canonical_json(harness_manifest)),
+            "harness_file_count": len(harness_manifest),
+        }
+        report["report_digest"] = wiki.digest_text(wiki.canonical_json(report))
+        wiki.atomic_write_json(report_path, report)
+        wiki.append_event(
+            "human:owner",
+            "release.evaluate",
+            "living-wiki-v4",
             {
-                "release_id": "living-wiki-v4",
-                "passed": True,
-                "production_certified": False,
-                "component_fingerprint": "f" * 64,
+                "component_fingerprint": report["component_fingerprint"],
+                "report_digest": report["report_digest"],
             },
         )
         args = type(
@@ -313,6 +493,46 @@ class ProposalGovernanceTests(unittest.TestCase):
         proposal = wiki.collection("proposals")[0]
         self.assertEqual(proposal["status"], "implemented")
         self.assertFalse(proposal["implementation_evidence"]["production_certified"])
+
+        newer_gates = [
+            {"name": "memory_feedback_lifecycle_hygiene", "passed": True},
+            {"name": "regression_tests", "passed": True},
+        ]
+        newer = {
+            **{key: value for key, value in report.items() if key != "report_digest"},
+            "component_fingerprint": wiki.digest_text(wiki.canonical_json(newer_gates)),
+            "gates": newer_gates,
+        }
+        newer["report_digest"] = wiki.digest_text(wiki.canonical_json(newer))
+        wiki.atomic_write_json(report_path, newer)
+        wiki.append_event(
+            "human:owner",
+            "release.evaluate",
+            "living-wiki-v4",
+            {
+                "component_fingerprint": newer["component_fingerprint"],
+                "report_digest": newer["report_digest"],
+            },
+        )
+        wiki.proposal_implement(args)
+        resealed = wiki.collection("proposals")[0]
+        self.assertEqual(
+            resealed["implementation_evidence"]["component_fingerprint"],
+            newer["component_fingerprint"],
+        )
+        self.assertIn("revalidated_at", resealed)
+
+    def test_implementation_rejects_unanchored_or_external_report(self):
+        wiki.proposal_review(self.args())
+        outside = Path(self.temp.name) / "forged.json"
+        outside.write_text("{}", encoding="utf-8")
+        args = type(
+            "Args",
+            (),
+            {"actor": "human:owner", "proposal": "RFC-1", "release_report": str(outside)},
+        )()
+        with self.assertRaises(wiki.WikiError):
+            wiki.proposal_implement(args)
 
 
 class IntegratedGateTests(unittest.TestCase):

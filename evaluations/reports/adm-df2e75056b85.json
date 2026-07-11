@@ -1,0 +1,61 @@
+{
+  "candidate": {
+    "counter_search": {
+      "checks": [
+        "origin",
+        "status",
+        "contradiction"
+      ]
+    },
+    "id": "CAND-AIE-DDC-VIDEO-2026",
+    "provenance_verified": true,
+    "publisher": "AI Engineer",
+    "registry_required": false,
+    "title": "Demand-Driven Context: A Methodology for Coherent Knowledge Bases Through Agent Failure",
+    "url": "https://www.youtube.com/watch?v=_QAVExf_1uw"
+  },
+  "created_at": "2026-07-11T17:15:40+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "candidate_id": "CAND-AIE-DDC-VIDEO-2026",
+    "canonical_identifiers": [
+      "url:https://www.youtube.com/watch?v=_QAVExf_1uw"
+    ],
+    "counter_search": {
+      "completed": [
+        "contradiction",
+        "origin",
+        "status"
+      ],
+      "coverage": 1.0,
+      "missing": [],
+      "required": [
+        "contradiction",
+        "origin",
+        "status"
+      ]
+    },
+    "decision": "allow",
+    "independence_cluster": {
+      "cluster_id": "IC-44B277CE72D0",
+      "members": [
+        "CAND-AIE-DDC-VIDEO-2026"
+      ]
+    },
+    "reasons": [
+      {
+        "code": "minimum_gate_satisfied",
+        "detail": "identity, provenance, status policy, and counter-search checks passed"
+      }
+    ],
+    "registry": {
+      "adapter": null,
+      "matches": [],
+      "status": "not_checked"
+    }
+  },
+  "id": "ADM-DF2E75056B85",
+  "policy_effect": "advisory_only",
+  "record_digest": "685acc3e2faa80baa6635e46fd0371a41c1823c10fcfd4b8ba3989b5d5c869be",
+  "status": "allow"
+}

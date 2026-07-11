@@ -3,9 +3,10 @@ type: "Reference"
 title: "Turn 10,994 Notes Into Memory"
 description: "talk source SRC-1C96ABEBBA41 assessed S2."
 resource: "https://www.youtube.com/watch?v=ZRM_TfEZcIo"
-tags: ["source", "talk", "S2"]
+tags: ["source", "talk", "S2", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-1C96ABEBBA41"
 source_level: "S2"
 ---
@@ -25,6 +26,9 @@ source_level: "S2"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `ai-research-os-authors` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

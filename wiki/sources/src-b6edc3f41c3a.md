@@ -3,9 +3,10 @@ type: "Reference"
 title: "LEDGER: Scaling Agentic Document Editing with Dependency-aware Graph Retrieval"
 description: "paper source SRC-B6EDC3F41C3A assessed S3."
 resource: "https://aclanthology.org/2026.findings-acl.515/"
-tags: ["source", "paper", "S3"]
+tags: ["source", "paper", "S3", "active"]
 timestamp: "2026-07-11T14:28:47+00:00"
 generated: true
+lifecycle_status: "active"
 source_id: "SRC-B6EDC3F41C3A"
 source_level: "S3"
 ---
@@ -25,6 +26,9 @@ source_level: "S3"
 | Retrieved | 2026-07-11T14:28:47+00:00 |
 | Independence group | `ledger-study` |
 | License | - |
+| Lifecycle | **active** |
+| Lifecycle reason | - |
+| Replaced by | - |
 
 ## Scoped assessment
 

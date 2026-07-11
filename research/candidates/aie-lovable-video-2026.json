@@ -1,0 +1,11 @@
+{
+  "id": "CAND-AIE-LOVABLE-VIDEO-2026",
+  "title": "How Lovable self-improves every hour",
+  "url": "https://www.youtube.com/watch?v=KA5kPbdkK2E",
+  "publisher": "AI Engineer",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "candidate": {
+    "id": "CAND-84C491D5B8DB",
+    "quarantine_artifact": {
+      "media_type": "text/plain",
+      "path": "raw/quarantine/a11327f8f10d0ca58779ae96a439a74b6dacf44112908db74938cadde7de3acc/artifact.vtt",
+      "sha256": "a11327f8f10d0ca58779ae96a439a74b6dacf44112908db74938cadde7de3acc",
+      "size_bytes": 3126160
+    },
+    "source_ref": "https://www.youtube.com/watch?v=O_IMsEg91g8"
+  },
+  "created_at": "2026-07-11T18:15:45+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "reject",
+    "reasons": [
+      "CONTENT_OVERSIZE",
+      "POLICY_DISABLE_GATE"
+    ],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE",
+            "POLICY_DISABLE_GATE"
+          ],
+          "risk_score": 20,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE",
+            "POLICY_DISABLE_GATE"
+          ],
+          "risk_score": 20,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "reject",
+          "max_risk": 5,
+          "meaning": "Deny this automatic transition; retain only immutable quarantine evidence.",
+          "reason_rule_ids": [
+            "CONTENT_OVERSIZE",
+            "POLICY_DISABLE_GATE"
+          ],
+          "risk_score": 20,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "a11327f8f10d0ca58779ae96a439a74b6dacf44112908db74938cadde7de3acc",
+        "declared_media_type": null,
+        "detected_media_type": "text/plain",
+        "hash_algorithm": "sha256",
+        "media_type": "text/plain",
+        "size_bytes": 3126160,
+        "source_ref": "https://www.youtube.com/watch?v=O_IMsEg91g8"
+      },
+      "normalized": {
+        "content_sha256": "794a47973a063e16f052d5d7f0dfd110c1b85aac35928cd24f2860d25aaf590b",
+        "length_chars": 999996,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "utf8_decode",
+        "replacement_characters": 0,
+        "truncated": true
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": [
+        {
+          "category": "content_integrity",
+          "description": "Content exceeds deterministic scan limit of 1000000 bytes.",
+          "excerpt": "",
+          "risk": 5,
+          "rule_id": "CONTENT_OVERSIZE",
+          "severity": "critical",
+          "span": null
+        },
+        {
+          "category": "policy_overwrite",
+          "description": "Attempts to disable a safety, review, or validation gate.",
+          "excerpt": "tart position:0% remote code execution, bypass<01:31:48.400><c> approval,</c><01:31:49.600><c> code</c><01:31:49",
+          "risk": 5,
+          "rule_id": "POLICY_DISABLE_GATE",
+          "severity": "critical",
+          "span": {
+            "end": 652745,
+            "start": 652713
+          }
+        },
+        {
+          "category": "policy_overwrite",
+          "description": "Attempts to disable a safety, review, or validation gate.",
+          "excerpt": "-> 01:31:51.280 align:start position:0% bypass approval, code injection, pass 01:31:51.280 -",
+          "risk": 5,
+          "rule_id": "POLICY_DISABLE_GATE",
+          "severity": "critical",
+          "span": {
+            "end": 652905,
+            "start": 652890
+          }
+        },
+        {
+          "category": "policy_overwrite",
+          "description": "Attempts to disable a safety, review, or validation gate.",
+          "excerpt": "-> 01:31:55.189 align:start position:0% bypass approval, code injection, pass traversal.<01:31:",
+          "risk": 5,
+          "rule_id": "POLICY_DISABLE_GATE",
+          "severity": "critical",
+          "span": {
+            "end": 653000,
+            "start": 652985
+          }
+        }
+      ]
+    },
+    "stage": "write"
+  },
+  "id": "ADM-9AD3913E71DD",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "b557a50f849cd6ec29ea8255894ada7e11a42d9c5a3f3fa5b3da2e48f1360a0a",
+  "status": "reject"
+}

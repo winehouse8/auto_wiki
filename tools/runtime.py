@@ -366,6 +366,7 @@ def build_search_documents(
     root: Path | str = ROOT,
     *,
     include_wiki: bool = True,
+    include_inactive: bool = False,
     max_wiki_file_bytes: int = 256_000,
 ) -> list[SearchDocument]:
     """Build a deterministic, read-only corpus from canonical state and Wiki.
@@ -397,6 +398,11 @@ def build_search_documents(
         for item in items:
             if not isinstance(item, dict) or not isinstance(item.get("id"), str):
                 continue
+            lifecycle = item.get("lifecycle_status")
+            if lifecycle is None and kind == "source":
+                lifecycle = item.get("status")
+            if kind in {"claim", "source"} and not include_inactive and (lifecycle or "active") != "active":
+                continue
             text = " ".join(_flatten_text(item.get(key)) for key in fields)
             documents.append(
                 SearchDocument(
@@ -421,6 +427,13 @@ def build_search_documents(
                     text = path.read_text(encoding="utf-8")
                 except (OSError, UnicodeDecodeError):
                     continue
+                if not include_inactive:
+                    match = re.search(
+                        r"(?m)^lifecycle_status:\s*[\"']?([A-Za-z-]+)[\"']?\s*$",
+                        text[:4096],
+                    )
+                    if match and match.group(1) in {"deprecated", "superseded", "invalidated", "archived"}:
+                        continue
                 documents.append(
                     SearchDocument(f"wiki:{relative}", text, "wiki", {"path": relative, "untrusted": True})
                 )
@@ -495,8 +508,13 @@ def lexical_search(
     root: Path | str = ROOT,
     documents: Iterable[SearchDocument] | None = None,
     limit: int = 10,
+    include_inactive: bool = False,
 ) -> list[dict[str, Any]]:
-    corpus = list(documents) if documents is not None else build_search_documents(root)
+    corpus = (
+        list(documents)
+        if documents is not None
+        else build_search_documents(root, include_inactive=include_inactive)
+    )
     return BM25Index(corpus).search(query, limit=limit)
 
 

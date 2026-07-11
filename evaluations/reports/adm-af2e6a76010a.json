@@ -1,0 +1,78 @@
+{
+  "candidate": {
+    "id": "CAND-FE0B2E4C2287",
+    "quarantine_artifact": {
+      "media_type": "text/plain",
+      "path": "raw/quarantine/2189778555f781e47b2df4adf68f18e5f16d0af26843529c01b3ae556fdc9bd3/artifact.txt",
+      "sha256": "2189778555f781e47b2df4adf68f18e5f16d0af26843529c01b3ae556fdc9bd3",
+      "size_bytes": 75579
+    },
+    "source_ref": "https://aclanthology.org/2026.acl-long.670.pdf#pypdf-5.9.0-extracted-text"
+  },
+  "created_at": "2026-07-11T17:14:27+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "decision": "allow",
+    "reasons": [],
+    "security_assessment": {
+      "classification": "untrusted_external_content",
+      "gates": {
+        "activate": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "activate"
+        },
+        "retrieve": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "retrieve"
+        },
+        "write": {
+          "decision": "allow",
+          "max_risk": 0,
+          "meaning": "May proceed only as untrusted data; never as executable instruction.",
+          "reason_rule_ids": [],
+          "risk_score": 0,
+          "stage": "write"
+        }
+      },
+      "invariants": {
+        "allow_means_data_use_only": true,
+        "credentials_accessed": false,
+        "network_used": false,
+        "payload_executed": false
+      },
+      "manifest": {
+        "classification": "untrusted_external_content",
+        "content_sha256": "2189778555f781e47b2df4adf68f18e5f16d0af26843529c01b3ae556fdc9bd3",
+        "declared_media_type": "text/plain",
+        "detected_media_type": "text/plain",
+        "hash_algorithm": "sha256",
+        "media_type": "text/plain",
+        "size_bytes": 75579,
+        "source_ref": "https://aclanthology.org/2026.acl-long.670.pdf#pypdf-5.9.0-extracted-text"
+      },
+      "normalized": {
+        "content_sha256": "75fff6c7037707513ef7809e00ec535e476f9921caf8a0a84cfcedd63a75e570",
+        "length_chars": 74680,
+        "normalization": "utf8+newline-lf+unicode-nfkc+control-strip",
+        "normalization_source": "utf8_decode",
+        "replacement_characters": 0,
+        "truncated": false
+      },
+      "schema_version": "living-wiki-security-gate/v1",
+      "signals": []
+    },
+    "stage": "write"
+  },
+  "id": "ADM-AF2E6A76010A",
+  "policy_effect": "quarantine_only_no_source_promotion",
+  "record_digest": "3737d1900d5a7f7041ebd15ec4f73db644c8bf0a0ed6c93651cd8e4cf28330cc",
+  "status": "allow"
+}

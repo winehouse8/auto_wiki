@@ -1,0 +1,61 @@
+{
+  "candidate": {
+    "counter_search": {
+      "checks": [
+        "origin",
+        "status",
+        "contradiction"
+      ]
+    },
+    "id": "CAND-AIE-CONTEXT-LIFECYCLE-VIDEO-2026",
+    "provenance_verified": true,
+    "publisher": "AI Engineer",
+    "registry_required": false,
+    "title": "Context Is the New Code",
+    "url": "https://www.youtube.com/watch?v=bSG9wUYaHWU"
+  },
+  "created_at": "2026-07-11T17:15:40+00:00",
+  "created_by": "agent:codex",
+  "decision": {
+    "candidate_id": "CAND-AIE-CONTEXT-LIFECYCLE-VIDEO-2026",
+    "canonical_identifiers": [
+      "url:https://www.youtube.com/watch?v=bSG9wUYaHWU"
+    ],
+    "counter_search": {
+      "completed": [
+        "contradiction",
+        "origin",
+        "status"
+      ],
+      "coverage": 1.0,
+      "missing": [],
+      "required": [
+        "contradiction",
+        "origin",
+        "status"
+      ]
+    },
+    "decision": "allow",
+    "independence_cluster": {
+      "cluster_id": "IC-AED3F307AF83",
+      "members": [
+        "CAND-AIE-CONTEXT-LIFECYCLE-VIDEO-2026"
+      ]
+    },
+    "reasons": [
+      {
+        "code": "minimum_gate_satisfied",
+        "detail": "identity, provenance, status policy, and counter-search checks passed"
+      }
+    ],
+    "registry": {
+      "adapter": null,
+      "matches": [],
+      "status": "not_checked"
+    }
+  },
+  "id": "ADM-B6AAFD3ECAC0",
+  "policy_effect": "advisory_only",
+  "record_digest": "f8ba3fda9157c1ca19825fbf4124bc0a3768b84a67d568a1db71b48cbe2b9714",
+  "status": "allow"
+}

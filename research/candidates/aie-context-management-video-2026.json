@@ -1,0 +1,11 @@
+{
+  "id": "CAND-AIE-CONTEXT-MANAGEMENT-VIDEO-2026",
+  "title": "How we solved Context Management in Agents",
+  "url": "https://www.youtube.com/watch?v=esY99nYXxR4",
+  "publisher": "AI Engineer",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": ["origin", "status", "contradiction"]
+  }
+}
