@@ -1,0 +1,893 @@
+{
+  "sources": [
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:55:15+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "official-record",
+          "primary-author-account"
+        ],
+        "rationale": "OKF의 목적과 발표 맥락을 설명하는 공식 1차 글이다. 공식 spec과 같은 제작자 group이므로 독립 corroboration이 아니다."
+      },
+      "authors": [
+        "Amir Hormati",
+        "Sam McVeety"
+      ],
+      "id": "SRC-064C46D22353",
+      "independence_group": "google-open-knowledge-format",
+      "license": null,
+      "notes": null,
+      "publication_status": "official announcement",
+      "published_at": "2026-06-12",
+      "publisher": "Google Cloud Blog",
+      "retrieved_at": "2026-07-11T14:55:15+00:00",
+      "source_level": "S3",
+      "source_type": "article",
+      "status": "active",
+      "title": "How the Open Knowledge Format can improve data sharing",
+      "url": "https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "official-record",
+          "standard"
+        ],
+        "rationale": "provenance 상호운용을 위한 안정된 공식 표준이다. 진실 판정 표준은 아니다."
+      },
+      "authors": [
+        "W3C Provenance Working Group"
+      ],
+      "id": "SRC-08654E066049",
+      "independence_group": "w3c-prov-standard",
+      "license": null,
+      "notes": null,
+      "publication_status": "W3C Recommendation",
+      "published_at": "2013-04-30",
+      "publisher": "W3C",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "standard",
+      "status": "active",
+      "title": "W3C PROV-O",
+      "url": "https://www.w3.org/TR/prov-o/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "primary-artifact",
+          "public-implementation"
+        ],
+        "rationale": "현재 구현 세부를 직접 검사할 수 있는 1차 코드다. 효용·확장성의 독립 증거는 아니다."
+      },
+      "authors": [
+        "Paul Iusztin and contributors"
+      ],
+      "id": "SRC-1BE9C681A9BA",
+      "independence_group": "ai-research-os-authors",
+      "license": "MIT",
+      "notes": null,
+      "publication_status": "open-source implementation",
+      "published_at": "2026-06-26",
+      "publisher": "GitHub",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S3",
+      "source_type": "code",
+      "status": "active",
+      "title": "ai-research-os-workshop",
+      "url": "https://github.com/iusztinpaul/ai-research-os-workshop"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "유료 강의 홍보",
+          "자체 프로젝트 발표"
+        ],
+        "quality_markers": [
+          "primary-author-account",
+          "public-implementation"
+        ],
+        "rationale": "자체 시스템의 구조와 한계를 설명하는 1차 발표이며 공개 구현이 있지만 독립 성능평가는 없다."
+      },
+      "authors": [
+        "Louis-François Bouchard",
+        "Paul Iusztin"
+      ],
+      "id": "SRC-1C96ABEBBA41",
+      "independence_group": "ai-research-os-authors",
+      "license": null,
+      "notes": "공개 자동자막 전체를 타임스탬프로 분석했다.",
+      "publication_status": "conference practitioner talk",
+      "published_at": "2026-06-26",
+      "publisher": "AI Engineer",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S2",
+      "source_type": "talk",
+      "status": "active",
+      "title": "Turn 10,994 Notes Into Memory",
+      "url": "https://www.youtube.com/watch?v=ZRM_TfEZcIo"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "ICML 심사를 통과한 memory utility 연구다. 유용성이 사실성·provenance를 보장하지는 않는다."
+      },
+      "authors": [],
+      "id": "SRC-1F603E3131E8",
+      "independence_group": "umem-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ICML 2026 regular paper",
+      "published_at": "2026-04-30",
+      "publisher": "ICML 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "UMEM: Unified Memory Extraction and Management Framework for Generalizable Memory",
+      "url": "https://openreview.net/forum?id=BoiXvrwtdi"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed"
+        ],
+        "rationale": "ICLR 심사를 통과한 동적 deep-research benchmark 원 논문이다. live web 변동성은 남는다."
+      },
+      "authors": [],
+      "id": "SRC-25318FE73DEB",
+      "independence_group": "liveresearchbench-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ICLR 2026 Poster",
+      "published_at": "2026-01-26",
+      "publisher": "ICLR 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "LiveResearchBench",
+      "url": "https://openreview.net/forum?id=ghwbZ3uhEd"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:14+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study",
+          "security-evaluation"
+        ],
+        "rationale": "검색 Agent의 misinformation·prompt injection을 체계적으로 평가한 ICML 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-2779A50E2D01",
+      "independence_group": "safesearch-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ICML 2026 regular paper",
+      "published_at": "2026-04-30",
+      "publisher": "ICML 2026",
+      "retrieved_at": "2026-07-11T14:29:14+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "SafeSearch: Automated Red-Teaming of LLM-Based Search Agents",
+      "url": "https://openreview.net/forum?id=95VVL0TJNH"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "반복 보고서 수정의 내용·인용 회귀를 직접 평가한 동료심사 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-2A53F0CF2080",
+      "independence_group": "multiturndra-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ACL 2026 Long Paper",
+      "published_at": "2026-07",
+      "publisher": "ACL 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Beyond Single-shot Writing: Deep Research Agents are Unreliable at Multi-turn Report Revision",
+      "url": "https://aclanthology.org/2026.acl-long.609/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:14+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "primary-study",
+          "public-code"
+        ],
+        "rationale": "사용자의 구상과 직접 닮은 living skill knowledge lifecycle이나 factual wiki 검증이 아니며 preprint다."
+      },
+      "authors": [],
+      "id": "SRC-43A6E8A3C217",
+      "independence_group": "skillwiki-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "preprint",
+      "published_at": "2026-06-15",
+      "publisher": "arXiv",
+      "retrieved_at": "2026-07-11T14:29:14+00:00",
+      "source_level": "S2",
+      "source_type": "paper",
+      "status": "active",
+      "title": "SkillWiki: A Living Knowledge Infrastructure for Agent Skills",
+      "url": "https://arxiv.org/abs/2606.16523"
+    },
+    {
+      "artifact": {
+        "bytes": 15046,
+        "media_type": "text/markdown",
+        "path": "raw/sources/SRC-477696BD1807/OKF-SPEC-v0.1-draft.md",
+        "sha256": "b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e"
+      },
+      "assessment": {
+        "assessed_at": "2026-07-11T14:58:43+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "official-draft",
+          "primary-artifact",
+          "version-pinned"
+        ],
+        "rationale": "공식 v0.1 Draft SPEC.md를 repository commit d44368c15e38e7c92481c5992e4f9b5b421a801d, blob 55d0a46cc988e99aa35cd027964d6278a4f93f35, local SHA-256 b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e로 고정했다. release/tag가 없어 S4로 승격하지 않는다."
+      },
+      "authors": [
+        "Amir Hormati",
+        "Google Cloud contributors",
+        "Sam McVeety"
+      ],
+      "id": "SRC-477696BD1807",
+      "independence_group": "google-open-knowledge-format",
+      "license": "Apache-2.0",
+      "notes": null,
+      "publication_status": "Version 0.1 Draft; no release tag as of 2026-07-11",
+      "published_at": "2026-06-12",
+      "publisher": "GoogleCloudPlatform/knowledge-catalog",
+      "retrieved_at": "2026-07-11T14:55:15+00:00",
+      "source_level": "S3",
+      "source_type": "standard",
+      "status": "active",
+      "title": "Open Knowledge Format v0.1 Specification",
+      "url": "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md",
+      "version_pin": {
+        "repository_commit": "d44368c15e38e7c92481c5992e4f9b5b421a801d",
+        "snapshot_sha256": "b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e",
+        "spec_blob": "55d0a46cc988e99aa35cd027964d6278a4f93f35"
+      }
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "GraphRAG 구성 요소의 병목을 직접 분해 평가한 동료심사 저널 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-4E9BB033389D",
+      "independence_group": "dissecting-graphrag-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "peer-reviewed journal article",
+      "published_at": "2026",
+      "publisher": "TACL",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Dissecting GraphRAG",
+      "url": "https://aclanthology.org/2026.tacl-1.29/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "official-record",
+          "standard"
+        ],
+        "rationale": "AI 위험 관리를 위한 공식 정부 프레임워크다. Wiki 세부 구현 명세는 아니다."
+      },
+      "authors": [],
+      "id": "SRC-55630C70A5F7",
+      "independence_group": "nist-ai-rmf",
+      "license": null,
+      "notes": null,
+      "publication_status": "official framework",
+      "published_at": "2023",
+      "publisher": "NIST",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "standard",
+      "status": "active",
+      "title": "NIST AI Risk Management Framework",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "세밀한 provenance 관계를 직접 평가한 ACL 동료심사 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-56255EE4508A",
+      "independence_group": "genprove-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ACL 2026 Long Paper",
+      "published_at": "2026-07",
+      "publisher": "ACL 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "GenProve: Learning to Generate Text with Fine-Grained Provenance",
+      "url": "https://aclanthology.org/2026.acl-long.228/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:14+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "peer-reviewed",
+          "public-implementation",
+          "system-demo"
+        ],
+        "rationale": "atomic claim 분해와 재현 가능한 로컬 검색 검증 파이프라인을 공개한 시스템 데모다."
+      },
+      "authors": [],
+      "id": "SRC-62BFE70FD005",
+      "independence_group": "factsearch-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ACL 2026 System Demo",
+      "published_at": "2026-07",
+      "publisher": "ACL 2026",
+      "retrieved_at": "2026-07-11T14:29:14+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "FactSearch: An Interactive Agentic Fact Search System",
+      "url": "https://aclanthology.org/2026.acl-demo.36/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "ACL 동료심사 원 논문이며 감사 전후 benchmark 정답 오류를 정량화한다."
+      },
+      "authors": [],
+      "id": "SRC-660F983C8346",
+      "independence_group": "deepfact-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ACL 2026 Long Paper",
+      "published_at": "2026-07",
+      "publisher": "ACL 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "DeepFact: Co-Evolving Benchmarks and Agents for Deep Research Factuality",
+      "url": "https://aclanthology.org/2026.acl-long.1586/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "source credibility와 cited-source groundedness를 분리 측정한 동료심사 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-696A976CE094",
+      "independence_group": "web-credibility-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "EACL 2026 Long Paper",
+      "published_at": "2026-03",
+      "publisher": "EACL 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Assessing Web Search Credibility and Response Groundedness in Chat Assistants",
+      "url": "https://aclanthology.org/2026.eacl-long.115/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "primary-study"
+        ],
+        "rationale": "memory poisoning taxonomy와 MPBench를 제시한 최신 원 연구지만 아직 preprint다."
+      },
+      "authors": [],
+      "id": "SRC-6D473BE1761E",
+      "independence_group": "memory-poisoning-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "preprint",
+      "published_at": "2026-06-03",
+      "publisher": "arXiv",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S2",
+      "source_type": "paper",
+      "status": "active",
+      "title": "From Untrusted Input to Trusted Memory",
+      "url": "https://arxiv.org/abs/2606.04329"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "peer-reviewed",
+          "primary-study",
+          "public-code",
+          "public-data"
+        ],
+        "rationale": "동료심사된 원 논문이며 코드·데이터·평가 한계를 공개한다. OpenScholar 결과 범위에서 강한 근거다."
+      },
+      "authors": [
+        "Asai et al."
+      ],
+      "id": "SRC-83F06C506C77",
+      "independence_group": "openscholar-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "peer-reviewed journal article",
+      "published_at": "2026-02-04",
+      "publisher": "Nature",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Synthesizing scientific literature with retrieval-augmented language models",
+      "url": "https://www.nature.com/articles/s41586-025-10072-4"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "사람이 다중 Agent 담화에 개입하는 협업 탐색을 평가한 동료심사 선행 연구다."
+      },
+      "authors": [],
+      "id": "SRC-8908754F8F5E",
+      "independence_group": "costorm-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "EMNLP 2024 Main Paper",
+      "published_at": "2024",
+      "publisher": "EMNLP 2024",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Co-STORM: Collaborative Information Seeking with Humans and Multi-agent Systems",
+      "url": "https://aclanthology.org/2024.emnlp-main.554/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:31:40+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "mechanistic-analysis",
+          "primary-study"
+        ],
+        "rationale": "권위 persona가 증거 판단을 왜곡하는 현상을 직접 연구하지만 아직 preprint이고 통제된 모델·QA 범위다."
+      },
+      "authors": [],
+      "id": "SRC-8DAAC6D75C2C",
+      "independence_group": "authority-sycophancy-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "preprint",
+      "published_at": "2026-07-01",
+      "publisher": "arXiv",
+      "retrieved_at": "2026-07-11T14:31:40+00:00",
+      "source_level": "S2",
+      "source_type": "paper",
+      "status": "active",
+      "title": "A Mechanistic View of Authority Hierarchy in LLM Sycophancy",
+      "url": "https://arxiv.org/abs/2607.00415"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "peer-reviewed",
+          "primary-study",
+          "security-evaluation"
+        ],
+        "rationale": "memory poisoning 방어를 평가한 ICML 원 논문이다. 공격 가정 밖 일반화는 추가 검증이 필요하다."
+      },
+      "authors": [],
+      "id": "SRC-A754BF8665D0",
+      "independence_group": "a-memguard-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ICML 2026 regular paper",
+      "published_at": "2026-04-30",
+      "publisher": "ICML 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "A-MemGuard",
+      "url": "https://openreview.net/forum?id=udqe7UZUZ6"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "dependency-aware 편집을 1,900 사례에서 평가한 동료심사 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-B6EDC3F41C3A",
+      "independence_group": "ledger-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "Findings ACL 2026",
+      "published_at": "2026-07",
+      "publisher": "Findings of ACL 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "LEDGER: Scaling Agentic Document Editing with Dependency-aware Graph Retrieval",
+      "url": "https://aclanthology.org/2026.findings-acl.515/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "faithfulness와 factuality를 분리해 평가한 동료심사 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-BC899B3F975F",
+      "independence_group": "franq-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "Findings ACL 2026",
+      "published_at": "2026-07",
+      "publisher": "Findings of ACL 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Faithfulness-Aware Uncertainty Quantification for Fact-Checking RAG Output",
+      "url": "https://aclanthology.org/2026.findings-acl.338/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:13+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "primary-study",
+          "public-code",
+          "user-study"
+        ],
+        "rationale": "관찰 가능성·실시간 조향·맥락 탐색을 다룬 직접 관련 최신 연구지만 아직 preprint다."
+      },
+      "authors": [],
+      "id": "SRC-C071A29F63E6",
+      "independence_group": "interdeepresearch-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "preprint",
+      "published_at": "2026-03-13",
+      "publisher": "arXiv",
+      "retrieved_at": "2026-07-11T14:29:13+00:00",
+      "source_level": "S2",
+      "source_type": "paper",
+      "status": "active",
+      "title": "InterDeepResearch: Enabling Human-Agent Collaborative Information Seeking",
+      "url": "https://arxiv.org/abs/2603.12608"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:14+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "지속적 knowledge drift와 temporal inconsistency를 평가한 동료심사 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-C204B45C665B",
+      "independence_group": "chronos-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "Findings ACL 2026",
+      "published_at": "2026-07",
+      "publisher": "Findings of ACL 2026",
+      "retrieved_at": "2026-07-11T14:29:14+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "RAG or Learning? Understanding the Limits of LLM Adaptation under Continuous Knowledge Drift",
+      "url": "https://aclanthology.org/2026.findings-acl.546/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "비동기 인간-Agent 협업 과정과 실패를 평가한 ICLR 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-C7AAE78B0CC4",
+      "independence_group": "collaborative-gym-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ICLR 2026 Poster",
+      "published_at": "2026-01-26",
+      "publisher": "ICLR 2026",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Collaborative Gym",
+      "url": "https://openreview.net/forum?id=GDYueXtKXT"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:14+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "peer-reviewed",
+          "public-implementation",
+          "system-demo"
+        ],
+        "rationale": "memory를 world/experience/observation/opinion으로 분리한 동료심사 시스템 데모다."
+      },
+      "authors": [],
+      "id": "SRC-CB315D66167D",
+      "independence_group": "hindsight-memory-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ACL 2026 System Demo",
+      "published_at": "2026-07",
+      "publisher": "ACL 2026",
+      "retrieved_at": "2026-07-11T14:29:14+00:00",
+      "source_level": "S3",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Hindsight: Structured Agent Memory that Retains, Recalls, and Reflects",
+      "url": "https://aclanthology.org/2026.acl-demo.27/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "관점 기반 질의와 위키형 합성을 평가한 동료심사 선행 연구다."
+      },
+      "authors": [],
+      "id": "SRC-CC24B88C8C02",
+      "independence_group": "storm-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "NAACL 2024 Long Paper",
+      "published_at": "2024",
+      "publisher": "NAACL 2024",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "STORM: Assisting in Writing Wikipedia-like Articles From Scratch",
+      "url": "https://aclanthology.org/2024.naacl-long.347/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:28:47+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "primary-author-account"
+        ],
+        "rationale": "저자의 설계 의도를 확인하는 1차 자료지만 동료심사·벤치마크·참조 구현이 없는 아이디어 파일이다."
+      },
+      "authors": [
+        "Andrej Karpathy"
+      ],
+      "id": "SRC-CFB88DDE3FF1",
+      "independence_group": "karpathy-llm-wiki",
+      "license": null,
+      "notes": "설계 영감용. 경험적 효과 증거로 사용하지 않는다.",
+      "publication_status": "practitioner idea file",
+      "published_at": "2026-04-04",
+      "publisher": "GitHub Gist",
+      "retrieved_at": "2026-07-11T14:28:47+00:00",
+      "source_level": "S2",
+      "source_type": "article",
+      "status": "active",
+      "title": "LLM Wiki",
+      "url": "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:14+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "조작된 과학 글에 대한 LLM reviewer의 concern-acceptance conflict를 평가한 동료심사 원 논문이다."
+      },
+      "authors": [],
+      "id": "SRC-E42CA8C4BD30",
+      "independence_group": "badscientist-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "ACL 2026 Long Paper",
+      "published_at": "2026-07",
+      "publisher": "ACL 2026",
+      "retrieved_at": "2026-07-11T14:29:14+00:00",
+      "source_level": "S4",
+      "source_type": "paper",
+      "status": "active",
+      "title": "BadScientist",
+      "url": "https://aclanthology.org/2026.acl-long.1134/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T14:29:14+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [],
+        "quality_markers": [
+          "preregistered",
+          "primary-study"
+        ],
+        "rationale": "compiled wiki와 RAG를 직접 비교하지만 단일 저자·소규모·LLM judge의 preprint다."
+      },
+      "authors": [],
+      "id": "SRC-F73B1F038B37",
+      "independence_group": "vector-rag-wiki-study",
+      "license": null,
+      "notes": null,
+      "publication_status": "preregistered preprint",
+      "published_at": "2026-05-18",
+      "publisher": "arXiv",
+      "retrieved_at": "2026-07-11T14:29:14+00:00",
+      "source_level": "S2",
+      "source_type": "paper",
+      "status": "active",
+      "title": "Vector RAG vs LLM-Compiled Wiki",
+      "url": "https://arxiv.org/abs/2605.18490"
+    }
+  ],
+  "version": 1
+}

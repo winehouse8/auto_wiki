@@ -1,0 +1,44 @@
+{
+  "name": "Living Wiki",
+  "harness_version": "3.1.0",
+  "knowledge_bundle": {
+    "format": "Open Knowledge Format",
+    "path": "wiki",
+    "spec_status": "Draft",
+    "version": "0.1"
+  },
+  "default_actor": "agent:codex",
+  "language": "ko",
+  "timezone": "Asia/Seoul",
+  "autonomy": {
+    "auto_apply": [
+      "archive_new_source",
+      "create_draft_claim",
+      "add_evidence_edge",
+      "refresh_derived_wiki",
+      "open_research_question",
+      "run_evaluation"
+    ],
+    "proposal_required": [
+      "change_constitution",
+      "change_trust_policy",
+      "modify_harness_code",
+      "delete_raw_source",
+      "publish_externally",
+      "increase_budget",
+      "use_credentials"
+    ]
+  },
+  "staleness_days": {
+    "fast": 30,
+    "normal": 180,
+    "slow": 730,
+    "timeless": null
+  },
+  "research_limits": {
+    "default_max_sources_per_cycle": 12,
+    "default_max_minutes_per_cycle": 45,
+    "min_independent_source_groups": 2,
+    "stop_after_no_novel_claim_rounds": 2
+  }
+}

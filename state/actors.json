@@ -1,0 +1,55 @@
+{
+  "actors": [
+    {
+      "capabilities": [
+        "discover",
+        "archive",
+        "extract",
+        "synthesize",
+        "review",
+        "lint",
+        "propose"
+      ],
+      "created_at": "2026-07-11T14:24:15+00:00",
+      "display_name": "Codex Research Maintainer",
+      "id": "agent:codex",
+      "kind": "agent",
+      "metadata": {
+        "independence_group": "openai-codex-session",
+        "model": "runtime-provided",
+        "prompt_hash": null
+      },
+      "roles": [
+        "maintainer",
+        "researcher",
+        "contributor",
+        "reviewer"
+      ],
+      "status": "active"
+    },
+    {
+      "capabilities": [
+        "discover",
+        "submit",
+        "review",
+        "direct",
+        "approve"
+      ],
+      "created_at": "2026-07-11T14:24:15+00:00",
+      "display_name": "Wiki Owner",
+      "id": "human:owner",
+      "kind": "human",
+      "metadata": {
+        "independence_group": "human:owner"
+      },
+      "roles": [
+        "director",
+        "contributor",
+        "reviewer",
+        "policy-approver"
+      ],
+      "status": "active"
+    }
+  ],
+  "version": 1
+}

@@ -1,0 +1,1117 @@
+{
+  "claims": [
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and Results on revision regressions",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-2A53F0CF2080",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and results on dependency-aware graph retrieval for document editing",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-B6EDC3F41C3A",
+          "strength": 4
+        }
+      ],
+      "freshness": "normal",
+      "id": "CLM-1EB8BD726482",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "agentic wiki document maintenance",
+      "statement": "지속적으로 편집되는 Wiki는 영향받은 의존성만 좁게 수정한 뒤 전체 불변조건과 사실 회귀를 다시 검사해야 한다.",
+      "supersedes": [],
+      "tags": [
+        "dependency-graph",
+        "editing",
+        "regression"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "mechanistic-analysis",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and source credibility analysis methodology",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-696A976CE094",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; authority hierarchy and sycophancy under conflicting evidence",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-8DAAC6D75C2C",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and concern-acceptance conflict results",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-E42CA8C4BD30",
+          "strength": 3
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-4A3051A018DC",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "source credibility policy",
+      "statement": "출처의 권위와 평판은 검색 우선순위와 검토 깊이를 정하는 prior로 쓸 수 있지만 개별 주장의 증거를 대체할 수 없다.",
+      "supersedes": [],
+      "tags": [
+        "authority",
+        "evidence",
+        "source-credibility"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study",
+          "security-evaluation"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and search-agent misinformation/prompt-injection red-team benchmark",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-2779A50E2D01",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; four write channels, structural vulnerabilities and MPBench",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-6D473BE1761E",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; reasoning-path consensus and protective memory defense",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-A754BF8665D0",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-61B3C391010C",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "persistent agent memory security",
+      "statement": "지속 메모리를 쓰는 Agent는 수집 시점과 검색 시점 모두에 오염 방지 gate가 필요하다.",
+      "supersedes": [],
+      "tags": [
+        "admission-gate",
+        "memory-poisoning",
+        "security"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 1,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "official-record",
+          "peer-reviewed",
+          "primary-study",
+          "standard"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "contested",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and scope: provenance representation, not truth certification",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-08654E066049",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; credible versus non-credible retrieved sources and groundedness",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-696A976CE094",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Architecture: raw sources described as source of truth",
+          "note": "불변성과 진실성을 혼동할 여지가 있는 표현.",
+          "relation": "contradicts",
+          "source_id": "SRC-CFB88DDE3FF1",
+          "strength": 2
+        }
+      ],
+      "freshness": "timeless",
+      "id": "CLM-6DDD53332A40",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "Living Wiki source model",
+      "statement": "원문 snapshot은 감사 가능한 증거이지 자동으로 참인 source of truth가 아니다.",
+      "supersedes": [],
+      "tags": [
+        "evidence",
+        "raw-source",
+        "truth"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; separate source credibility and response groundedness evaluation",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-696A976CE094",
+          "strength": 4
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; distinction between factuality and faithfulness",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-BC899B3F975F",
+          "strength": 4
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-6ED77E226EF7",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "RAG and deep-research evaluation",
+      "statement": "검색된 문맥에 대한 충실성, 현실 세계의 사실성, 출처 자체의 신뢰도는 서로 다른 평가 대상이다.",
+      "supersedes": [],
+      "tags": [
+        "factuality",
+        "faithfulness",
+        "source-credibility"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:56:18+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official-draft",
+          "primary-artifact"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T14:55:25+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:55:34+00:00",
+          "added_by": "agent:codex",
+          "locator": "Official announcement: OKF v0.1 representation and conventions",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-064C46D22353",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:55:34+00:00",
+          "added_by": "agent:codex",
+          "locator": "SPEC.md §§3.1, 4.1, 6, 7, 9",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-477696BD1807",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-7FDAF2F91E73",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T14:56:18+00:00",
+      "notes": null,
+      "scope": "Open Knowledge Format Version 0.1 Draft as of 2026-07-11",
+      "statement": "OKF v0.1 conformance는 비예약 Markdown의 parseable YAML frontmatter와 non-empty type, 그리고 예약 index.md/log.md 구조를 핵심 필수 조건으로 둔다.",
+      "supersedes": [],
+      "tags": [
+        "conformance",
+        "interoperability",
+        "okf"
+      ],
+      "valid_at": "2026-07-11"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-author-account",
+          "primary-study",
+          "public-implementation"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:09+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "CONVENTIONS.md: index.yaml relevance_score definition and seed score 1.0",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-1BE9C681A9BA",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "36:50-38:33, acknowledged provenance/ranking/source-strength limitations",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-1C96ABEBBA41",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; methodology separating source credibility and groundedness",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-696A976CE094",
+          "strength": 4
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-860EB3D6AAEB",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "open-web research source selection",
+      "statement": "자료의 주제 관련도는 해당 자료의 신뢰도나 그 자료를 인용한 답변의 사실성을 보장하지 않는다.",
+      "supersedes": [],
+      "tags": [
+        "relevance",
+        "source-credibility"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:56:18+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official-draft",
+          "primary-artifact"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T14:55:25+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:55:34+00:00",
+          "added_by": "agent:codex",
+          "locator": "SPEC.md §1 Non-goals, §4.1 Extensions, §§8-10",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-477696BD1807",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-952258184EF2",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:56:18+00:00",
+      "notes": null,
+      "scope": "Living Wiki mapping to OKF v0.1 Draft",
+      "statement": "OKF v0.1은 claim confidence, source credibility, actor governance, 저장 및 검색 인프라를 정의하지 않으므로 Living Wiki는 이를 producer extension과 외부 control plane으로 보완해야 한다.",
+      "supersedes": [],
+      "tags": [
+        "control-plane",
+        "governance",
+        "okf",
+        "trust"
+      ],
+      "valid_at": "2026-07-11"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study",
+          "public-implementation",
+          "system-demo"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 3
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "PROV-O overview: Entity, Activity, Agent and derivation/attribution relations",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-08654E066049",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and provenance relation taxonomy: Quotation, Compression, Inference",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-56255EE4508A",
+          "strength": 4
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; atomic claim decomposition and targeted evidence retrieval workflow",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-62BFE70FD005",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and Audit-then-Score procedure",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-660F983C8346",
+          "strength": 3
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-CB6E34C87DA3",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "Living Wiki epistemic design",
+      "statement": "감사 가능한 연구 Wiki의 신뢰 최소 단위는 페이지 전체보다 원자적 주장과 정확한 evidence locator의 연결이어야 한다.",
+      "supersedes": [],
+      "tags": [
+        "atomic-claim",
+        "auditability",
+        "provenance"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and component ablations on triple extraction and community granularity",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-4E9BB033389D",
+          "strength": 4
+        }
+      ],
+      "freshness": "normal",
+      "id": "CLM-CEBC308C15C4",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "GraphRAG systems evaluated in Dissecting GraphRAG",
+      "statement": "GraphRAG의 그래프 구조는 잘못 추출된 triple과 부적절한 community 구성에서 생기는 오류를 자동으로 상쇄하지 못한다.",
+      "supersedes": [],
+      "tags": [
+        "error-propagation",
+        "extraction",
+        "graphrag"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study",
+          "public-implementation",
+          "system-demo"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "PROV-O derivation and invalidation vocabulary",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-08654E066049",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; temporal inconsistency and Event Evolution Graph",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-C204B45C665B",
+          "strength": 4
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; append-only temporal evolution and world/experience/observation/opinion separation",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-CB315D66167D",
+          "strength": 3
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-D2A1B46809DA",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "temporally evolving knowledge",
+      "statement": "시간에 따라 변하는 주장은 valid_from, valid_to, as_of, supersedes 같은 시간 범위와 계보를 가져야 한다.",
+      "supersedes": [],
+      "tags": [
+        "provenance",
+        "supersession",
+        "temporal-knowledge"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study",
+          "public-code",
+          "user-study"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 3
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and human intervention over multi-agent discourse study",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-8908754F8F5E",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; observability, real-time steerability, context navigation and user study",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-C071A29F63E6",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and evaluation of process-level human-agent collaboration failures",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-C7AAE78B0CC4",
+          "strength": 3
+        }
+      ],
+      "freshness": "normal",
+      "id": "CLM-DA7C92E9A901",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "human-agent collaborative information seeking",
+      "statement": "효과적인 인간-Agent 공동 연구에는 결과만이 아니라 과정의 관찰 가능성, 실시간 조향, 공유 맥락과 복구 가능한 commitment가 필요하다.",
+      "supersedes": [],
+      "tags": [
+        "collaboration",
+        "observability",
+        "steerability"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study",
+          "public-implementation",
+          "system-demo"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 3
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; collaborative discourse and evolving mind map",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-8908754F8F5E",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; separate opinion network with confidence",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-CB315D66167D",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; perspective-guided question asking and multi-perspective synthesis",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-CC24B88C8C02",
+          "strength": 3
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-DCFACC957266",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "Living Wiki perspective management",
+      "statement": "Wiki가 형성한 관점은 사실 원장과 분리하고 가장 강한 반론, 가정, 입장 변경 조건과 개정 이력을 보존해야 한다.",
+      "supersedes": [],
+      "tags": [
+        "disagreement",
+        "perspective",
+        "thesis"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 2
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract; continuous memory evolution under utility feedback",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-1F603E3131E8",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and multi-turn regression findings",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-2A53F0CF2080",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "AI RMF Govern-Map-Measure-Manage lifecycle",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-55630C70A5F7",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and Audit-then-Score benchmark correction results",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-660F983C8346",
+          "strength": 3
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-F464CCF0AA1A",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "Living Wiki harness governance",
+      "statement": "하네스의 자기진화는 고정된 평가, 최소 변경, 회귀 검사와 rollback을 통과한 제안으로만 승격해야 한다.",
+      "supersedes": [],
+      "tags": [
+        "evaluation",
+        "governance",
+        "rollback",
+        "self-evolution"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:56:18+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official-draft",
+          "primary-artifact"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T14:55:25+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:55:34+00:00",
+          "added_by": "agent:codex",
+          "locator": "Official announcement: intentionally small set of conventions",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-064C46D22353",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:55:34+00:00",
+          "added_by": "agent:codex",
+          "locator": "SPEC.md §1 Non-goals, §4.1 type registry and Extensions, full bundle structure",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-477696BD1807",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-F526A53CB69F",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T14:56:18+00:00",
+      "notes": null,
+      "scope": "Open Knowledge Format Version 0.1 Draft as of 2026-07-11",
+      "statement": "OKF v0.1에는 필수 bundle manifest, JSON Schema, 중앙 type registry가 없으며 type taxonomy와 추가 frontmatter는 producer에게 열려 있다.",
+      "supersedes": [],
+      "tags": [
+        "extensions",
+        "manifest",
+        "okf",
+        "schema"
+      ],
+      "valid_at": "2026-07-11"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "preregistered",
+          "primary-author-account",
+          "primary-study",
+          "public-implementation"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 3
+      },
+      "created_at": "2026-07-11T14:31:09+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "README.md: Architecture, Research modes, Output layout",
+          "note": null,
+          "relation": "contextualizes",
+          "source_id": "SRC-1BE9C681A9BA",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "18:28-25:01, V3 wiki layer and progressive query demo",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-1C96ABEBBA41",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T14:32:26+00:00",
+          "added_by": "agent:codex",
+          "locator": "The core idea; Architecture; Operations",
+          "note": "지속 합성 Wiki라는 설계 가설의 1차 제안.",
+          "relation": "supports",
+          "source_id": "SRC-CFB88DDE3FF1",
+          "strength": 2
+        },
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and reported comparison results",
+          "note": "소규모 preprint이므로 일반화 제한.",
+          "relation": "supports",
+          "source_id": "SRC-F73B1F038B37",
+          "strength": 2
+        }
+      ],
+      "freshness": "normal",
+      "id": "CLM-F6367BFF8F35",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "LLM research memory architecture as of 2026-07",
+      "statement": "불변 원문 위의 지속적 합성 Wiki는 원문 검색을 대체하는 것이 아니라 반복 재합성을 줄이는 보완 계층이다.",
+      "supersedes": [],
+      "tags": [
+        "architecture",
+        "persistent-synthesis",
+        "retrieval"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "primary-artifact",
+          "primary-author-account",
+          "public-implementation"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "README.md: presenters, workshop provenance, repository ownership",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-1BE9C681A9BA",
+          "strength": 3
+        },
+        {
+          "added_at": "2026-07-11T14:32:28+00:00",
+          "added_by": "agent:codex",
+          "locator": "00:00-39:32; talk authors and project description",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-1C96ABEBBA41",
+          "strength": 3
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-FBF709C70CCF",
+      "kind": "interpretation",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "source independence clustering",
+      "statement": "같은 제작자 집단의 발표와 구현 저장소는 서로 다른 형식이어도 독립적인 교차검증 두 건으로 세면 안 된다.",
+      "supersedes": [],
+      "tags": [
+        "corroboration",
+        "independence",
+        "source-credibility"
+      ],
+      "valid_at": null
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T14:32:40+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "benchmark",
+          "peer-reviewed",
+          "primary-study"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T14:31:10+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T14:32:27+00:00",
+          "added_by": "agent:codex",
+          "locator": "Abstract and Results reporting 16-27% degradation during multi-turn revision",
+          "note": null,
+          "relation": "supports",
+          "source_id": "SRC-2A53F0CF2080",
+          "strength": 4
+        }
+      ],
+      "freshness": "slow",
+      "id": "CLM-FC9028899EE0",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "notes": null,
+      "scope": "systems and benchmark evaluated in ACL 2026 multi-turn report revision study",
+      "statement": "2026년 한 평가에서 deep-research Agent의 반복 보고서 수정은 기존 내용과 인용 품질의 16~27%를 훼손했다.",
+      "supersedes": [],
+      "tags": [
+        "document-editing",
+        "evaluation",
+        "regression"
+      ],
+      "valid_at": "2026-07"
+    }
+  ],
+  "version": 1
+}

@@ -1,0 +1,195 @@
+{
+  "campaigns": [
+    {
+      "claim_ids": [
+        "CLM-7FDAF2F91E73",
+        "CLM-952258184EF2",
+        "CLM-F526A53CB69F"
+      ],
+      "counter_search_required": true,
+      "created_at": "2026-07-11T14:55:47+00:00",
+      "created_by": "human:owner",
+      "id": "CMP-0619AC235CCA",
+      "interest_id": "INT-SELF-EVOLVING-WIKI",
+      "max_minutes": 45,
+      "max_sources": 4,
+      "notes": [
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T14:56:26+00:00",
+          "text": "공식 Google Cloud 글, SPEC.md, Apache-2.0 source, sample bundle과 reference implementation을 검사했다."
+        },
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T14:56:26+00:00",
+          "text": "wiki/를 전용 OKF v0.1 bundle root로 지정하고 typed frontmatter, 표준 Markdown links, reserved indexes/log, profile mapping, validator와 tests를 구현했다."
+        }
+      ],
+      "priority": 1.0,
+      "question": "Living Wiki의 교환 가능한 지식층을 Open Knowledge Format v0.1 패턴에 맞추려면 control plane과 bundle 경계를 어떻게 정해야 하는가?",
+      "required_independent_groups": 1,
+      "source_ids": [
+        "SRC-064C46D22353",
+        "SRC-477696BD1807"
+      ],
+      "status": "completed",
+      "stop_conditions": [
+        "bundle migration",
+        "validator와 tests",
+        "공식 spec 확인",
+        "보고서 반영"
+      ],
+      "updated_at": "2026-07-11T14:56:26+00:00",
+      "why_now": "사용자가 Wiki 구축 시 OKF 패턴 준수를 추가 요구했다."
+    },
+    {
+      "claim_ids": [],
+      "counter_search_required": true,
+      "created_at": "2026-07-11T14:33:16+00:00",
+      "created_by": "agent:codex",
+      "id": "CMP-088A51571084",
+      "interest_id": "INT-SELF-EVOLVING-WIKI",
+      "max_minutes": 60,
+      "max_sources": 12,
+      "notes": [],
+      "priority": 0.88,
+      "question": "지속 실행 Agent의 memory poisoning과 prompt injection을 실제 fixture로 어떻게 회귀 테스트할 것인가?",
+      "required_independent_groups": 3,
+      "source_ids": [],
+      "status": "queued",
+      "stop_conditions": [
+        "write/retrieve/activate 지표",
+        "격리 runbook",
+        "위협 모델",
+        "최소 공격 fixture"
+      ],
+      "why_now": "현재 보안은 정책과 구조 수준이며 공격 실행 검증이 없다."
+    },
+    {
+      "claim_ids": [],
+      "counter_search_required": true,
+      "created_at": "2026-07-11T14:33:16+00:00",
+      "created_by": "agent:codex",
+      "id": "CMP-76BD99582F70",
+      "interest_id": "INT-SELF-EVOLVING-WIKI",
+      "max_minutes": 60,
+      "max_sources": 15,
+      "notes": [],
+      "priority": 0.95,
+      "question": "C0-C4 파생 레벨은 실제 claim 정확도와 얼마나 보정되어 있으며 도메인별 gate는 어떻게 달라야 하는가?",
+      "required_independent_groups": 3,
+      "source_ids": [],
+      "status": "queued",
+      "stop_conditions": [
+        "gold claim set 100개 설계",
+        "level별 accuracy/Brier/ECE 측정 계획",
+        "도메인별 gate RFC"
+      ],
+      "why_now": "현재 레벨은 근거 기반 설계 규칙일 뿐 empirical calibration이 없다."
+    },
+    {
+      "claim_ids": [],
+      "counter_search_required": true,
+      "created_at": "2026-07-11T14:33:16+00:00",
+      "created_by": "agent:codex",
+      "id": "CMP-7A543D820D83",
+      "interest_id": "INT-SELF-EVOLVING-WIKI",
+      "max_minutes": 60,
+      "max_sources": 15,
+      "notes": [],
+      "priority": 0.9,
+      "question": "검색 품질을 높이기 위해 source registry, retraction 확인, 독립성 clustering, counter-search를 어떻게 자동 평가할 것인가?",
+      "required_independent_groups": 3,
+      "source_ids": [],
+      "status": "queued",
+      "stop_conditions": [
+        "fixture와 attack corpus",
+        "precision/recall 평가 계획",
+        "공식 registry 목록"
+      ],
+      "why_now": "Garbage-in을 막는 admission gate가 현재 수동 평가에 의존한다."
+    },
+    {
+      "claim_ids": [
+        "CLM-1EB8BD726482",
+        "CLM-4A3051A018DC",
+        "CLM-61B3C391010C",
+        "CLM-6DDD53332A40",
+        "CLM-6ED77E226EF7",
+        "CLM-860EB3D6AAEB",
+        "CLM-CB6E34C87DA3",
+        "CLM-CEBC308C15C4",
+        "CLM-D2A1B46809DA",
+        "CLM-DA7C92E9A901",
+        "CLM-DCFACC957266",
+        "CLM-F464CCF0AA1A",
+        "CLM-F6367BFF8F35",
+        "CLM-FBF709C70CCF",
+        "CLM-FC9028899EE0"
+      ],
+      "counter_search_required": true,
+      "created_at": "2026-07-11T14:33:16+00:00",
+      "created_by": "human:owner",
+      "id": "CMP-C31903B13965",
+      "interest_id": "INT-SELF-EVOLVING-WIKI",
+      "max_minutes": 180,
+      "max_sources": 35,
+      "notes": [
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T14:33:31+00:00",
+          "text": "지정 Gist·영상·공개 GitHub와 2026 핵심 연구를 비판적으로 조사하고 v1-v3 하네스를 구현했다."
+        },
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T14:33:31+00:00",
+          "text": "29개 출처, 15개 evidence-linked claim, 보고서, 실행 CLI, 테스트, 연구 큐를 만들었다. 독립 reviewer가 없어 C3/C4는 의도적으로 비워 뒀다."
+        }
+      ],
+      "priority": 1.0,
+      "question": "사람과 Agent가 동등한 기여자로 참여하면서 Agent가 지속적으로 연구·관리하고 신뢰도를 레벨링하는 Wiki 하네스는 어떻게 설계해야 하는가?",
+      "required_independent_groups": 8,
+      "source_ids": [
+        "SRC-08654E066049",
+        "SRC-1BE9C681A9BA",
+        "SRC-1C96ABEBBA41",
+        "SRC-1F603E3131E8",
+        "SRC-25318FE73DEB",
+        "SRC-2779A50E2D01",
+        "SRC-2A53F0CF2080",
+        "SRC-43A6E8A3C217",
+        "SRC-4E9BB033389D",
+        "SRC-55630C70A5F7",
+        "SRC-56255EE4508A",
+        "SRC-62BFE70FD005",
+        "SRC-660F983C8346",
+        "SRC-696A976CE094",
+        "SRC-6D473BE1761E",
+        "SRC-83F06C506C77",
+        "SRC-8908754F8F5E",
+        "SRC-8DAAC6D75C2C",
+        "SRC-A754BF8665D0",
+        "SRC-B6EDC3F41C3A",
+        "SRC-BC899B3F975F",
+        "SRC-C071A29F63E6",
+        "SRC-C204B45C665B",
+        "SRC-C7AAE78B0CC4",
+        "SRC-CB315D66167D",
+        "SRC-CC24B88C8C02",
+        "SRC-CFB88DDE3FF1",
+        "SRC-E42CA8C4BD30",
+        "SRC-F73B1F038B37"
+      ],
+      "status": "completed",
+      "stop_conditions": [
+        "2026 핵심 연구 20개 이상 선별",
+        "v1-v3 실패-개선 연결",
+        "실행 가능한 validator와 tests",
+        "지정 자료 분석 완료"
+      ],
+      "updated_at": "2026-07-11T14:33:31+00:00",
+      "why_now": "사용자가 지정한 초기 시스템 구축 목표"
+    }
+  ],
+  "version": 1
+}
