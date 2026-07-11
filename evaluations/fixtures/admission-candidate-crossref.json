@@ -1,0 +1,23 @@
+{
+  "id": "CAND-CROSSREF-RETRACTION-WATCH",
+  "title": "Crossref Retraction Watch production data documentation",
+  "url": "https://www.crossref.org/documentation/retrieve-metadata/retraction-watch/",
+  "provenance_verified": true,
+  "registry_required": false,
+  "counter_search": {
+    "checks": [
+      {
+        "dimension": "origin",
+        "completed": true
+      },
+      {
+        "dimension": "status",
+        "completed": true
+      },
+      {
+        "dimension": "contradiction",
+        "completed": true
+      }
+    ]
+  }
+}

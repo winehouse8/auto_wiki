@@ -62,6 +62,39 @@
     {
       "artifact": null,
       "assessment": {
+        "assessed_at": "2026-07-11T15:57:39+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "service-operator"
+        ],
+        "quality_markers": [
+          "biomedical-registry",
+          "official",
+          "primary-source",
+          "public-api"
+        ],
+        "rationale": "PubMed와 PMC를 운영하는 NCBI가 E-utilities의 범위와 접근 방식을 직접 명시한 공식 문서다. 평가 범위는 biomedical metadata retrieval adapter에 한정한다."
+      },
+      "authors": [
+        "National Center for Biotechnology Information"
+      ],
+      "id": "SRC-0C6123529E07",
+      "independence_group": "ncbi-eutilities-official",
+      "license": null,
+      "notes": "2026-07-12 조회; online adapter 결과는 cache timestamp와 함께 advisory로만 사용한다.",
+      "publication_status": "living official documentation",
+      "published_at": null,
+      "publisher": "National Center for Biotechnology Information",
+      "retrieved_at": "2026-07-11T15:57:39+00:00",
+      "source_level": "S4",
+      "source_type": "official-doc",
+      "status": "active",
+      "title": "NCBI public APIs and Entrez E-utilities",
+      "url": "https://www.ncbi.nlm.nih.gov/home/develop/api/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
         "assessed_at": "2026-07-11T14:28:47+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [],
@@ -147,6 +180,38 @@
       "status": "active",
       "title": "UMEM: Unified Memory Extraction and Management Framework for Generalizable Memory",
       "url": "https://openreview.net/forum?id=BoiXvrwtdi"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T15:24:07+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "product-owner"
+        ],
+        "quality_markers": [
+          "official",
+          "primary-source",
+          "version-sensitive"
+        ],
+        "rationale": "Codex의 AGENTS.md 탐색·결합·재로딩 동작을 직접 명시하는 제품 제작자의 공식 문서다. 이 평가 등급은 해당 제품 동작 범위에만 적용하며 장기 안정성이나 규범적 우월성을 뜻하지 않는다."
+      },
+      "authors": [
+        "OpenAI"
+      ],
+      "id": "SRC-228828E53C40",
+      "independence_group": "openai-codex-official-docs",
+      "license": null,
+      "notes": "2026-07-12 조회. 공식 URL은 현재 learn.chatgpt.com 문서로 리디렉션된다.",
+      "publication_status": "living official documentation",
+      "published_at": null,
+      "publisher": "OpenAI",
+      "retrieved_at": "2026-07-11T15:24:07+00:00",
+      "source_level": "S4",
+      "source_type": "official-doc",
+      "status": "active",
+      "title": "OpenAI Codex: Custom instructions with AGENTS.md",
+      "url": "https://developers.openai.com/codex/guides/agents-md"
     },
     {
       "artifact": null,
@@ -328,6 +393,39 @@
       "status": "active",
       "title": "Dissecting GraphRAG",
       "url": "https://aclanthology.org/2026.tacl-1.29/"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T15:57:39+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "service-operator"
+        ],
+        "quality_markers": [
+          "commit-provenance",
+          "official",
+          "primary-source",
+          "versioned-api"
+        ],
+        "rationale": "GitHub가 commit 조회 응답의 immutable SHA와 signature verification 필드를 직접 기술한 공식 API 문서다. 평가 범위는 code source version pinning과 verification metadata에 한정한다."
+      },
+      "authors": [
+        "GitHub"
+      ],
+      "id": "SRC-4F5AF5EE0ADB",
+      "independence_group": "github-rest-commit-official",
+      "license": null,
+      "notes": "2026-07-12 조회; online adapter 결과는 cache timestamp와 함께 advisory로만 사용한다.",
+      "publication_status": "living official documentation",
+      "published_at": null,
+      "publisher": "GitHub",
+      "retrieved_at": "2026-07-11T15:57:39+00:00",
+      "source_level": "S4",
+      "source_type": "official-doc",
+      "status": "active",
+      "title": "GitHub REST API endpoints for commits",
+      "url": "https://docs.github.com/en/rest/commits/commits"
     },
     {
       "artifact": null,
@@ -580,6 +678,39 @@
       "status": "active",
       "title": "A Mechanistic View of Authority Hierarchy in LLM Sycophancy",
       "url": "https://arxiv.org/abs/2607.00415"
+    },
+    {
+      "artifact": null,
+      "assessment": {
+        "assessed_at": "2026-07-11T15:57:39+00:00",
+        "assessed_by": "agent:codex",
+        "conflicts_of_interest": [
+          "service-operator"
+        ],
+        "quality_markers": [
+          "integrity-registry",
+          "official",
+          "primary-source",
+          "production-api"
+        ],
+        "rationale": "Crossref production services에서 Retraction Watch 상태 데이터의 접근 경로와 update-to/source 필드를 직접 명시하는 공식 문서다. 평가 범위는 scholarly publication status lookup에 한정한다."
+      },
+      "authors": [
+        "Crossref"
+      ],
+      "id": "SRC-920AB22F540A",
+      "independence_group": "crossref-retraction-watch-official",
+      "license": null,
+      "notes": "2026-07-12 조회; online adapter 결과는 cache timestamp와 함께 advisory로만 사용한다.",
+      "publication_status": "living official documentation",
+      "published_at": null,
+      "publisher": "Crossref",
+      "retrieved_at": "2026-07-11T15:57:39+00:00",
+      "source_level": "S4",
+      "source_type": "official-doc",
+      "status": "active",
+      "title": "Crossref Retraction Watch production data documentation",
+      "url": "https://www.crossref.org/documentation/retrieve-metadata/retraction-watch/"
     },
     {
       "artifact": null,

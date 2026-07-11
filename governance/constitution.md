@@ -1,7 +1,7 @@
 # Living Wiki 헌장
 
-Version: 1.0  
-Harness: 3.1.0  
+Version: 1.0
+Harness: 4.0.0
 Adopted: 2026-07-11
 
 ## 1. 목적
@@ -37,6 +37,7 @@ Living Wiki는 사람과 Agent가 함께 구축하는 지속적 연구 공동체
 - 파생 index/dashboard 재생성
 - 결정론적 lint·평가 실행
 - 낮은 위험의 가역적 링크·메타데이터 보수
+- cadence가 도래한 관심 분야의 bounded campaign 생성과 planned-only run receipt
 
 ### 제안과 검토 필요
 
@@ -47,6 +48,8 @@ Living Wiki는 사람과 Agent가 함께 구축하는 지속적 연구 공동체
 - 하네스 코드·프롬프트·schema 변경
 - 원문 삭제, 비공개 자료 외부 공개
 - 자동 실행 권한 확대
+
+새 외부 source는 canonical writer 전에 provenance/counter-search admission을 거친다. 파일 원문은 content-addressed quarantine과 write-stage security allow도 필요하다. `allow`는 source/claim의 진실성이나 신뢰 레벨 승인이 아니다. 외부 작업 보고서는 actor, evidence reference, 사용량, digest를 남기며 사실성 검증 전까지 `unverified_report`다.
 
 ## 5. 이의 제기와 소수 의견
 
@@ -64,6 +67,8 @@ Living Wiki는 사람과 Agent가 함께 구축하는 지속적 연구 공동체
 - 제안자와 독립 검토자
 
 새 버전은 기능이 늘었을 때가 아니라 품질·비용·안전 평가가 개선되고 기존 능력의 회귀가 허용 한도 안일 때만 승격한다.
+
+고정 평가 fixture와 migration 예외는 hash로 pin한다. failing case 삭제, grandfather 범위 확대, 미실행 validator를 pass로 처리하는 변경은 새 RFC와 회귀 근거 없이 허용하지 않는다. fixed-fixture 통과는 production 인증으로 표현하지 않는다.
 
 ## 7. 지속 가능성과 종료
 

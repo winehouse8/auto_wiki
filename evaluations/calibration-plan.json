@@ -1,0 +1,57 @@
+{
+  "schema_version": "living-wiki-calibration-plan/v1",
+  "status": "designed_not_yet_fully_adjudicated",
+  "target_records": 100,
+  "purpose": "Measure observed benchmark correctness conditional on ordinal C-level and domain without redefining C0-C4 as probabilities.",
+  "domain_quotas": {
+    "peer_reviewed_science": 20,
+    "software_and_product_versions": 20,
+    "law_policy_and_official_records": 15,
+    "practitioner_experience": 15,
+    "time_sensitive_public_facts": 15,
+    "contested_or_adversarial_claims": 15
+  },
+  "level_quotas": {
+    "C0": 20,
+    "C1": 20,
+    "C2": 20,
+    "C3": 20,
+    "C4": 20
+  },
+  "gold_labels": [
+    "supported",
+    "contradicted",
+    "mixed",
+    "insufficient",
+    "obsolete"
+  ],
+  "sampling_constraints": {
+    "maximum_fraction_from_current_wiki": 0.25,
+    "minimum_fraction_with_counter_evidence": 0.25,
+    "minimum_fraction_time_bounded": 0.2,
+    "minimum_independent_adjudicator_groups": 2,
+    "same_model_sessions_count_as_independent": false
+  },
+  "adjudication": {
+    "strict_majority_required": true,
+    "disputes_retained": true,
+    "benchmark_corrections_append_only": true,
+    "author_kind_hidden_during_judgment": true,
+    "required_locator_audit": true
+  },
+  "reported_metrics": [
+    "P(correct | C-level, domain) with Wilson interval",
+    "prediction and adjudication coverage",
+    "citation entailment accuracy",
+    "exact-locator accuracy",
+    "counter-evidence recall",
+    "independence-clustering precision and recall",
+    "stale/retraction detection latency"
+  ],
+  "release_interpretation": {
+    "pilot_fixture_is_certification": false,
+    "c_levels_are_probabilities": false,
+    "automatic_gate_changes_allowed": false,
+    "policy_change_requires_new_rfc_and_human_approval": true
+  }
+}

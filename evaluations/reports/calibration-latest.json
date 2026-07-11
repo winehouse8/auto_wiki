@@ -1,0 +1,855 @@
+{
+  "admission": {
+    "counts": {
+      "allow": 2,
+      "reject": 2,
+      "review": 4
+    },
+    "decisions": [
+      {
+        "candidate_id": "CAND-BAD-IDENTIFIER",
+        "canonical_identifiers": [],
+        "counter_search": {
+          "completed": [],
+          "coverage": 0.0,
+          "missing": [
+            "contradiction",
+            "origin",
+            "status"
+          ],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "reject",
+        "independence_cluster": {
+          "cluster_id": "IC-EA1EE22BF810",
+          "members": [
+            "CAND-BAD-IDENTIFIER"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "invalid_identifier",
+            "detail": "URL must be absolute HTTP(S): not-an-absolute-url"
+          },
+          {
+            "code": "invalid_identifier",
+            "detail": "no canonical URL, DOI, repository, or content hash"
+          },
+          {
+            "code": "counter_search_incomplete",
+            "detail": "missing: contradiction, origin, status"
+          },
+          {
+            "code": "provenance_unverified",
+            "detail": "provenance_verified must be explicitly true"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [],
+          "status": "not_checked_invalid"
+        }
+      },
+      {
+        "candidate_id": "CAND-CLEAN",
+        "canonical_identifiers": [
+          "url:https://data.example.net/report?version=1"
+        ],
+        "counter_search": {
+          "completed": [
+            "contradiction",
+            "origin",
+            "status"
+          ],
+          "coverage": 1.0,
+          "missing": [],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "allow",
+        "independence_cluster": {
+          "cluster_id": "IC-51770E204C8F",
+          "members": [
+            "CAND-CLEAN"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "minimum_gate_satisfied",
+            "detail": "identity, provenance, status policy, and counter-search checks passed"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [],
+          "status": "not_found"
+        }
+      },
+      {
+        "candidate_id": "CAND-CORRECTED",
+        "canonical_identifiers": [
+          "doi:10.5555/corrected.2"
+        ],
+        "counter_search": {
+          "completed": [
+            "contradiction",
+            "origin",
+            "status"
+          ],
+          "coverage": 1.0,
+          "missing": [],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "review",
+        "independence_cluster": {
+          "cluster_id": "IC-3B186581A7BD",
+          "members": [
+            "CAND-CORRECTED"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "registry_requires_review",
+            "detail": "corrected"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [
+            {
+              "detail": "offline correction control",
+              "identifier": "doi:10.5555/corrected.2",
+              "status": "corrected"
+            }
+          ],
+          "status": "corrected"
+        }
+      },
+      {
+        "candidate_id": "CAND-DERIVED",
+        "canonical_identifiers": [
+          "url:https://news.example.com/project-result"
+        ],
+        "counter_search": {
+          "completed": [
+            "contradiction",
+            "origin",
+            "status"
+          ],
+          "coverage": 1.0,
+          "missing": [],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "review",
+        "independence_cluster": {
+          "cluster_id": "IC-CD1177D2E18E",
+          "members": [
+            "CAND-DERIVED",
+            "SRC-ORIGIN-RELEASE"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "derived_independence_collision",
+            "detail": "SRC-ORIGIN-RELEASE"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [],
+          "status": "not_found"
+        }
+      },
+      {
+        "candidate_id": "CAND-DUPLICATE",
+        "canonical_identifiers": [
+          "doi:10.1000/alpha"
+        ],
+        "counter_search": {
+          "completed": [
+            "contradiction",
+            "origin",
+            "status"
+          ],
+          "coverage": 1.0,
+          "missing": [],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "review",
+        "independence_cluster": {
+          "cluster_id": "IC-673EA60F6298",
+          "members": [
+            "CAND-DUPLICATE",
+            "SRC-EXISTING-PAPER"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "duplicate_existing_source",
+            "detail": "SRC-EXISTING-PAPER"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [
+            {
+              "detail": "offline active control",
+              "identifier": "doi:10.1000/alpha",
+              "status": "active"
+            }
+          ],
+          "status": "active"
+        }
+      },
+      {
+        "candidate_id": "CAND-MISSING-COUNTER",
+        "canonical_identifiers": [
+          "url:https://blog.example.com/account"
+        ],
+        "counter_search": {
+          "completed": [
+            "origin"
+          ],
+          "coverage": 0.333333,
+          "missing": [
+            "contradiction",
+            "status"
+          ],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "review",
+        "independence_cluster": {
+          "cluster_id": "IC-6A10D7D56F6B",
+          "members": [
+            "CAND-MISSING-COUNTER"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "counter_search_incomplete",
+            "detail": "missing: contradiction, status"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [],
+          "status": "not_found"
+        }
+      },
+      {
+        "candidate_id": "CAND-REPOSITORY",
+        "canonical_identifiers": [
+          "repository:https://github.com/example/new-tool"
+        ],
+        "counter_search": {
+          "completed": [
+            "contradiction",
+            "origin",
+            "status"
+          ],
+          "coverage": 1.0,
+          "missing": [],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "allow",
+        "independence_cluster": {
+          "cluster_id": "IC-B3522078E719",
+          "members": [
+            "CAND-REPOSITORY"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "minimum_gate_satisfied",
+            "detail": "identity, provenance, status policy, and counter-search checks passed"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [],
+          "status": "not_found"
+        }
+      },
+      {
+        "candidate_id": "CAND-RETRACTED",
+        "canonical_identifiers": [
+          "doi:10.5555/retracted.1"
+        ],
+        "counter_search": {
+          "completed": [
+            "contradiction",
+            "origin",
+            "status"
+          ],
+          "coverage": 1.0,
+          "missing": [],
+          "required": [
+            "contradiction",
+            "origin",
+            "status"
+          ]
+        },
+        "decision": "reject",
+        "independence_cluster": {
+          "cluster_id": "IC-55311BA7E95D",
+          "members": [
+            "CAND-RETRACTED"
+          ]
+        },
+        "reasons": [
+          {
+            "code": "registry_terminal_status",
+            "detail": "retracted"
+          }
+        ],
+        "registry": {
+          "adapter": "offline-fixture-registry",
+          "matches": [
+            {
+              "detail": "offline retraction control",
+              "identifier": "doi:10.5555/retracted.1",
+              "status": "retracted"
+            }
+          ],
+          "status": "retracted"
+        }
+      }
+    ],
+    "policy_effect": "advisory_only"
+  },
+  "benchmark_sha256": "7d3674bb803f1f23bf67c1191d3b017f3b22df1b5a2d26fe6eedda9b3726782d",
+  "calibration": {
+    "adjudication": [
+      {
+        "id": "GOLD-001",
+        "label": "insufficient",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-002",
+        "label": "contradicted",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-003",
+        "label": "supported",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-004",
+        "label": "mixed",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-005",
+        "label": "obsolete",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-006",
+        "label": null,
+        "reason": "benchmark_marked_disputed",
+        "status": "disputed"
+      },
+      {
+        "id": "GOLD-007",
+        "label": "supported",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-008",
+        "label": "insufficient",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-009",
+        "label": "contradicted",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-010",
+        "label": "supported",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-011",
+        "label": "mixed",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-012",
+        "label": "obsolete",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-013",
+        "label": "insufficient",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-014",
+        "label": "contradicted",
+        "reason": "strict_majority",
+        "status": "resolved"
+      },
+      {
+        "id": "GOLD-015",
+        "label": "supported",
+        "reason": "strict_majority",
+        "status": "resolved"
+      }
+    ],
+    "by_domain": {
+      "policy": {
+        "correct": 3,
+        "n": 4,
+        "p_correct": 0.75,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.300642,
+          0.954413
+        ]
+      },
+      "science": {
+        "correct": 3,
+        "n": 4,
+        "p_correct": 0.75,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.300642,
+          0.954413
+        ]
+      },
+      "software": {
+        "correct": 4,
+        "n": 5,
+        "p_correct": 0.8,
+        "small_n": false,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.375535,
+          0.963776
+        ]
+      }
+    },
+    "by_level": {
+      "C0": {
+        "correct": 3,
+        "n": 3,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.438503,
+          1.0
+        ]
+      },
+      "C1": {
+        "correct": 1,
+        "n": 2,
+        "p_correct": 0.5,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.094531,
+          0.905469
+        ]
+      },
+      "C2": {
+        "correct": 2,
+        "n": 2,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.34238,
+          1.0
+        ]
+      },
+      "C3": {
+        "correct": 1,
+        "n": 3,
+        "p_correct": 0.333333,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.061492,
+          0.79234
+        ]
+      },
+      "C4": {
+        "correct": 3,
+        "n": 3,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.438503,
+          1.0
+        ]
+      }
+    },
+    "coverage": {
+      "abstained_resolved_records": 1,
+      "disputed_records": 1,
+      "prediction_coverage_of_resolved": 0.928571,
+      "resolved_gold_records": 14,
+      "scorable_records": 13,
+      "total_records": 15
+    },
+    "interpretation": {
+      "c_levels_are_probabilities": false,
+      "conditional_rate_is": "observed benchmark correctness given assigned ordinal level and domain",
+      "scale": "C0-C4 ordinal evidence-maturity level",
+      "warning": "Never assign or promote a C-level from p_correct; use the existing trust-policy gates."
+    },
+    "overall": {
+      "correct": 10,
+      "n": 13,
+      "p_correct": 0.769231,
+      "small_n": false,
+      "small_n_threshold": 5,
+      "wilson_95": [
+        0.497436,
+        0.918205
+      ]
+    },
+    "p_correct_given_level_domain": [
+      {
+        "correct": 1,
+        "domain": "policy",
+        "level": "C0",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "science",
+        "level": "C0",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "software",
+        "level": "C0",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "policy",
+        "level": "C1",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 0,
+        "domain": "science",
+        "level": "C1",
+        "n": 0,
+        "p_correct": null,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": null
+      },
+      {
+        "correct": 0,
+        "domain": "software",
+        "level": "C1",
+        "n": 1,
+        "p_correct": 0.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.0,
+          0.793451
+        ]
+      },
+      {
+        "correct": 0,
+        "domain": "policy",
+        "level": "C2",
+        "n": 0,
+        "p_correct": null,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": null
+      },
+      {
+        "correct": 1,
+        "domain": "science",
+        "level": "C2",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "software",
+        "level": "C2",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 0,
+        "domain": "policy",
+        "level": "C3",
+        "n": 1,
+        "p_correct": 0.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.0,
+          0.793451
+        ]
+      },
+      {
+        "correct": 0,
+        "domain": "science",
+        "level": "C3",
+        "n": 1,
+        "p_correct": 0.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.0,
+          0.793451
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "software",
+        "level": "C3",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "policy",
+        "level": "C4",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "science",
+        "level": "C4",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      },
+      {
+        "correct": 1,
+        "domain": "software",
+        "level": "C4",
+        "n": 1,
+        "p_correct": 1.0,
+        "small_n": true,
+        "small_n_threshold": 5,
+        "wilson_95": [
+          0.206549,
+          1.0
+        ]
+      }
+    ]
+  },
+  "independence": {
+    "cluster_count": 9,
+    "clusters": [
+      {
+        "cluster_id": "IC-EA1EE22BF810",
+        "links": [],
+        "members": [
+          "CAND-BAD-IDENTIFIER"
+        ]
+      },
+      {
+        "cluster_id": "IC-51770E204C8F",
+        "links": [],
+        "members": [
+          "CAND-CLEAN"
+        ]
+      },
+      {
+        "cluster_id": "IC-3B186581A7BD",
+        "links": [],
+        "members": [
+          "CAND-CORRECTED"
+        ]
+      },
+      {
+        "cluster_id": "IC-CD1177D2E18E",
+        "links": [
+          {
+            "left": "CAND-DERIVED",
+            "reason": "explicit_derived_from",
+            "right": "SRC-ORIGIN-RELEASE"
+          }
+        ],
+        "members": [
+          "CAND-DERIVED",
+          "SRC-ORIGIN-RELEASE"
+        ]
+      },
+      {
+        "cluster_id": "IC-673EA60F6298",
+        "links": [
+          {
+            "left": "CAND-DUPLICATE",
+            "reason": "shared_identity:doi:10.1000/alpha",
+            "right": "SRC-EXISTING-PAPER"
+          }
+        ],
+        "members": [
+          "CAND-DUPLICATE",
+          "SRC-EXISTING-PAPER"
+        ]
+      },
+      {
+        "cluster_id": "IC-6A10D7D56F6B",
+        "links": [],
+        "members": [
+          "CAND-MISSING-COUNTER"
+        ]
+      },
+      {
+        "cluster_id": "IC-B3522078E719",
+        "links": [],
+        "members": [
+          "CAND-REPOSITORY"
+        ]
+      },
+      {
+        "cluster_id": "IC-55311BA7E95D",
+        "links": [],
+        "members": [
+          "CAND-RETRACTED"
+        ]
+      },
+      {
+        "cluster_id": "IC-EB5D7D9E12E2",
+        "links": [],
+        "members": [
+          "SRC-EXISTING-REPO"
+        ]
+      }
+    ],
+    "identity_errors": [
+      {
+        "error": "URL must be absolute HTTP(S): not-an-absolute-url",
+        "source_id": "CAND-BAD-IDENTIFIER"
+      }
+    ],
+    "membership": {
+      "CAND-BAD-IDENTIFIER": "IC-EA1EE22BF810",
+      "CAND-CLEAN": "IC-51770E204C8F",
+      "CAND-CORRECTED": "IC-3B186581A7BD",
+      "CAND-DERIVED": "IC-CD1177D2E18E",
+      "CAND-DUPLICATE": "IC-673EA60F6298",
+      "CAND-MISSING-COUNTER": "IC-6A10D7D56F6B",
+      "CAND-REPOSITORY": "IC-B3522078E719",
+      "CAND-RETRACTED": "IC-55311BA7E95D",
+      "SRC-EXISTING-PAPER": "IC-673EA60F6298",
+      "SRC-EXISTING-REPO": "IC-EB5D7D9E12E2",
+      "SRC-ORIGIN-RELEASE": "IC-CD1177D2E18E"
+    },
+    "source_count": 11,
+    "warning": "Heuristic origin clusters require human review before changing canonical independence_group."
+  },
+  "schema_version": "living-wiki-calibration-report/v1",
+  "trust_policy_mutated": false
+}

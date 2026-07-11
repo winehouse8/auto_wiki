@@ -43,7 +43,9 @@
       "why_now": "사용자가 Wiki 구축 시 OKF 패턴 준수를 추가 요구했다."
     },
     {
-      "claim_ids": [],
+      "claim_ids": [
+        "CLM-61B3C391010C"
+      ],
       "counter_search_required": true,
       "created_at": "2026-07-11T14:33:16+00:00",
       "created_by": "agent:codex",
@@ -51,18 +53,39 @@
       "interest_id": "INT-SELF-EVOLVING-WIKI",
       "max_minutes": 60,
       "max_sources": 12,
-      "notes": [],
+      "notes": [
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T15:58:03+00:00",
+          "text": "Calibration and admission gates complete; poisoning/security fixture integration phase started."
+        },
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T16:07:58+00:00",
+          "text": "Security gate completed: immutable content-addressed quarantine contract, separated normalized artifact, explainable write/retrieve/activate decisions, 31-case fixed corpus (18 attacks, 13 benign), zero automatic attack allows and zero forced benign rejections. This is a deterministic lexical baseline, not complete production security."
+        },
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T16:20:50+00:00",
+          "text": "Linked the campaign to the C2 memory-poisoning gate claim and three primary security research sources; the fixed lexical corpus remains regression evidence rather than an independent empirical source."
+        }
+      ],
       "priority": 0.88,
       "question": "지속 실행 Agent의 memory poisoning과 prompt injection을 실제 fixture로 어떻게 회귀 테스트할 것인가?",
       "required_independent_groups": 3,
-      "source_ids": [],
-      "status": "queued",
+      "source_ids": [
+        "SRC-2779A50E2D01",
+        "SRC-6D473BE1761E",
+        "SRC-A754BF8665D0"
+      ],
+      "status": "completed",
       "stop_conditions": [
         "write/retrieve/activate 지표",
         "격리 runbook",
         "위협 모델",
         "최소 공격 fixture"
       ],
+      "updated_at": "2026-07-11T16:20:50+00:00",
       "why_now": "현재 보안은 정책과 구조 수준이며 공격 실행 검증이 없다."
     },
     {
@@ -74,21 +97,42 @@
       "interest_id": "INT-SELF-EVOLVING-WIKI",
       "max_minutes": 60,
       "max_sources": 15,
-      "notes": [],
+      "notes": [
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T15:44:13+00:00",
+          "text": "RFC-69828EB38078 구현을 시작했다. 먼저 ordinal calibration fixture와 source admission baseline을 구축하고 고정 report를 생성한다."
+        },
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T15:57:09+00:00",
+          "text": "Calibration harness completed: frozen 15-case pilot, 100-record quota design, Wilson intervals, disputed benchmark handling, no automatic trust-policy mutation. Pilot p_correct=0.769231 (10/13, 95% Wilson 0.497436-0.918205) is baseline evidence, not certification."
+        }
+      ],
       "priority": 0.95,
       "question": "C0-C4 파생 레벨은 실제 claim 정확도와 얼마나 보정되어 있으며 도메인별 gate는 어떻게 달라야 하는가?",
       "required_independent_groups": 3,
+      "runtime": {
+        "last_run_at": "2026-07-11T15:56:57+00:00",
+        "used_minutes": 15,
+        "used_sources": 1
+      },
       "source_ids": [],
-      "status": "queued",
+      "status": "completed",
       "stop_conditions": [
         "gold claim set 100개 설계",
         "level별 accuracy/Brier/ECE 측정 계획",
         "도메인별 gate RFC"
       ],
+      "updated_at": "2026-07-11T16:07:51+00:00",
       "why_now": "현재 레벨은 근거 기반 설계 규칙일 뿐 empirical calibration이 없다."
     },
     {
-      "claim_ids": [],
+      "claim_ids": [
+        "CLM-99AE239A5BA3",
+        "CLM-A49ACF085321",
+        "CLM-F2BB537122FE"
+      ],
       "counter_search_required": true,
       "created_at": "2026-07-11T14:33:16+00:00",
       "created_by": "agent:codex",
@@ -96,17 +140,33 @@
       "interest_id": "INT-SELF-EVOLVING-WIKI",
       "max_minutes": 60,
       "max_sources": 15,
-      "notes": [],
+      "notes": [
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T15:57:09+00:00",
+          "text": "Calibration gate completed; source admission/status registry/independence clustering integration phase started."
+        },
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-11T15:58:03+00:00",
+          "text": "Source admission baseline completed: canonical URL/DOI/repository identity, conservative derived-source clustering, Crossref/NCBI/GitHub official adapter contracts, status registry fixture, counter-search coverage, advisory allow-review-reject. Duplicate Crossref candidate correctly routed to review; canonical independence_group was not auto-mutated."
+        }
+      ],
       "priority": 0.9,
       "question": "검색 품질을 높이기 위해 source registry, retraction 확인, 독립성 clustering, counter-search를 어떻게 자동 평가할 것인가?",
       "required_independent_groups": 3,
-      "source_ids": [],
-      "status": "queued",
+      "source_ids": [
+        "SRC-0C6123529E07",
+        "SRC-4F5AF5EE0ADB",
+        "SRC-920AB22F540A"
+      ],
+      "status": "completed",
       "stop_conditions": [
         "fixture와 attack corpus",
         "precision/recall 평가 계획",
         "공식 registry 목록"
       ],
+      "updated_at": "2026-07-11T15:58:03+00:00",
       "why_now": "Garbage-in을 막는 admission gate가 현재 수동 평가에 의존한다."
     },
     {

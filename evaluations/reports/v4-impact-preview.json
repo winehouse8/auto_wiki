@@ -1,0 +1,243 @@
+{
+  "dependency_edges": [],
+  "direct_targets": [
+    "CMP-76BD99582F70",
+    "RFC-69828EB38078"
+  ],
+  "impacted": {
+    "campaigns": [
+      "CMP-76BD99582F70"
+    ],
+    "claims": [],
+    "sources": []
+  },
+  "schema_version": 1,
+  "semantic_conflict_candidates": [
+    {
+      "doc_id": "wiki:wiki/governance/rfc-69828eb38078.md",
+      "reasons": [
+        "polarity_mismatch"
+      ],
+      "score": 38.005469886456,
+      "status": "candidate_requires_review"
+    },
+    {
+      "doc_id": "claim:CLM-61B3C391010C",
+      "reasons": [
+        "polarity_mismatch"
+      ],
+      "score": 12.956635887251,
+      "status": "candidate_requires_review"
+    },
+    {
+      "doc_id": "campaign:CMP-76BD99582F70",
+      "reasons": [
+        "polarity_mismatch"
+      ],
+      "score": 12.71690653913,
+      "status": "candidate_requires_review"
+    }
+  ],
+  "semantic_matches": [
+    {
+      "doc_id": "wiki:wiki/governance/rfc-69828eb38078.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "additive",
+        "admission",
+        "bounded",
+        "calibration",
+        "collaboration",
+        "gate",
+        "runner",
+        "runtime",
+        "schema",
+        "security",
+        "source",
+        "도입한다"
+      ],
+      "metadata": {
+        "path": "wiki/governance/rfc-69828eb38078.md",
+        "untrusted": true
+      },
+      "score": 38.005469886456,
+      "snippet": "--- type: \"Harness Proposal\" title: \"RFC-69828EB38078: Living Wiki v4 closed-loop harness\" description: \"v3.1은 근거 원장과 OKF projection은 갖췄지만 calibration, source admission 자동 평가, poisoning 회귀검사, 인간 commitment/review queue, bounded runner와 release orchestration이 연결되지 않아 자가진화 루프가 실제로 "
+    },
+    {
+      "doc_id": "wiki:wiki/governance/index.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "admission",
+        "bounded",
+        "calibration",
+        "runner",
+        "source"
+      ],
+      "metadata": {
+        "path": "wiki/governance/index.md",
+        "untrusted": true
+      },
+      "score": 17.32563080985,
+      "snippet": "# Governance * [Living Wiki constitution](constitution.md) - Actor parity, epistemic rules, authority boundaries, and self-evolution policy. * [Living Wiki decision log](decision-log.md) - Architectural decisions and their explicit rationale. * [RFC-69828EB38078: Living Wiki v4 c"
+    },
+    {
+      "doc_id": "claim:CLM-61B3C391010C",
+      "kind": "claim",
+      "matched_terms": [
+        "admission",
+        "gate",
+        "security",
+        "source"
+      ],
+      "metadata": {
+        "origin": "state/claims.json",
+        "ref": "CLM-61B3C391010C"
+      },
+      "score": 12.956635887251,
+      "snippet": "CLM-61B3C391010C 지속 메모리를 쓰는 Agent는 수집 시점과 검색 시점 모두에 오염 방지 gate가 필요하다. persistent agent memory security interpretation admission-gate memory-poisoning security False 2026-07-11T14:32:40+00:00 0 0 C2 0 benchmark peer-reviewed primary-study security-evaluation at least one traceable"
+    },
+    {
+      "doc_id": "campaign:CMP-76BD99582F70",
+      "kind": "campaign",
+      "matched_terms": [
+        "admission",
+        "calibration",
+        "gate",
+        "source"
+      ],
+      "metadata": {
+        "origin": "state/campaigns.json",
+        "ref": "CMP-76BD99582F70"
+      },
+      "score": 12.71690653913,
+      "snippet": "CMP-76BD99582F70 C0-C4 파생 레벨은 실제 claim 정확도와 얼마나 보정되어 있으며 도메인별 gate는 어떻게 달라야 하는가? 현재 레벨은 근거 기반 설계 규칙일 뿐 empirical calibration이 없다. agent:codex 2026-07-11T15:44:13+00:00 RFC-69828EB38078 구현을 시작했다. 먼저 ordinal calibration fixture와 source admission baseline을 구축하고 고정 report를 생성한다. gold"
+    },
+    {
+      "doc_id": "wiki:wiki/open-questions.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "admission",
+        "calibration",
+        "collaboration",
+        "gate",
+        "source"
+      ],
+      "metadata": {
+        "path": "wiki/open-questions.md",
+        "untrusted": true
+      },
+      "score": 9.382345887891,
+      "snippet": "--- type: Research Queue title: Open questions description: 정보 이득과 위험을 기준으로 정렬한 Living Wiki의 미해결 연구 질문. tags: [research-queue, open-questions] timestamp: '2026-07-11T23:40:00+09:00' --- # Open questions 우선순위는 정보 이득, 사용자 관심도, 위험, 최신성, 비용으로 정한다. ## P0 — Confidence calibration - C0–"
+    },
+    {
+      "doc_id": "wiki:wiki/concepts/source-discovery-and-admission.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "admission",
+        "gate",
+        "security",
+        "source"
+      ],
+      "metadata": {
+        "path": "wiki/concepts/source-discovery-and-admission.md",
+        "untrusted": true
+      },
+      "score": 9.153269966708,
+      "snippet": "--- type: Concept title: Source discovery and admission description: Source ladder, messenger/message assessment, counter-search, and poisoning-resistant admission. tags: [source-quality, admission, security, search] timestamp: '2026-07-11T23:40:00+09:00' claim_ids: [CLM-860EB3D6"
+    },
+    {
+      "doc_id": "campaign:CMP-7A543D820D83",
+      "kind": "campaign",
+      "matched_terms": [
+        "admission",
+        "gate",
+        "source"
+      ],
+      "metadata": {
+        "origin": "state/campaigns.json",
+        "ref": "CMP-7A543D820D83"
+      },
+      "score": 7.438810991055,
+      "snippet": "CMP-7A543D820D83 검색 품질을 높이기 위해 source registry, retraction 확인, 독립성 clustering, counter-search를 어떻게 자동 평가할 것인가? Garbage-in을 막는 admission gate가 현재 수동 평가에 의존한다. fixture와 attack corpus precision/recall 평가 계획 공식 registry 목록 queued"
+    },
+    {
+      "doc_id": "wiki:wiki/campaigns/cmp-76bd99582f70.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "calibration",
+        "gate"
+      ],
+      "metadata": {
+        "path": "wiki/campaigns/cmp-76bd99582f70.md",
+        "untrusted": true
+      },
+      "score": 7.238269100306,
+      "snippet": "--- type: \"Research Campaign\" title: \"CMP-76BD99582F70\" description: \"C0-C4 파생 레벨은 실제 claim 정확도와 얼마나 보정되어 있으며 도메인별 gate는 어떻게 달라야 하는가?\" tags: [\"research-campaign\", \"active\", \"INT-SELF-EVOLVING-WIKI\"] timestamp: \"2026-07-11T15:44:13+00:00\" campaign_id: \"CMP-76BD99582F70\" generated:"
+    },
+    {
+      "doc_id": "wiki:wiki/synthesis.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "admission",
+        "bounded",
+        "calibration",
+        "gate",
+        "source"
+      ],
+      "metadata": {
+        "path": "wiki/synthesis.md",
+        "untrusted": true
+      },
+      "score": 7.200100146464,
+      "snippet": "--- type: Synthesis title: 문서 저장소가 아니라 검증 가능한 연구 공동체 description: Living Wiki가 현재 채택한 전체 설계 종합과 신뢰 경계. tags: [living-wiki, synthesis, provenance, governance] timestamp: '2026-07-11T23:40:00+09:00' claim_ids: [CLM-F6367BFF8F35, CLM-CB6E34C87DA3, CLM-F464CCF0AA1A] --- # 현재 종합 — 문서 "
+    },
+    {
+      "doc_id": "wiki:wiki/claims/clm-61b3c391010c.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "gate",
+        "security",
+        "source"
+      ],
+      "metadata": {
+        "path": "wiki/claims/clm-61b3c391010c.md",
+        "untrusted": true
+      },
+      "score": 5.696602701979,
+      "snippet": "--- type: \"Claim\" title: \"CLM-61B3C391010C\" description: \"지속 메모리를 쓰는 Agent는 수집 시점과 검색 시점 모두에 오염 방지 gate가 필요하다.\" tags: [\"claim\", \"interpretation\", \"C2\", \"supported\"] timestamp: \"2026-07-11T14:32:40+00:00\" claim_id: \"CLM-61B3C391010C\" generated: true --- <!-- AUTOGENERATED from sta"
+    },
+    {
+      "doc_id": "wiki:wiki/campaigns/cmp-7a543d820d83.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "admission",
+        "gate",
+        "source"
+      ],
+      "metadata": {
+        "path": "wiki/campaigns/cmp-7a543d820d83.md",
+        "untrusted": true
+      },
+      "score": 5.646503172726,
+      "snippet": "--- type: \"Research Campaign\" title: \"CMP-7A543D820D83\" description: \"검색 품질을 높이기 위해 source registry, retraction 확인, 독립성 clustering, counter-search를 어떻게 자동 평가할 것인가?\" tags: [\"research-campaign\", \"queued\", \"INT-SELF-EVOLVING-WIKI\"] timestamp: \"2026-07-11T14:33:16+00:00\" campaign_id:"
+    },
+    {
+      "doc_id": "wiki:wiki/concepts/governed-self-evolution.md",
+      "kind": "wiki",
+      "matched_terms": [
+        "schema",
+        "security"
+      ],
+      "metadata": {
+        "path": "wiki/concepts/governed-self-evolution.md",
+        "untrusted": true
+      },
+      "score": 5.048302805606,
+      "snippet": "--- type: Concept title: Governed self-evolution description: Benchmark-gated, reversible harness evolution through attributed RFCs. tags: [self-evolution, evaluation, rollback, governance] timestamp: '2026-07-11T23:40:00+09:00' claim_ids: [CLM-F464CCF0AA1A, CLM-1EB8BD726482, CLM"
+    }
+  ],
+  "unknown_targets": [
+    "RFC-69828EB38078"
+  ],
+  "warning": "Lexical candidates are triage hints, not semantic judgments."
+}

@@ -1,0 +1,289 @@
+{
+  "schema_version": "living-wiki-calibration-fixture/v1",
+  "gold_records": [
+    {
+      "id": "GOLD-001",
+      "domain": "software",
+      "level": "C0",
+      "predicted_label": "insufficient",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "insufficient"},
+        {"reviewer_group": "human-b", "label": "insufficient"}
+      ]
+    },
+    {
+      "id": "GOLD-002",
+      "domain": "software",
+      "level": "C1",
+      "predicted_label": "supported",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "contradicted"},
+        {"reviewer_group": "agent-independent-a", "label": "contradicted"}
+      ]
+    },
+    {
+      "id": "GOLD-003",
+      "domain": "science",
+      "level": "C2",
+      "predicted_label": "supported",
+      "adjudications": [
+        {"reviewer_group": "human-b", "label": "supported"},
+        {"reviewer_group": "human-b", "label": "supported"},
+        {"reviewer_group": "agent-independent-b", "label": "supported"}
+      ]
+    },
+    {
+      "id": "GOLD-004",
+      "domain": "science",
+      "level": "C3",
+      "predicted_label": "supported",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "mixed"},
+        {"reviewer_group": "human-c", "label": "mixed"}
+      ]
+    },
+    {
+      "id": "GOLD-005",
+      "domain": "policy",
+      "level": "C4",
+      "predicted_label": "obsolete",
+      "adjudications": [
+        {"reviewer_group": "human-b", "label": "obsolete"},
+        {"reviewer_group": "agent-independent-a", "label": "obsolete"}
+      ]
+    },
+    {
+      "id": "GOLD-006",
+      "domain": "policy",
+      "level": "C2",
+      "predicted_label": "supported",
+      "benchmark_status": "disputed",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "supported"},
+        {"reviewer_group": "human-b", "label": "contradicted"}
+      ]
+    },
+    {
+      "id": "GOLD-007",
+      "domain": "software",
+      "level": "C3",
+      "predicted_label": "supported",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "supported"},
+        {"reviewer_group": "human-b", "label": "supported"},
+        {"reviewer_group": "agent-independent-b", "label": "mixed"}
+      ]
+    },
+    {
+      "id": "GOLD-008",
+      "domain": "science",
+      "level": "C1",
+      "predicted_label": null,
+      "adjudications": [
+        {"reviewer_group": "human-c", "label": "insufficient"},
+        {"reviewer_group": "agent-independent-a", "label": "insufficient"}
+      ]
+    },
+    {
+      "id": "GOLD-009",
+      "domain": "policy",
+      "level": "C0",
+      "predicted_label": "contradicted",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "contradicted"},
+        {"reviewer_group": "human-c", "label": "contradicted"}
+      ]
+    },
+    {
+      "id": "GOLD-010",
+      "domain": "science",
+      "level": "C4",
+      "predicted_label": "supported",
+      "adjudications": [
+        {"reviewer_group": "human-b", "label": "supported"},
+        {"reviewer_group": "agent-independent-b", "label": "supported"}
+      ]
+    },
+    {
+      "id": "GOLD-011",
+      "domain": "software",
+      "level": "C2",
+      "predicted_label": "mixed",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "mixed"},
+        {"reviewer_group": "human-c", "label": "mixed"}
+      ]
+    },
+    {
+      "id": "GOLD-012",
+      "domain": "policy",
+      "level": "C1",
+      "predicted_label": "obsolete",
+      "adjudications": [
+        {"reviewer_group": "human-b", "label": "obsolete"},
+        {"reviewer_group": "agent-independent-a", "label": "obsolete"}
+      ]
+    },
+    {
+      "id": "GOLD-013",
+      "domain": "science",
+      "level": "C0",
+      "predicted_label": "insufficient",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "insufficient"},
+        {"reviewer_group": "human-c", "label": "insufficient"}
+      ]
+    },
+    {
+      "id": "GOLD-014",
+      "domain": "policy",
+      "level": "C3",
+      "predicted_label": "supported",
+      "adjudications": [
+        {"reviewer_group": "human-b", "label": "contradicted"},
+        {"reviewer_group": "agent-independent-b", "label": "contradicted"}
+      ]
+    },
+    {
+      "id": "GOLD-015",
+      "domain": "software",
+      "level": "C4",
+      "predicted_label": "supported",
+      "adjudications": [
+        {"reviewer_group": "human-a", "label": "supported"},
+        {"reviewer_group": "human-c", "label": "supported"}
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "SRC-EXISTING-PAPER",
+      "title": "Alpha Study",
+      "doi": "https://doi.org/10.1000/ALPHA",
+      "publisher": "Example Journal",
+      "published_at": "2026-01-01"
+    },
+    {
+      "id": "SRC-ORIGIN-RELEASE",
+      "title": "Project Result Release",
+      "url": "https://lab.example.org/releases/result",
+      "publisher": "Example Lab",
+      "published_at": "2026-02-01"
+    },
+    {
+      "id": "SRC-EXISTING-REPO",
+      "title": "Reference implementation",
+      "repository": "git@github.com:Example/Reference.git",
+      "publisher": "Example",
+      "published_at": "2026-02-10"
+    }
+  ],
+  "registry_entries": [
+    {
+      "identifier": "doi:10.1000/alpha",
+      "status": "active",
+      "detail": "offline active control"
+    },
+    {
+      "identifier": "doi:10.5555/retracted.1",
+      "status": "retracted",
+      "detail": "offline retraction control"
+    },
+    {
+      "identifier": "doi:10.5555/corrected.2",
+      "status": "corrected",
+      "detail": "offline correction control"
+    },
+    {
+      "identifier": "repository:https://github.com/example/reference",
+      "status": "active",
+      "detail": "offline repository status control"
+    }
+  ],
+  "admission_candidates": [
+    {
+      "id": "CAND-CLEAN",
+      "title": "Independent primary report",
+      "url": "https://data.example.net/report?utm_source=newsletter&version=1",
+      "publisher": "Example Data Cooperative",
+      "provenance_verified": true,
+      "counter_search": {
+        "checks": ["origin", "status", "contradiction"]
+      }
+    },
+    {
+      "id": "CAND-CORRECTED",
+      "title": "Corrected paper",
+      "doi": "10.5555/CORRECTED.2",
+      "publisher": "Example Journal",
+      "registry_required": true,
+      "provenance_verified": true,
+      "counter_search": {
+        "checks": ["origin", "status", "contradiction"]
+      }
+    },
+    {
+      "id": "CAND-DERIVED",
+      "title": "Project Result Release Covered",
+      "url": "https://news.example.com/project-result",
+      "publisher": "Example News",
+      "derived_from": ["SRC-ORIGIN-RELEASE"],
+      "provenance_verified": true,
+      "counter_search": {
+        "checks": ["origin", "status", "contradiction"]
+      }
+    },
+    {
+      "id": "CAND-DUPLICATE",
+      "title": "Alpha Study mirror",
+      "doi": "doi:10.1000/alpha",
+      "publisher": "Repository Mirror",
+      "registry_required": true,
+      "provenance_verified": true,
+      "counter_search": {
+        "checks": ["origin", "status", "contradiction"]
+      }
+    },
+    {
+      "id": "CAND-MISSING-COUNTER",
+      "title": "Unchallenged practitioner account",
+      "url": "https://blog.example.com/account",
+      "publisher": "Example Blog",
+      "provenance_verified": true,
+      "counter_search": {
+        "checks": ["origin"]
+      }
+    },
+    {
+      "id": "CAND-REPOSITORY",
+      "title": "New implementation",
+      "repository": "https://github.com/example/new-tool/tree/main",
+      "publisher": "Example",
+      "provenance_verified": true,
+      "counter_search": {
+        "checks": ["origin", "status", "contradiction"]
+      }
+    },
+    {
+      "id": "CAND-RETRACTED",
+      "title": "Retracted result",
+      "doi": "https://doi.org/10.5555/RETRACTED.1",
+      "publisher": "Example Journal",
+      "registry_required": true,
+      "provenance_verified": true,
+      "counter_search": {
+        "checks": ["origin", "status", "contradiction"]
+      }
+    },
+    {
+      "id": "CAND-BAD-IDENTIFIER",
+      "title": "Malformed lead",
+      "url": "not-an-absolute-url",
+      "publisher": "Unknown",
+      "provenance_verified": false,
+      "counter_search": {
+        "checks": []
+      }
+    }
+  ]
+}

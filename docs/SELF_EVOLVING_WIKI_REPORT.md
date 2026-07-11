@@ -5,6 +5,25 @@
 초기 구현: `/Users/jaewoo/Desktop/SSHWorkspace/projects/wiki_v1`  
 요청 보고서 사본: `/Users/jaewoo/Desktop/SSHWorkspace/projects/wiki/docs/SELF_EVOLVING_WIKI_REPORT.md`
 
+## 2026-07-12 v4 구현 후속
+
+초기 보고서가 제안했던 다음 단계를 `RFC-69828EB38078`에 따라 실제 v4 control plane으로 구현했다. 현재 상태는 source 35개, claim 26개, 완료 campaign 5개이며 독립 claim review가 0이므로 모든 claim을 C2 이하로 유지한다.
+
+v4가 추가한 것은 다음과 같다.
+
+- 사람/Agent 공통 collaboration envelope와 lifecycle
+- interest cadence에서 bounded campaign을 다시 생성하는 `interest-seed`
+- 외부 작업을 실행하지 않는 priority/budget/cadence/stop-condition scheduler와 hash receipt
+- content-addressed quarantine, 원문/정규화 분리, write/retrieve/activate security gate
+- canonical URL/DOI/repository identity, status, dependency cluster, counter-search source admission
+- admission allow를 우회할 수 없는 canonical `source-add` writer gate
+- deterministic BM25-like retrieval과 dependency/semantic-conflict candidate preview
+- calibration/security/runtime fixture와 fixture hash pin
+- 구조·OKF·fixture·receipt·실제 test를 결합하는 `release-check`
+- admission과 외부 보고 digest의 event-chain anchor, additive state/OKF projection, rollback rehearsal
+
+다만 이 결과는 production 인증이 아니다. calibration은 15건 pilot이고, security는 31건 fixed lexical corpus이며, live status adapter와 외부 executor·credential broker·publication path·multi-writer signature/locking은 인증 범위 밖이다. release gate는 성공하더라도 `production_certified=false`를 고정한다. 상세 migration과 rollback은 `evolution/v4-closed-loop-harness.md`, 기계 판정은 `evaluations/reports/v4-release-report.json`을 기준으로 한다.
+
 ## 0. 결론부터
 
 원하는 시스템은 “Agent가 대신 써주는 Obsidian”이나 “RAG에 신뢰 점수를 붙인 검색기”가 아니다. 가장 정확한 정의는 다음과 같다.
@@ -39,7 +58,7 @@ immutable raw → index → LLM-maintained Markdown wiki
 5. Control & evolution   policy, eval, security gate, RFC, rollback, audit event
 ```
 
-현재 `wiki_v1`에는 2026년 공식 [Open Knowledge Format v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)을 따르는 portable `wiki/` bundle, 선별 출처와 evidence-linked claim, v1→v3.1 진화 기록, 표준 라이브러리 중심의 실행 CLI, unit test, 신뢰도 dashboard, 연구 campaign queue가 들어 있다. 모든 claim은 C2 이하로 유지했다. 독립 reviewer가 없는 상태에서 제가 만든 것을 제가 검사해 C3/C4라고 부르는 것은 시스템 철학에 어긋나기 때문이다.
+초기 v3.1 시점의 `wiki_v1`에는 2026년 공식 [Open Knowledge Format v0.1](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)을 따르는 portable `wiki/` bundle, 선별 출처와 evidence-linked claim, v1→v3.1 진화 기록, 표준 라이브러리 중심의 실행 CLI, unit test, 신뢰도 dashboard, 연구 campaign queue가 들어 있었다. 현재 v4도 모든 claim을 C2 이하로 유지한다. 독립 reviewer가 없는 상태에서 제가 만든 것을 제가 검사해 C3/C4라고 부르는 것은 시스템 철학에 어긋나기 때문이다.
 
 ## 1. 사용자가 원하는 철학의 기술적 해석
 
@@ -386,7 +405,7 @@ interests / current thesis / human leads
 
 ### 8.4 실제 지속 실행의 경계
 
-이 저장소만으로 시간이 지나면 저절로 Agent가 깨어나지는 않는다. 지속 연구에는 cron, CI, local daemon 또는 agent runner가 필요하다. `scripts/research-cycle.sh`는 다음 campaign과 provider-neutral prompt를 출력하며 `WIKI_AGENT_CMD`가 설정됐을 때만 trusted runner를 실행한다. 무인 모드는 수집·초안·검사까지만 허용하고 헌장·trust policy·삭제·외부 공개·비용 증가는 RFC/승인으로 멈춘다.
+이 저장소만으로 시간이 지나면 저절로 Agent가 깨어나지는 않는다. 지속 연구에는 cron, CI, local daemon 또는 agent runner가 필요하다. v4의 `scripts/research-cycle.sh`는 due interest를 campaign으로 seed하고 planned-only RUN/ACT receipt와 provider-neutral prompt를 출력하지만 shell-configured Agent를 실행하지 않는다. 별도 권한·sandbox의 executor가 결과를 반환하면 `run-action-report`가 actor·usage·evidence reference·digest를 남긴다. 결과는 `unverified_report`이며 admission/evidence 검토를 대체하지 않는다. 헌장·trust policy·삭제·외부 공개·비용·credential은 RFC/승인으로 멈춘다.
 
 ## 9. 반복 편집과 지식 노후화
 
@@ -455,7 +474,7 @@ RFC 필수 필드:
 - migration과 rollback
 - 제안 actor와 독립 reviewer group
 
-### 11.2 구현된 v1→v3.1
+### 11.2 구현된 v1→v4
 
 #### v1 — File Wiki
 
@@ -487,7 +506,15 @@ RFC 필수 필드:
 - Living Wiki extension mapping과 OKF validator
 - trust/governance 원장은 바깥 control plane에 유지
 
-v4는 아직 만들지 않았다. 운영 evidence 없이 기능 이름만 늘리는 것은 진화가 아니기 때문이다.
+#### v4 — Closed-loop Harness
+
+- actor-neutral collaboration direction/correction/lead/objection
+- cadence-based interest seeding과 planned-only bounded runtime
+- source identity/status/counter-search admission과 quarantine security gate
+- external report digest/usage attribution과 `unverified_report` 경계
+- pinned calibration/security/runtime fixtures와 통합 release gate
+- finite v3.1 source grandfather manifest, migration, rollback rehearsal
+- 남은 실패: 장기 empirical calibration, unseen semantic/multimodal red team, live adapter/executor, multi-writer 서명·locking
 
 ## 12. 초기 구현 상세
 
@@ -508,13 +535,17 @@ wiki_v1/
 │   ├── reviews.json
 │   ├── campaigns.json
 │   ├── proposals.json
+│   ├── collaborations.json
+│   ├── admissions.json
+│   ├── runs.json
 │   └── events.jsonl             hash-chain append-only log
-├── raw/sources/                 immutable artifact store
+├── raw/                         immutable source + quarantine artifact store
 ├── wiki/                        OKF v0.1 portable derived knowledge bundle
 ├── research/                    campaigns와 research notes
 ├── governance/                  헌장, ADR, RFC
-├── evolution/                   v1→v2→v3.1 failure trail
-├── evaluations/                 release gate와 snapshot
+├── evolution/                   v1→v2→v3.1→v4 failure/migration trail
+├── evaluations/                 fixtures, receipts, release reports, snapshots
+├── migrations/                  pinned grandfather/migration manifests
 ├── reports/                     lint와 보고서
 ├── prompts/research-cycle.md
 ├── scripts/research-cycle.sh
@@ -526,8 +557,12 @@ wiki_v1/
 
 ```bash
 python3 tools/wiki.py status
+python3 tools/wiki.py interest-seed
 python3 tools/wiki.py next-task
-python3 tools/wiki.py source-add --help
+python3 tools/wiki.py run-plan --help
+python3 tools/wiki.py security-screen --help
+python3 tools/wiki.py admission-check --help
+python3 tools/wiki.py source-add --help  # admission IDs required
 python3 tools/wiki.py claim-add --help
 python3 tools/wiki.py evidence-add --help
 python3 tools/wiki.py review-add --help
@@ -537,6 +572,7 @@ python3 tools/wiki.py lint
 python3 tools/wiki.py okf-validate
 python3 tools/wiki.py validate
 python3 -m unittest discover -s tests -v
+python3 tools/wiki.py release-check
 ```
 
 CLI가 담당하는 것은 판단이 아니라 invariant다.
@@ -553,22 +589,21 @@ CLI가 담당하는 것은 판단이 아니라 invariant다.
 - deterministic dashboard/index
 - content-addressed evaluation snapshot
 
-### 12.3 초기 연구 상태
+### 12.3 현재 v4 연구 상태
 
-- source 31개
-- evidence-linked claim 18개
-- C2 18개, C3/C4 0개
-- OKF concept document 75개, OKF core/profile validation warning/error 0개
-- unit test 12개
-- pure OKF export 2회가 86개 Markdown 전체에서 byte-identical
+- source 35개
+- evidence-linked claim 26개
+- C2 26개, C3/C4 0개
+- OKF state projection에 collaboration/admission/run 포함
+- calibration 15건 pilot, security 31건 fixed corpus, runtime fixed scenarios
+- 전체 구조/OKF/unit test 수치와 fingerprint는 `evaluations/reports/v4-release-report.json`이 source of truth
 - contested claim 1개: raw가 source of truth인가 evidence인가
-- lint finding 1개: 영상과 GitHub가 같은 제작자 group으로 접힘
-- 완료 campaign 2개
-- queued P0 campaign 3개: confidence calibration, source admission, poisoning red team
+- 완료 campaign 5개; 다음 campaign은 interest cadence가 도래할 때 seed
+- canonical independent review 0개
 
 ### 12.4 현재 경고
 
-대부분의 외부 source는 저작권·접근성·저장 비용 때문에 metadata/URL만 등록했고 immutable local snapshot이 없다. validator가 이를 오류로 숨기지 않고 warning으로 보인다. 이후 공개 라이선스·공식 문서는 snapshot을 추가하고, 유료/제한 자료는 hash 가능한 개인 사본 또는 접근 가능한 locator 정책을 정해야 한다.
+대부분의 외부 source는 저작권·접근성·저장 비용 때문에 metadata/URL만 등록했고 immutable local snapshot이 없다. validator가 이를 오류로 숨기지 않고 warning으로 보인다. admission 강제 이전의 정확한 35개 ID만 pinned migration manifest로 grandfather했다. 새 source는 admission을 생략하면 hard error다. 이후 공개 라이선스·공식 문서는 security-screen을 거쳐 snapshot을 추가하고, 유료/제한 자료는 공개 Wiki에 복사하지 않은 채 접근 가능한 locator 정책을 정해야 한다.
 
 ## 13. 평가 지표
 

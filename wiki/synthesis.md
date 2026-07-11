@@ -3,7 +3,7 @@ type: Synthesis
 title: 문서 저장소가 아니라 검증 가능한 연구 공동체
 description: Living Wiki가 현재 채택한 전체 설계 종합과 신뢰 경계.
 tags: [living-wiki, synthesis, provenance, governance]
-timestamp: '2026-07-11T23:40:00+09:00'
+timestamp: '2026-07-12T12:00:00+09:00'
 claim_ids: [CLM-F6367BFF8F35, CLM-CB6E34C87DA3, CLM-F464CCF0AA1A]
 ---
 
@@ -25,11 +25,12 @@ Karpathy와 AI Research OS의 가장 강한 통찰은 지식을 매 질의마다
 4. 사람과 Agent는 같은 actor/contribution protocol을 사용한다. 권한은 책임과 위험에 따라 역할별로 다르다.
 5. Wiki의 관점은 사실 원장과 분리하고 강한 반론과 변화 조건을 보존한다.
 6. 자율 연구는 관심 분야 → gap → counter-search → admission → synthesis → eval의 bounded loop다.
-7. 하네스 자기수정은 콘텐츠 편집과 다르며 RFC, 고정 benchmark, rollback이 필요하다.
+7. 하네스 자기수정은 콘텐츠 편집과 다르며 RFC, pin된 benchmark, rollback, 통합 release gate가 필요하다.
+8. 외부 실행은 runtime과 분리한다. runtime은 계획만 만들고 외부 결과는 digest가 남는 `unverified_report`로 돌아와 admission/evidence gate를 다시 거친다.
 
 ## 현재 신뢰 경계
 
-이 종합은 production 인증이 아니다. 31개 source record 중 OKF 공식 spec 하나만 local immutable snapshot까지 보존했고, 나머지 대부분은 저작권·접근성 때문에 URL과 metadata만 있어 경고가 남는다. C0–C4 gate의 empirical calibration, 장기 반복 편집, 실제 memory-poisoning red team, 동시 편집은 아직 평가하지 않았다. 이 한계를 숨기지 않는 것이 v3 계열의 첫 번째 품질 기능이다.
+이 종합은 production 인증이 아니다. 35개 source record 중 하나만 local immutable snapshot까지 보존했고, v4 이전 35개 모두 admission 이전 자료라 finite grandfather manifest로만 예외 처리한다. 15건 calibration pilot은 10/13 scorable 정답이라는 관찰값일 뿐 C-level 확률이 아니다. 18개 공격·13개 정상 case의 lexical write/retrieve/activate fixture에서는 자동 공격 허용과 정상 강제 거부가 0이었지만, unseen semantic·multilingual·multimodal·parser 공격을 평가하지 않았다. 독립 claim review, 장기 반복 편집, live registry adapter, 동시 writer signature/locking도 아직 없다. 이 제한을 `production_certified=false`로 고정하는 것이 v4의 품질 기능이다.
 
 # Citations
 

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "actors": [
+    {
+      "id": "human:owner",
+      "kind": "human"
+    },
+    {
+      "id": "agent:researcher",
+      "kind": "agent"
+    }
+  ],
+  "collaboration_records": [
+    {
+      "actor_id": "human:owner",
+      "record_kind": "commitment",
+      "intent": "direction",
+      "content": "반증 검색을 모든 캠페인에 포함한다.",
+      "targets": [
+        "CMP-HIGH"
+      ],
+      "stance": "request"
+    },
+    {
+      "actor_id": "agent:researcher",
+      "record_kind": "commitment",
+      "intent": "direction",
+      "content": "반증 검색을 모든 캠페인에 포함한다.",
+      "targets": [
+        "CMP-HIGH"
+      ],
+      "stance": "request"
+    },
+    {
+      "actor_id": "agent:researcher",
+      "record_kind": "review",
+      "intent": "objection",
+      "content": "자동 승격은 독립 검토가 없으므로 보류해야 한다.",
+      "targets": [
+        "CLM-A"
+      ],
+      "stance": "challenge"
+    }
+  ],
+  "search_documents": [
+    {
+      "doc_id": "claim:CLM-A",
+      "kind": "claim",
+      "text": "독립 검토와 반증 검색은 주장 신뢰도 승격 전에 필요하다."
+    },
+    {
+      "doc_id": "claim:CLM-B",
+      "kind": "claim",
+      "text": "외부 공개와 자격증명 사용은 사람의 명시적 승인을 요구한다."
+    },
+    {
+      "doc_id": "campaign:CMP-HIGH",
+      "kind": "campaign",
+      "text": "반증 검색과 독립 출처를 조사하는 우선순위가 높은 캠페인"
+    }
+  ],
+  "permission_cases": [
+    {
+      "action_type": "impact.preview",
+      "expected": "auto"
+    },
+    {
+      "action_type": "governance.modify",
+      "expected": "review"
+    },
+    {
+      "action_type": "raw.overwrite",
+      "expected": "deny"
+    },
+    {
+      "action_type": "external.search",
+      "expected": "review"
+    }
+  ],
+  "interests": [
+    {
+      "id": "INT-WIKI",
+      "priority": 1.0,
+      "cadence_days": 7
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "CMP-HIGH",
+      "interest_id": "INT-WIKI",
+      "question": "가장 중요한 반증은 무엇인가?",
+      "priority": 0.95,
+      "status": "queued",
+      "max_minutes": 60,
+      "max_sources": 5,
+      "stop_conditions": [
+        "counter-search-complete"
+      ]
+    },
+    {
+      "id": "CMP-LOW",
+      "interest_id": "INT-WIKI",
+      "question": "낮은 우선순위 보완 자료는 무엇인가?",
+      "priority": 0.2,
+      "status": "queued",
+      "max_minutes": 20,
+      "max_sources": 2,
+      "stop_conditions": []
+    },
+    {
+      "id": "CMP-STOPPED",
+      "interest_id": "INT-WIKI",
+      "question": "이미 종료된 질문",
+      "priority": 1.0,
+      "status": "queued",
+      "max_minutes": 60,
+      "max_sources": 5,
+      "stop_conditions": [
+        "done"
+      ],
+      "runtime": {
+        "used_minutes": 5,
+        "used_sources": 1,
+        "met_stop_conditions": [
+          "done"
+        ]
+      }
+    }
+  ]
+}

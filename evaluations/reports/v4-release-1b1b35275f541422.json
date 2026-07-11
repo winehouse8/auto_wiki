@@ -1,0 +1,197 @@
+{
+  "calibration_status": "pilot_regression_only",
+  "claims": {
+    "c_levels_are_probabilities": false,
+    "empirical_calibration_certified": false,
+    "external_executor_certified": false,
+    "production_security_certified": false,
+    "release_gate_mutated_repository": false
+  },
+  "component_fingerprint": "1b1b35275f5414223ff55d831d60f81caebcd6d30629bfab490ee9ec800ddb9a",
+  "gates": [
+    {
+      "counts": {
+        "actors": 2,
+        "admissions": 1,
+        "campaigns": 5,
+        "claims": 26,
+        "collaborations": 1,
+        "events": 158,
+        "okf_concepts": 92,
+        "proposals": 1,
+        "reviews": 0,
+        "runs": 1,
+        "sources": 35
+      },
+      "errors": [],
+      "evaluated": true,
+      "name": "structural_and_ledger",
+      "passed": true,
+      "warnings": [
+        "35 source(s) predate v4 admission enforcement and remain grandfathered",
+        "CLM-6DDD53332A40: contested claim",
+        "SRC-064C46D22353: metadata-only source; immutable snapshot absent",
+        "SRC-08654E066049: metadata-only source; immutable snapshot absent",
+        "SRC-0C6123529E07: metadata-only source; immutable snapshot absent",
+        "SRC-1BE9C681A9BA: metadata-only source; immutable snapshot absent",
+        "SRC-1C96ABEBBA41: metadata-only source; immutable snapshot absent",
+        "SRC-1F603E3131E8: metadata-only source; immutable snapshot absent",
+        "SRC-228828E53C40: metadata-only source; immutable snapshot absent",
+        "SRC-25318FE73DEB: metadata-only source; immutable snapshot absent",
+        "SRC-2779A50E2D01: metadata-only source; immutable snapshot absent",
+        "SRC-2A53F0CF2080: metadata-only source; immutable snapshot absent",
+        "SRC-43A6E8A3C217: metadata-only source; immutable snapshot absent",
+        "SRC-4E9BB033389D: metadata-only source; immutable snapshot absent",
+        "SRC-4F5AF5EE0ADB: metadata-only source; immutable snapshot absent",
+        "SRC-55630C70A5F7: metadata-only source; immutable snapshot absent",
+        "SRC-56255EE4508A: metadata-only source; immutable snapshot absent",
+        "SRC-62BFE70FD005: metadata-only source; immutable snapshot absent",
+        "SRC-660F983C8346: metadata-only source; immutable snapshot absent",
+        "SRC-696A976CE094: metadata-only source; immutable snapshot absent",
+        "SRC-6D473BE1761E: metadata-only source; immutable snapshot absent",
+        "SRC-83F06C506C77: metadata-only source; immutable snapshot absent",
+        "SRC-8908754F8F5E: metadata-only source; immutable snapshot absent",
+        "SRC-8DAAC6D75C2C: metadata-only source; immutable snapshot absent",
+        "SRC-920AB22F540A: metadata-only source; immutable snapshot absent",
+        "SRC-A754BF8665D0: metadata-only source; immutable snapshot absent",
+        "SRC-B6EDC3F41C3A: metadata-only source; immutable snapshot absent",
+        "SRC-BC899B3F975F: metadata-only source; immutable snapshot absent",
+        "SRC-C071A29F63E6: metadata-only source; immutable snapshot absent",
+        "SRC-C204B45C665B: metadata-only source; immutable snapshot absent",
+        "SRC-C7AAE78B0CC4: metadata-only source; immutable snapshot absent",
+        "SRC-CB315D66167D: metadata-only source; immutable snapshot absent",
+        "SRC-CC24B88C8C02: metadata-only source; immutable snapshot absent",
+        "SRC-CFB88DDE3FF1: metadata-only source; immutable snapshot absent",
+        "SRC-E42CA8C4BD30: metadata-only source; immutable snapshot absent",
+        "SRC-F73B1F038B37: metadata-only source; immutable snapshot absent"
+      ]
+    },
+    {
+      "counts": {},
+      "errors": [],
+      "evaluated": true,
+      "name": "okf_bundle",
+      "passed": true,
+      "warnings": []
+    },
+    {
+      "errors": [],
+      "name": "calibration",
+      "passed": true,
+      "production_calibration": false,
+      "status": "pilot_regression_only",
+      "summary": {
+        "abstained_resolved_records": 1,
+        "admission_counts": {
+          "allow": 2,
+          "reject": 2,
+          "review": 4
+        },
+        "benchmark_sha256": "7d3674bb803f1f23bf67c1191d3b017f3b22df1b5a2d26fe6eedda9b3726782d",
+        "deterministic": true,
+        "disputed_records": 1,
+        "observed_overall_p_correct": 0.769231,
+        "ordinal_scale_preserved": true,
+        "report_sha256": "544709b1ec91aa1c8bd5f99345b521ae9ac63be4cb9b84a7389f3c832d5c1513",
+        "resolved_gold_records": 14,
+        "scorable_records": 13,
+        "small_n_cells": 20,
+        "total_records": 15,
+        "trust_policy_mutated": false
+      },
+      "warnings": [
+        "pilot_fixture_below_100_record_empirical_calibration_target"
+      ]
+    },
+    {
+      "errors": [],
+      "name": "security",
+      "passed": true,
+      "production_security_certified": false,
+      "status": "fixed_corpus_regression_only",
+      "summary": {
+        "attack_cases": 18,
+        "attack_detection_rate": 1.0,
+        "attack_success_rate": 0.0,
+        "benign_cases": 13,
+        "benign_rejection_rate": 0.0,
+        "benign_review_rate": 0.384615,
+        "case_count": 31,
+        "corpus_id": "living-wiki-memory-poisoning-baseline-2026-07",
+        "corpus_sha256": "38c337f61795f67ee7b0893b3bb81f19ebab7368136a1657022882ae56f30eea",
+        "credential_reads": 0,
+        "deterministic": true,
+        "known_false_positive_cases": 4,
+        "network_calls": 0,
+        "payloads_executed": 0,
+        "report_sha256": "5dd9b6f1c18f78de46fc6f26c88a33b67e9073cfb282979ed8441906fdf3c2e2"
+      },
+      "warnings": [
+        "benign_review_rate_nonzero_operator_cost",
+        "lexical_fixed_corpus_is_not_a_production_security_boundary"
+      ]
+    },
+    {
+      "errors": [],
+      "name": "runtime",
+      "passed": true,
+      "status": "bounded_local_runtime_regression",
+      "summary": {
+        "actor_kinds_exercised": [
+          "agent",
+          "human"
+        ],
+        "allocated": {
+          "actions": 2,
+          "campaigns": 2,
+          "minutes": 30,
+          "sources": 2
+        },
+        "collaboration_record_count": 3,
+        "deterministic_schedule": true,
+        "fixture_sha256": "e5e6da8aa314d89f6e8e6f65351d105773f827b1c24dfb957c3eb5c5dd02521a",
+        "permission_case_count": 4,
+        "permission_mismatches": [],
+        "receipt_chain_errors": [],
+        "receipt_chain_sha256": "036eb49c7ffd1cab61be76cf5f59cbace41d374aa90413f633fa48df3ada66fe",
+        "receipt_count": 1,
+        "scheduled_actions": 2,
+        "side_effects_executed": false,
+        "unauthorized_side_effects": 0
+      },
+      "warnings": [
+        "receipt_hash_chain_is_not_a_signature_or_multi_writer_lock"
+      ]
+    },
+    {
+      "errors": [],
+      "evaluated": true,
+      "name": "regression_tests",
+      "passed": true,
+      "summary": {
+        "errors": 0,
+        "evidence": "644c67086256255f456fbff5622ba000f787470ea8fbebeb38273188515882ec",
+        "failures": 0,
+        "rollback_evidence": "91b89b7a8a78c82041248dd05a4e330512f6654bc9c5bbe67192d6109c47546f",
+        "rollback_rehearsal_passed": true,
+        "skipped": 0,
+        "test_count": 158
+      },
+      "warnings": []
+    }
+  ],
+  "limitations": [
+    "The calibration fixture is a pilot regression set, not a population-level reliability estimate.",
+    "The lexical security corpus does not establish robustness to unseen or semantic attacks.",
+    "Receipt hashes detect accidental mutation but provide neither signatures nor multi-writer serialization.",
+    "Injected structural, OKF, and unit-test results are trusted as caller-provided observations.",
+    "No live network adapter, credential broker, external executor, or publication path is certified."
+  ],
+  "passed": true,
+  "production_certified": false,
+  "readiness": "closed_loop_harness_fixed_fixture_passed",
+  "release_id": "living-wiki-v4",
+  "schema_version": "living-wiki-v4-release-gate/v1",
+  "scope": "deterministic local control-plane, injected repository validators, and fixed regression fixtures",
+  "security_status": "fixed_corpus_regression_only"
+}

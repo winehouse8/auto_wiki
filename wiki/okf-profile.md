@@ -4,7 +4,7 @@ title: Living Wiki OKF profile
 description: How this OKF v0.1 bundle maps its epistemic and governance extensions.
 resource: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 tags: [okf, interoperability, profile]
-timestamp: '2026-07-11T23:40:00+09:00'
+timestamp: '2026-07-12T12:00:00+09:00'
 okf_version: '0.1'
 spec_status: Draft
 bundle_boundary: wiki/
@@ -49,13 +49,16 @@ These keys extend OKF; they are not claims that the v0.1 specification defines t
 | Actor | `actors/actor-*.md`, `type: Actor` | `state/actors.json` |
 | Review | `reviews/rev-*.md`, `type: Review` | `state/reviews.json` |
 | Research campaign | `campaigns/cmp-*.md`, `type: Research Campaign` | `state/campaigns.json` |
+| Collaboration record | `collaborations/col-*.md`, `type: Collaboration Record` | `state/collaborations.json` |
+| Admission decision | `admissions/adm-*.md`, `type: Admission Decision` | `state/admissions.json` |
+| Runtime receipt | `runs/run-*.md`, `type: Runtime Receipt` | `state/runs.json` and external receipt ledger |
 | Trust/governance | Typed producer-policy concepts | `config/` and `governance/` |
 | Event | Reserved human-readable `log.md` summary | `state/events.jsonl` hash chain |
 | Navigation/history | Reserved `index.md` / `log.md` | regenerated from canonical state |
 
 # Boundary rationale
 
-OKF is the interoperable knowledge exchange layer, not the entire runtime. JSON ledgers, raw artifacts, evaluator snapshots, secrets, and executable tooling stay outside the bundle. Actor, source, claim, review, campaign, trust, and governance records are one-way projections; the exporter does not invent or raise their status. An OKF-only consumer can still read the knowledge; a Living-Wiki-aware consumer can follow extension IDs into stronger provenance and governance data. Direct edits to generated concepts are not imported back into canonical state in v3.1.
+OKF is the interoperable knowledge exchange layer, not the entire runtime. JSON ledgers, raw/quarantine artifacts, evaluator snapshots, receipts, secrets, and executable tooling stay outside the bundle. Actor, source, claim, review, campaign, collaboration, admission, runtime, trust, and governance records are one-way projections; the exporter does not invent or raise their status. An OKF-only consumer can still read the knowledge; a Living-Wiki-aware consumer can follow extension IDs into stronger provenance and governance data. Direct edits to generated concepts are not imported back into canonical state in v4.
 
 # Known limitation
 

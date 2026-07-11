@@ -3,7 +3,7 @@ type: Concept
 title: Governed self-evolution
 description: Benchmark-gated, reversible harness evolution through attributed RFCs.
 tags: [self-evolution, evaluation, rollback, governance]
-timestamp: '2026-07-11T23:40:00+09:00'
+timestamp: '2026-07-12T12:00:00+09:00'
 claim_ids: [CLM-F464CCF0AA1A, CLM-1EB8BD726482, CLM-FC9028899EE0]
 ---
 
@@ -36,7 +36,7 @@ failure/event
 - 과거 실패와 반대 결과 삭제
 - rollback 없는 schema migration
 
-현재 v3는 RFC 생성까지 자동화하지만 적용은 자동화하지 않는다.
+현재 v4는 사람 policy-approver가 승인한 RFC만 release gate와 rollback evidence 뒤에서 구현 완료로 닫는다. 미래 RFC를 자동 승인·적용하지 않으며 fixed-fixture 통과도 production 인증으로 승격하지 않는다.
 
 # Citations
 

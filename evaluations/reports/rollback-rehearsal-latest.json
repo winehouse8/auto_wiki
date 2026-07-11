@@ -1,0 +1,8 @@
+{
+  "base_commit": "d18213a78376c0543a0aa590a3db7fcf7022c187",
+  "commands_passed": 3,
+  "error": null,
+  "evidence": "48f64bdcf863bec40b5dd8a279e887820fcf865a1ce6fe8c293ea47488a267cb",
+  "live_workspace_unchanged": true,
+  "passed": true
+}

@@ -1,0 +1,112 @@
+{
+  "plan": {
+    "actions": [
+      {
+        "action_type": "external.research.plan",
+        "budget": {
+          "minutes": 15,
+          "sources": 1
+        },
+        "campaign_id": "CMP-76BD99582F70",
+        "execution": "planned_only",
+        "external_work": true,
+        "id": "ACT-2E20CA0710FC",
+        "permission": {
+          "action_type": "external.research.plan",
+          "actor_id": null,
+          "actor_kind_used_for_decision": false,
+          "decision": "auto",
+          "reasons": [
+            "allowlisted low-risk reversible control-plane action"
+          ],
+          "risk": "low"
+        },
+        "priority": 0.95,
+        "question": "C0-C4 파생 레벨은 실제 claim 정확도와 얼마나 보정되어 있으며 도메인별 gate는 어떻게 달라야 하는가?",
+        "stop_conditions": [
+          "gold claim set 100개 설계",
+          "level별 accuracy/Brier/ECE 측정 계획",
+          "도메인별 gate RFC"
+        ]
+      }
+    ],
+    "allocated": {
+      "actions": 1,
+      "campaigns": 1,
+      "minutes": 15,
+      "sources": 1
+    },
+    "generated_at": "2026-07-11T16:00:00+00:00",
+    "kind": "bounded_schedule",
+    "limits": {
+      "action_minutes": 15,
+      "max_actions": 1,
+      "max_campaigns": 1,
+      "max_minutes": 15,
+      "max_sources": 1,
+      "sources_per_action": 1
+    },
+    "plan_id": "PLAN-C2A3EA068C2E",
+    "schema_version": 1,
+    "side_effects_executed": false,
+    "skipped": [
+      {
+        "campaign_id": "CMP-0619AC235CCA",
+        "reason": "lifecycle:completed"
+      },
+      {
+        "campaign_id": "CMP-088A51571084",
+        "reason": "run_budget:max_actions_or_campaigns"
+      },
+      {
+        "campaign_id": "CMP-7A543D820D83",
+        "reason": "run_budget:max_actions_or_campaigns"
+      },
+      {
+        "campaign_id": "CMP-C31903B13965",
+        "reason": "lifecycle:completed"
+      }
+    ]
+  },
+  "receipt": {
+    "actions": [
+      {
+        "action_id": "ACT-2E20CA0710FC",
+        "action_type": "external.research.plan",
+        "campaign_id": "CMP-76BD99582F70",
+        "permission": {
+          "action_type": "external.research.plan",
+          "actor_id": "agent:codex",
+          "actor_kind_used_for_decision": false,
+          "decision": "auto",
+          "reasons": [
+            "allowlisted low-risk reversible control-plane action"
+          ],
+          "risk": "low"
+        },
+        "side_effect": false,
+        "status": "planned"
+      }
+    ],
+    "attempt": 1,
+    "budget": {
+      "actions": 1,
+      "campaigns": 1,
+      "minutes": 15,
+      "sources": 1
+    },
+    "completed_at": "2026-07-11T16:00:00+00:00",
+    "created_at": "2026-07-11T16:00:00+00:00",
+    "dry_run": true,
+    "idempotency_key": "KEY-371350DA2BB0",
+    "plan_hash": "8c07ac6ab018dd3eab723f5536876cfaebf8afa587c7e8d99e52d3da51ce5e91",
+    "plan_id": "PLAN-C2A3EA068C2E",
+    "prev_receipt_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "receipt_hash": "2c61843bae73a1e05fc790beeb9453b7cfe7c992289d1596d2bcff531557cd3f",
+    "recovery_of": null,
+    "run_id": "RUN-8354665F4697",
+    "schema_version": 1,
+    "side_effect_count": 0,
+    "status": "planned"
+  }
+}

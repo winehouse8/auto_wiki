@@ -59,6 +59,102 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:29:25+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official",
+          "primary-source",
+          "version-sensitive"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:24:08+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:24:08+00:00",
+          "added_by": "agent:codex",
+          "locator": "How Codex discovers guidance: size limit paragraph",
+          "note": "OpenAI 공식 제품 문서의 직접 기술",
+          "relation": "supports",
+          "source_id": "SRC-228828E53C40",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-25D2398ACBF4",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "notes": "제품 업데이트 시 재검증 필요",
+      "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
+      "statement": "Codex의 프로젝트 지침 결합 용량 기본값은 32 KiB이며, 한도에 도달하면 추가 지침 파일을 더하지 않는다.",
+      "supersedes": [],
+      "tags": [
+        "agents-md",
+        "bootstrap",
+        "codex",
+        "context-loading"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:29:25+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official",
+          "primary-source",
+          "version-sensitive"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:24:08+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:24:08+00:00",
+          "added_by": "agent:codex",
+          "locator": "Customize fallback filenames and Verify your setup",
+          "note": "OpenAI 공식 제품 문서의 직접 기술",
+          "relation": "supports",
+          "source_id": "SRC-228828E53C40",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-3B0EC9C26226",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "notes": "제품 업데이트 시 재검증 필요",
+      "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
+      "statement": "AGENTS.md 변경 내용을 확실히 반영하려면 새 Codex 명령 또는 새 TUI 세션을 시작해야 하며, project_doc_fallback_filenames에 등록되지 않은 대체 파일명은 자동 지침 탐색 대상이 아니다.",
+      "supersedes": [],
+      "tags": [
+        "agents-md",
+        "bootstrap",
+        "codex",
+        "context-loading"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
         "computed_at": "2026-07-11T14:32:40+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
@@ -314,14 +410,15 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:56:18+00:00",
+        "computed_at": "2026-07-11T15:29:25+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
         "positive_independent_reviews": 0,
         "quality_markers": [
           "official-draft",
-          "primary-artifact"
+          "primary-artifact",
+          "version-pinned"
         ],
         "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
         "status": "supported",
@@ -354,7 +451,7 @@
       "freshness": "fast",
       "id": "CLM-7FDAF2F91E73",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T14:56:18+00:00",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
       "notes": null,
       "scope": "Open Knowledge Format Version 0.1 Draft as of 2026-07-11",
       "statement": "OKF v0.1 conformance는 비예약 Markdown의 parseable YAML frontmatter와 non-empty type, 그리고 예약 index.md/log.md 구조를 핵심 필수 조건으로 둔다.",
@@ -435,14 +532,15 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:56:18+00:00",
+        "computed_at": "2026-07-11T15:29:25+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
         "positive_independent_reviews": 0,
         "quality_markers": [
           "official-draft",
-          "primary-artifact"
+          "primary-artifact",
+          "version-pinned"
         ],
         "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
         "status": "supported",
@@ -466,7 +564,7 @@
       "freshness": "fast",
       "id": "CLM-952258184EF2",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:56:18+00:00",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
       "notes": null,
       "scope": "Living Wiki mapping to OKF v0.1 Draft",
       "statement": "OKF v0.1은 claim confidence, source credibility, actor governance, 저장 및 검색 인프라를 정의하지 않으므로 Living Wiki는 이를 producer extension과 외부 control plane으로 보완해야 한다.",
@@ -478,6 +576,152 @@
         "trust"
       ],
       "valid_at": "2026-07-11"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:58:03+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "integrity-registry",
+          "official",
+          "primary-source",
+          "production-api"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:57:39+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:57:39+00:00",
+          "added_by": "agent:codex",
+          "locator": "Accessing the Retraction Watch Database; REST API",
+          "note": "공식 서비스 운영자의 직접 문서",
+          "relation": "supports",
+          "source_id": "SRC-920AB22F540A",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-99AE239A5BA3",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:58:03+00:00",
+      "notes": "서비스 schema 변경 시 fixture와 adapter contract 재검증 필요",
+      "scope": "source admission registry adapters, 2026-07-12 현재",
+      "statement": "Crossref는 Retraction Watch의 retraction 및 일부 correction·expression-of-concern 데이터를 production REST API와 공개 dataset으로 제공하며, REST 결과의 update-to와 source 필드로 update 유형과 provenance를 구분한다.",
+      "supersedes": [],
+      "tags": [
+        "provenance",
+        "registry",
+        "source-admission",
+        "status"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:58:03+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "commit-provenance",
+          "official",
+          "primary-source",
+          "versioned-api"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:57:40+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:57:40+00:00",
+          "added_by": "agent:codex",
+          "locator": "Get a commit; Signature verification object",
+          "note": "공식 서비스 운영자의 직접 문서",
+          "relation": "supports",
+          "source_id": "SRC-4F5AF5EE0ADB",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-A49ACF085321",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:58:03+00:00",
+      "notes": "서비스 schema 변경 시 fixture와 adapter contract 재검증 필요",
+      "scope": "source admission registry adapters, 2026-07-12 현재",
+      "statement": "GitHub REST commit 조회는 commit SHA와 signature verification 객체를 제공하므로 코드 출처를 가변 branch 이름보다 특정 commit에 고정하고 검증 메타데이터를 기록할 수 있다.",
+      "supersedes": [],
+      "tags": [
+        "provenance",
+        "registry",
+        "source-admission",
+        "status"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:29:25+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official",
+          "primary-source",
+          "version-sensitive"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:24:08+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:24:08+00:00",
+          "added_by": "agent:codex",
+          "locator": "How Codex discovers guidance: Merge order",
+          "note": "OpenAI 공식 제품 문서의 직접 기술",
+          "relation": "supports",
+          "source_id": "SRC-228828E53C40",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-B97B5BE5E324",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "notes": "제품 업데이트 시 재검증 필요",
+      "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
+      "statement": "Codex는 선택된 프로젝트 지침을 루트에서 현재 디렉터리 순으로 결합하므로 더 가까운 디렉터리의 지침이 뒤에 놓여 앞선 지침을 재정의할 수 있다.",
+      "supersedes": [],
+      "tags": [
+        "agents-md",
+        "bootstrap",
+        "codex",
+        "context-loading"
+      ],
+      "valid_at": "2026-07-12"
     },
     {
       "confidence": {
@@ -672,6 +916,54 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:29:25+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official",
+          "primary-source",
+          "version-sensitive"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:24:08+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:24:08+00:00",
+          "added_by": "agent:codex",
+          "locator": "How Codex discovers guidance: opening paragraph",
+          "note": "OpenAI 공식 제품 문서의 직접 기술",
+          "relation": "supports",
+          "source_id": "SRC-228828E53C40",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-DA4E9F9BA977",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "notes": "제품 업데이트 시 재검증 필요",
+      "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
+      "statement": "Codex는 작업을 시작하기 전에 지침 체인을 구성하며, 대화형 TUI에서는 보통 실행된 세션마다 한 번만 AGENTS.md 계열 파일을 탐색한다.",
+      "supersedes": [],
+      "tags": [
+        "agents-md",
+        "bootstrap",
+        "codex",
+        "context-loading"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
         "computed_at": "2026-07-11T14:32:40+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
@@ -806,6 +1098,55 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:58:03+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "biomedical-registry",
+          "official",
+          "primary-source",
+          "public-api"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:57:39+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:57:39+00:00",
+          "added_by": "agent:codex",
+          "locator": "Entrez Programming Utilities (E-utilities)",
+          "note": "공식 서비스 운영자의 직접 문서",
+          "relation": "supports",
+          "source_id": "SRC-0C6123529E07",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-F2BB537122FE",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:58:03+00:00",
+      "notes": "서비스 schema 변경 시 fixture와 adapter contract 재검증 필요",
+      "scope": "source admission registry adapters, 2026-07-12 현재",
+      "statement": "NCBI E-utilities는 PubMed와 PMC를 포함한 Entrez 데이터베이스를 검색·연결·조회할 수 있는 공식 공개 API다.",
+      "supersedes": [],
+      "tags": [
+        "provenance",
+        "registry",
+        "source-admission",
+        "status"
+      ],
+      "valid_at": "2026-07-12"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
         "computed_at": "2026-07-11T14:32:40+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
@@ -881,14 +1222,15 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:56:18+00:00",
+        "computed_at": "2026-07-11T15:29:25+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
         "positive_independent_reviews": 0,
         "quality_markers": [
           "official-draft",
-          "primary-artifact"
+          "primary-artifact",
+          "version-pinned"
         ],
         "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
         "status": "supported",
@@ -921,7 +1263,7 @@
       "freshness": "fast",
       "id": "CLM-F526A53CB69F",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T14:56:18+00:00",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
       "notes": null,
       "scope": "Open Knowledge Format Version 0.1 Draft as of 2026-07-11",
       "statement": "OKF v0.1에는 필수 bundle manifest, JSON Schema, 중앙 type registry가 없으며 type taxonomy와 추가 frontmatter는 producer에게 열려 있다.",
@@ -1111,6 +1453,54 @@
         "regression"
       ],
       "valid_at": "2026-07"
+    },
+    {
+      "confidence": {
+        "adversarial_reviewed": false,
+        "computed_at": "2026-07-11T15:29:25+00:00",
+        "contradicting_groups": 0,
+        "independent_reviews": 0,
+        "level": "C2",
+        "positive_independent_reviews": 0,
+        "quality_markers": [
+          "official",
+          "primary-source",
+          "version-sensitive"
+        ],
+        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "status": "supported",
+        "strong_contradiction": false,
+        "supporting_groups": 1
+      },
+      "created_at": "2026-07-11T15:24:08+00:00",
+      "created_by": "agent:codex",
+      "created_by_group": "openai-codex-session",
+      "evidence": [
+        {
+          "added_at": "2026-07-11T15:24:08+00:00",
+          "added_by": "agent:codex",
+          "locator": "How Codex discovers guidance: Project scope",
+          "note": "OpenAI 공식 제품 문서의 직접 기술",
+          "relation": "supports",
+          "source_id": "SRC-228828E53C40",
+          "strength": 4
+        }
+      ],
+      "freshness": "fast",
+      "id": "CLM-FF4A31447E3E",
+      "kind": "fact",
+      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "notes": "제품 업데이트 시 재검증 필요",
+      "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
+      "statement": "프로젝트 지침 탐색에서 Codex는 프로젝트 루트부터 현재 작업 디렉터리까지 내려가며, 각 디렉터리에서 AGENTS.override.md, AGENTS.md, 설정된 fallback 이름 순으로 최대 한 파일을 선택한다.",
+      "supersedes": [],
+      "tags": [
+        "agents-md",
+        "bootstrap",
+        "codex",
+        "context-loading"
+      ],
+      "valid_at": "2026-07-12"
     }
   ],
   "version": 1

@@ -11,25 +11,36 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import hashlib
+import io
 import json
 import mimetypes
 import os
 import re
 import shutil
+import subprocess
 import sys
+import tarfile
+import tempfile
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import urlparse
 
 
-ROOT = Path(__file__).resolve().parents[1]
+TOOLS_DIR = Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+ROOT = TOOLS_DIR.parents[0]
 STATE = ROOT / "state"
 RAW = ROOT / "raw" / "sources"
+QUARANTINE = ROOT / "raw" / "quarantine"
 WIKI = ROOT / "wiki"
 REPORTS = ROOT / "reports"
 EVALUATIONS = ROOT / "evaluations"
+EVALUATION_REPORTS = EVALUATIONS / "reports"
 OKF_BUNDLE = WIKI
 ZERO_HASH = "0" * 64
+SOURCE_GRANDFATHER_MANIFEST = ROOT / "migrations" / "v3.1-source-grandfather.json"
+SOURCE_GRANDFATHER_MANIFEST_SHA256 = "6c7ecd0c7a99a679534de7ca265fb3254b4091720c98f168619c6cf60c792dac"
 
 STATE_FILES: dict[str, dict[str, Any]] = {
     "actors": {"version": 1, "actors": []},
@@ -38,6 +49,9 @@ STATE_FILES: dict[str, dict[str, Any]] = {
     "reviews": {"version": 1, "reviews": []},
     "campaigns": {"version": 1, "campaigns": []},
     "proposals": {"version": 1, "proposals": []},
+    "collaborations": {"version": 1, "collaborations": []},
+    "admissions": {"version": 1, "admissions": []},
+    "runs": {"version": 1, "runs": []},
 }
 
 SOURCE_LEVELS = {f"S{i}": i for i in range(5)}
@@ -92,6 +106,62 @@ def stable_id(prefix: str, *parts: Any) -> str:
     return f"{prefix}-{digest_text(joined)[:12].upper()}"
 
 
+def admission_record_digest(item: dict[str, Any]) -> str:
+    material = {
+        key: item.get(key)
+        for key in ("id", "candidate", "decision", "status", "created_by", "created_at", "policy_effect")
+    }
+    return digest_text(canonical_json(material))
+
+
+def external_report_digest(item: dict[str, Any]) -> str:
+    return digest_text(canonical_json({key: value for key, value in item.items() if key != "report_digest"}))
+
+
+def admission_integrity_findings(item: dict[str, Any], *, require_digest: bool = True) -> list[str]:
+    findings: list[str] = []
+    candidate = item.get("candidate", {})
+    decision = item.get("decision", {})
+    effect = item.get("policy_effect")
+    if not isinstance(candidate, dict) or not isinstance(decision, dict):
+        return ["candidate and decision must be objects"]
+    if item.get("status") != decision.get("decision"):
+        findings.append("top-level status does not match decision.decision")
+    if effect == "advisory_only":
+        expected_id = stable_id("ADM", candidate.get("id"), canonical_json(decision))
+    elif effect == "quarantine_only_no_source_promotion":
+        assessment = decision.get("security_assessment", {})
+        expected_id = stable_id(
+            "ADM",
+            "security",
+            candidate.get("source_ref"),
+            candidate.get("quarantine_artifact", {}).get("sha256"),
+            canonical_json(assessment),
+        )
+        write_gate = assessment.get("gates", {}).get("write", {}) if isinstance(assessment, dict) else {}
+        if decision.get("stage") != "write" or write_gate.get("decision") != decision.get("decision"):
+            findings.append("security decision does not match the embedded write gate")
+    else:
+        return ["unknown policy_effect"]
+    if item.get("id") != expected_id:
+        findings.append("admission ID does not match canonical candidate/decision")
+    recorded_digest = item.get("record_digest")
+    if recorded_digest is None:
+        if require_digest:
+            findings.append("record_digest is missing")
+    elif recorded_digest != admission_record_digest(item):
+        findings.append("record_digest mismatch")
+    return findings
+
+
+def admission_digest_is_anchored(item: dict[str, Any]) -> bool:
+    return any(
+        event.get("subject") == item.get("id")
+        and event.get("details", {}).get("record_digest") == item.get("record_digest")
+        for event in event_lines()
+    )
+
+
 def slugify(value: str, limit: int = 72) -> str:
     value = value.lower().strip()
     value = re.sub(r"[^a-z0-9가-힣]+", "-", value).strip("-")
@@ -119,7 +189,7 @@ def latest_meaningful_timestamp(*groups: Iterable[dict[str, Any]]) -> str:
 
 
 def ensure_layout() -> None:
-    for path in (STATE, RAW, WIKI, REPORTS, EVALUATIONS):
+    for path in (STATE, RAW, QUARANTINE, WIKI, REPORTS, EVALUATIONS, EVALUATION_REPORTS):
         path.mkdir(parents=True, exist_ok=True)
     for name, default in STATE_FILES.items():
         path = STATE / f"{name}.json"
@@ -153,6 +223,25 @@ def atomic_write_text(path: Path, value: str) -> None:
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(value, encoding="utf-8")
     os.replace(temp, path)
+
+
+def source_grandfather_ids() -> set[str]:
+    """Load the pinned, finite v3.1 exception set for pre-admission sources."""
+
+    if not SOURCE_GRANDFATHER_MANIFEST.is_file():
+        raise WikiError("Pinned v3.1 source grandfather manifest is missing")
+    if digest_file(SOURCE_GRANDFATHER_MANIFEST) != SOURCE_GRANDFATHER_MANIFEST_SHA256:
+        raise WikiError("Pinned v3.1 source grandfather manifest hash drift")
+    payload = load_json(SOURCE_GRANDFATHER_MANIFEST)
+    ids = payload.get("source_ids", [])
+    if (
+        payload.get("schema_version") != "living-wiki-source-grandfather/v1"
+        or not isinstance(ids, list)
+        or len(ids) != payload.get("source_count")
+        or len(set(ids)) != len(ids)
+    ):
+        raise WikiError("Pinned v3.1 source grandfather manifest schema is invalid")
+    return set(ids)
 
 
 def yaml_value(value: Any) -> str:
@@ -341,7 +430,12 @@ def bootstrap(args: argparse.Namespace) -> None:
     if changed:
         save_collection("actors", actors)
     if not event_lines():
-        append_event("agent:codex", "bootstrap", "wiki", {"harness_version": "3.1.0"})
+        append_event(
+            "agent:codex",
+            "bootstrap",
+            "wiki",
+            {"harness_version": load_json(ROOT / "config" / "wiki.json").get("harness_version", "unknown")},
+        )
     render_all(actor="agent:codex", log=False)
     print("Living Wiki initialized.")
 
@@ -378,6 +472,89 @@ def validate_url(url: str | None) -> None:
         raise WikiError(f"Invalid http(s) URL: {url}")
 
 
+def require_source_admission(
+    admission_id: str | None,
+    *,
+    title: str,
+    url: str | None,
+) -> dict[str, Any]:
+    """Require a positive advisory admission before the canonical writer runs."""
+
+    if not admission_id:
+        raise WikiError("New sources require --admission with an allow decision")
+    admission = find(collection("admissions"), admission_id, "admission")
+    integrity = admission_integrity_findings(admission)
+    if integrity:
+        raise WikiError(f"Source admission integrity failure: {'; '.join(integrity)}")
+    if not admission_digest_is_anchored(admission):
+        raise WikiError("Source admission digest is not anchored in the event chain")
+    decision = admission.get("decision", {})
+    expected_id = stable_id("ADM", admission.get("candidate", {}).get("id"), canonical_json(decision))
+    if admission.get("id") != expected_id:
+        raise WikiError(f"Source admission identity/decision integrity mismatch: {admission_id}")
+    if (
+        admission.get("status") != "allow"
+        or decision.get("decision") != "allow"
+        or admission.get("policy_effect") != "advisory_only"
+    ):
+        raise WikiError(f"Source admission is not an advisory allow decision: {admission_id}")
+    candidate = admission.get("candidate", {})
+    candidate_url = candidate.get("url")
+    candidate_title = str(candidate.get("title") or "").strip().casefold()
+    if url and candidate_url:
+        import calibration
+
+        try:
+            if calibration.canonicalize_url(url) != calibration.canonicalize_url(candidate_url):
+                raise WikiError("Source URL does not match the admitted candidate identity")
+        except calibration.CalibrationError as exc:
+            raise WikiError(f"Cannot verify admitted source identity: {exc}") from exc
+    elif candidate_title != title.strip().casefold():
+        raise WikiError("Source title does not match the admitted metadata-only candidate")
+    return admission
+
+
+def require_security_admission(admission_id: str | None, artifact_hash: str) -> dict[str, Any]:
+    """Require a positive quarantine gate whose immutable hash matches the file."""
+
+    if not admission_id:
+        raise WikiError("File-backed sources require --security-admission with an allow decision")
+    admission = find(collection("admissions"), admission_id, "security admission")
+    integrity = admission_integrity_findings(admission)
+    if integrity:
+        raise WikiError(f"Security admission integrity failure: {'; '.join(integrity)}")
+    if not admission_digest_is_anchored(admission):
+        raise WikiError("Security admission digest is not anchored in the event chain")
+    candidate = admission.get("candidate", {})
+    decision = admission.get("decision", {})
+    assessment = decision.get("security_assessment", {})
+    expected_id = stable_id(
+        "ADM",
+        "security",
+        candidate.get("source_ref"),
+        candidate.get("quarantine_artifact", {}).get("sha256"),
+        canonical_json(assessment),
+    )
+    write_gate = assessment.get("gates", {}).get("write", {}) if isinstance(assessment, dict) else {}
+    if admission.get("id") != expected_id:
+        raise WikiError(f"Security admission identity/assessment integrity mismatch: {admission_id}")
+    if (
+        admission.get("status") != "allow"
+        or decision.get("decision") != "allow"
+        or decision.get("stage") != "write"
+        or write_gate.get("decision") != "allow"
+        or admission.get("policy_effect") != "quarantine_only_no_source_promotion"
+    ):
+        raise WikiError(f"Security admission is not a quarantine allow decision: {admission_id}")
+    artifact = candidate.get("quarantine_artifact", {})
+    if artifact.get("sha256") != artifact_hash:
+        raise WikiError("File hash does not match the security-admitted quarantine artifact")
+    artifact_path = ROOT / str(artifact.get("path", ""))
+    if not artifact_path.is_file() or digest_file(artifact_path) != artifact_hash:
+        raise WikiError("Security-admitted quarantine artifact is missing or mutated")
+    return admission
+
+
 def source_add(args: argparse.Namespace) -> None:
     require_actor(args.actor)
     validate_url(args.url)
@@ -390,6 +567,12 @@ def source_add(args: argparse.Namespace) -> None:
     if source_file and not source_file.is_file():
         raise WikiError(f"Source artifact does not exist: {source_file}")
     artifact_hash = digest_file(source_file) if source_file else None
+    source_admission = require_source_admission(args.admission, title=args.title, url=args.url)
+    security_admission = (
+        require_security_admission(args.security_admission, artifact_hash)
+        if source_file and artifact_hash
+        else None
+    )
     identity = args.url or args.title
     source_id = stable_id("SRC", identity, artifact_hash or args.published or "metadata-only")
     sources = collection("sources")
@@ -439,6 +622,10 @@ def source_add(args: argparse.Namespace) -> None:
         "artifact": artifact,
         "license": args.license,
         "notes": args.notes,
+        "admission_ids": [
+            source_admission["id"],
+            *([security_admission["id"]] if security_admission else []),
+        ],
         "status": "active",
     }
     sources.append(item)
@@ -751,6 +938,147 @@ def next_task(args: argparse.Namespace) -> None:
     print("Stop: " + "; ".join(campaign.get("stop_conditions", [])))
 
 
+def interest_seed(args: argparse.Namespace) -> None:
+    """Seed due interest questions as bounded queued campaigns; execute no research."""
+
+    require_actor(args.actor)
+    if args.max_campaigns < 1:
+        raise WikiError("--max-campaigns must be at least 1")
+    import runtime
+
+    try:
+        now = runtime.parse_time(args.now)
+    except runtime.RuntimeErrorBase as exc:
+        raise WikiError(str(exc)) from exc
+    config = load_json(ROOT / "config" / "interests.json")
+    interests = config.get("interests", [])
+    if not isinstance(interests, list):
+        raise WikiError("config/interests.json must contain an interests list")
+    campaigns = collection("campaigns")
+    created: list[str] = []
+    ordered_interests = sorted(
+        (item for item in interests if isinstance(item, dict) and item.get("id")),
+        key=lambda item: (-float(item.get("priority", 0.0)), str(item["id"])),
+    )
+    for interest in ordered_interests:
+        if len(created) >= args.max_campaigns:
+            break
+        interest_id = str(interest["id"])
+        related = [item for item in campaigns if item.get("interest_id") == interest_id]
+        if any(item.get("status") in {"queued", "active"} for item in related):
+            continue
+        timestamps = []
+        for item in related:
+            value = item.get("updated_at") or item.get("created_at")
+            if isinstance(value, str):
+                try:
+                    timestamps.append(runtime.parse_time(value))
+                except runtime.RuntimeErrorBase:
+                    raise WikiError(f"{item.get('id')}: invalid campaign timestamp {value}")
+        cadence_days = max(0, int(interest.get("cadence_days", 0)))
+        if timestamps and now < max(timestamps) + dt.timedelta(days=cadence_days):
+            continue
+        questions = [str(item).strip() for item in interest.get("questions", []) if str(item).strip()]
+        if not questions:
+            continue
+        usage = {question: sum(item.get("question") == question for item in related) for question in questions}
+        question = min(questions, key=lambda value: (usage[value], questions.index(value)))
+        cycle_key = now.date().isoformat()
+        campaign_id = stable_id("CMP", interest_id, question.casefold(), cycle_key)
+        if any(item.get("id") == campaign_id for item in campaigns):
+            continue
+        limits = load_json(ROOT / "config" / "wiki.json").get("research_limits", {})
+        item = {
+            "id": campaign_id,
+            "interest_id": interest_id,
+            "question": question,
+            "why_now": f"Interest cadence of {cadence_days} day(s) became due at {now.isoformat()}.",
+            "priority": float(interest.get("priority", 0.5)),
+            "status": "queued",
+            "created_by": args.actor,
+            "created_at": now.isoformat(),
+            "cadence_days": cadence_days,
+            "cycle_key": cycle_key,
+            "max_sources": int(limits.get("default_max_sources_per_cycle", 12)),
+            "max_minutes": int(limits.get("default_max_minutes_per_cycle", 45)),
+            "required_independent_groups": int(limits.get("min_independent_source_groups", 2)),
+            "stop_conditions": [
+                "counter-search completed",
+                f"{int(limits.get('stop_after_no_novel_claim_rounds', 2))} rounds with no novel claims",
+                "budget exhausted",
+            ],
+            "counter_search_required": True,
+            "source_ids": [],
+            "claim_ids": [],
+            "notes": [],
+            "runtime": {"used_minutes": 0, "used_sources": 0, "met_stop_conditions": []},
+        }
+        campaigns.append(item)
+        created.append(campaign_id)
+        save_collection("campaigns", campaigns)
+        append_event(
+            args.actor,
+            "campaign.seed",
+            campaign_id,
+            {"interest_id": interest_id, "cycle_key": cycle_key, "cadence_days": cadence_days},
+        )
+    if created:
+        print("\n".join(created))
+    else:
+        print("No interest is due for campaign seeding.")
+
+
+def render_proposal_record(item: dict[str, Any]) -> None:
+    path = ROOT / "governance" / "proposals" / f"{item['id'].lower()}-{slugify(item['title'])}.md"
+    reviews = item.get("approvals", [])
+    review_lines = [
+        f"- `{review.get('at', '-')}` — **{review.get('decision', '-')}** by "
+        f"`{review.get('actor_id', '-')}`: {review.get('rationale', '-') }"
+        for review in reviews
+    ]
+    body = f"""# {item['id']}: {item['title']}
+
+Status: {item.get('status', 'proposed')}
+Proposed by: `{item['created_by']}`
+Created: {item['created_at']}
+
+## Problem
+
+{item['problem']}
+
+## Proposed change
+
+{item['proposed_change']}
+
+## Evidence
+
+{chr(10).join(f'- `{e}`' for e in item.get('evidence', [])) or '- 아직 연결된 근거 없음'}
+
+## Benchmark and acceptance gate
+
+{item['benchmark']}
+
+## Risks
+
+{chr(10).join(f'- {risk}' for risk in item.get('risks', [])) or '- 미기록'}
+
+## Rollback
+
+{item['rollback']}
+
+## Review decisions
+
+{chr(10).join(review_lines) or '- 아직 검토 결정 없음'}
+
+## Implementation evidence
+
+{f"- Release report: `{item.get('implementation_evidence', {}).get('release_report')}`" if item.get('implementation_evidence') else '- 아직 구현 완료 증거 없음'}
+{f"- Component fingerprint: `{item.get('implementation_evidence', {}).get('component_fingerprint')}`" if item.get('implementation_evidence') else ''}
+{f"- Production certified: `{item.get('implementation_evidence', {}).get('production_certified')}`" if item.get('implementation_evidence') else ''}
+"""
+    atomic_write_text(path, body)
+
+
 def proposal_add(args: argparse.Namespace) -> None:
     require_actor(args.actor)
     proposal_id = stable_id("RFC", args.title.casefold(), args.problem.casefold())
@@ -774,40 +1102,748 @@ def proposal_add(args: argparse.Namespace) -> None:
     }
     proposals.append(item)
     save_collection("proposals", proposals)
-    path = ROOT / "governance" / "proposals" / f"{proposal_id.lower()}-{slugify(args.title)}.md"
-    body = f"""# {proposal_id}: {args.title}
-
-Status: proposed  
-Proposed by: `{args.actor}`  
-Created: {item['created_at']}
-
-## Problem
-
-{args.problem}
-
-## Proposed change
-
-{args.change}
-
-## Evidence
-
-{chr(10).join(f'- `{e}`' for e in item['evidence']) or '- 아직 연결된 근거 없음'}
-
-## Benchmark and acceptance gate
-
-{args.benchmark}
-
-## Risks
-
-{chr(10).join(f'- {risk}' for risk in item['risks']) or '- 미기록'}
-
-## Rollback
-
-{args.rollback}
-"""
-    atomic_write_text(path, body)
+    render_proposal_record(item)
     append_event(args.actor, "proposal.add", proposal_id, {"title": args.title})
     print(proposal_id)
+
+
+def proposal_review(args: argparse.Namespace) -> None:
+    require_actor(args.actor)
+    actor = actor_record(args.actor)
+    if args.decision not in {"approve", "request-changes", "reject"}:
+        raise WikiError("Proposal decision must be approve, request-changes, or reject")
+    if args.decision in {"approve", "reject"} and "policy-approver" not in actor.get("roles", []):
+        raise WikiError("Only an actor with policy-approver role may approve or reject a harness proposal")
+    proposals = collection("proposals")
+    proposal = find(proposals, args.proposal, "proposal")
+    review = {
+        "actor_id": args.actor,
+        "decision": args.decision,
+        "rationale": args.rationale.strip(),
+        "at": utc_now(),
+    }
+    signature = (review["actor_id"], review["decision"], review["rationale"])
+    existing = proposal.setdefault("approvals", [])
+    if any((item.get("actor_id"), item.get("decision"), item.get("rationale")) == signature for item in existing):
+        print(args.proposal)
+        return
+    existing.append(review)
+    if args.decision == "approve":
+        proposal["status"] = "approved"
+    elif args.decision == "request-changes":
+        proposal["status"] = "changes-requested"
+    else:
+        proposal["status"] = "rejected"
+    proposal["updated_at"] = review["at"]
+    save_collection("proposals", proposals)
+    render_proposal_record(proposal)
+    append_event(args.actor, "proposal.review", args.proposal, {"decision": args.decision})
+    print(args.proposal)
+
+
+def proposal_implement(args: argparse.Namespace) -> None:
+    """Close an approved RFC only after a passing, non-certifying release report."""
+
+    require_actor(args.actor)
+    actor = actor_record(args.actor)
+    if not ({"maintainer", "policy-approver"} & set(actor.get("roles", []))):
+        raise WikiError("Only a maintainer or policy-approver may mark an approved proposal implemented")
+    report_path = Path(args.release_report).expanduser().resolve()
+    report = load_json(report_path)
+    if (
+        report.get("release_id") != "living-wiki-v4"
+        or report.get("passed") is not True
+        or report.get("production_certified") is not False
+    ):
+        raise WikiError("Proposal implementation requires a passing truthful v4 release report")
+    proposals = collection("proposals")
+    proposal = find(proposals, args.proposal, "proposal")
+    if proposal.get("status") == "implemented":
+        print(args.proposal)
+        return
+    if proposal.get("status") != "approved":
+        raise WikiError("Only an approved proposal can be marked implemented")
+    proposal["status"] = "implemented"
+    proposal["implemented_by"] = args.actor
+    proposal["implemented_at"] = utc_now()
+    proposal["updated_at"] = proposal["implemented_at"]
+    archived_report = EVALUATION_REPORTS / f"v4-release-{report['component_fingerprint'][:16]}.json"
+    if not archived_report.exists():
+        atomic_write_json(archived_report, report)
+    proposal["implementation_evidence"] = {
+        "release_report": archived_report.relative_to(ROOT).as_posix(),
+        "component_fingerprint": report["component_fingerprint"],
+        "production_certified": False,
+    }
+    save_collection("proposals", proposals)
+    render_proposal_record(proposal)
+    append_event(
+        args.actor,
+        "proposal.implement",
+        args.proposal,
+        {"component_fingerprint": report["component_fingerprint"]},
+    )
+    print(args.proposal)
+
+
+def calibration_run(args: argparse.Namespace) -> None:
+    """Evaluate a frozen gold/admission fixture without changing trust levels."""
+
+    require_actor(args.actor)
+    import calibration
+
+    fixture_path = Path(args.input).expanduser().resolve()
+    fixture = calibration.load_fixture(fixture_path)
+    report = calibration.build_report(fixture, small_n_threshold=args.small_n)
+    output = Path(args.output).expanduser().resolve() if args.output else EVALUATION_REPORTS / "calibration-latest.json"
+    atomic_write_json(output, report)
+    append_event(
+        args.actor,
+        "calibration.evaluate",
+        output.relative_to(ROOT).as_posix() if ROOT in output.parents else str(output),
+        {
+            "benchmark_sha256": report["benchmark_sha256"],
+            "scorable": report["calibration"]["coverage"]["scorable_records"],
+            "trust_policy_mutated": report["trust_policy_mutated"],
+        },
+    )
+    print(output.relative_to(ROOT) if ROOT in output.parents else output)
+
+
+def admission_check(args: argparse.Namespace) -> None:
+    """Screen one source candidate and record an advisory admission decision."""
+
+    require_actor(args.actor)
+    import calibration
+
+    candidate_path = Path(args.candidate).expanduser().resolve()
+    candidate = load_json(candidate_path)
+    if not isinstance(candidate, dict):
+        raise WikiError("Admission candidate file must contain one JSON object")
+    fixture_path = Path(args.registry_fixture).expanduser().resolve() if args.registry_fixture else None
+    registry = None
+    if fixture_path:
+        fixture = calibration.load_fixture(fixture_path)
+        registry = calibration.FixtureStatusRegistry(fixture.get("registry_entries", []))
+    existing_sources = collection("sources")
+    try:
+        independence = calibration.cluster_independence([*existing_sources, candidate])
+        decision = calibration.admission_decision(
+            candidate,
+            registry=registry,
+            existing_sources=existing_sources,
+            independence=independence,
+        )
+    except calibration.CalibrationError as exc:
+        raise WikiError(str(exc)) from exc
+    admission_id = stable_id("ADM", candidate.get("id"), canonical_json(decision))
+    admissions = collection("admissions")
+    if any(item.get("id") == admission_id for item in admissions):
+        print(admission_id)
+        return
+    item = {
+        "id": admission_id,
+        "candidate": candidate,
+        "decision": decision,
+        "status": decision["decision"],
+        "created_by": args.actor,
+        "created_at": utc_now(),
+        "policy_effect": "advisory_only",
+    }
+    item["record_digest"] = admission_record_digest(item)
+    admissions.append(item)
+    save_collection("admissions", admissions)
+    append_event(
+        args.actor,
+        "source.admission.evaluate",
+        admission_id,
+        {"decision": decision["decision"], "record_digest": item["record_digest"]},
+    )
+    output = EVALUATION_REPORTS / f"{admission_id.lower()}.json"
+    atomic_write_json(output, item)
+    print(admission_id)
+
+
+def admission_seal(args: argparse.Namespace) -> None:
+    """Backfill or re-anchor one structurally valid admission record."""
+
+    require_actor(args.actor)
+    actor = actor_record(args.actor)
+    if "maintainer" not in actor.get("roles", []):
+        raise WikiError("Only a maintainer may seal an admission record")
+    admissions = collection("admissions")
+    item = find(admissions, args.admission, "admission")
+    findings = admission_integrity_findings(item, require_digest=False)
+    if findings:
+        raise WikiError("Admission cannot be sealed: " + "; ".join(findings))
+    item["record_digest"] = admission_record_digest(item)
+    save_collection("admissions", admissions)
+    append_event(
+        args.actor,
+        "admission.seal",
+        args.admission,
+        {"record_digest": item["record_digest"], "decision": item.get("status")},
+    )
+    print(args.admission)
+
+
+def security_evaluate(args: argparse.Namespace) -> None:
+    """Evaluate the frozen poisoning corpus without executing fixture content."""
+
+    require_actor(args.actor)
+    import security_gate
+
+    corpus_path = Path(args.corpus).expanduser().resolve()
+    try:
+        corpus = security_gate.load_corpus(corpus_path)
+        report = security_gate.evaluate_corpus(corpus)
+    except (OSError, ValueError, TypeError) as exc:
+        raise WikiError(f"Security corpus evaluation failed closed: {exc}") from exc
+    output = Path(args.output).expanduser().resolve() if args.output else EVALUATION_REPORTS / "security-latest.json"
+    atomic_write_json(output, report)
+    append_event(
+        args.actor,
+        "security.corpus.evaluate",
+        output.relative_to(ROOT).as_posix() if ROOT in output.parents else str(output),
+        {
+            "corpus_sha256": report["corpus_sha256"],
+            "cases": report["case_count"],
+            "attack_success_rate": report["metrics"]["attack_success_rate"],
+            "benign_rejection_rate": report["metrics"]["benign_rejection_rate"],
+            "payloads_executed": report["invariants"]["payloads_executed"],
+        },
+    )
+    print(output.relative_to(ROOT) if ROOT in output.parents else output)
+
+
+def security_screen(args: argparse.Namespace) -> None:
+    """Quarantine and screen one local candidate; never promote it to a source."""
+
+    require_actor(args.actor)
+    import security_gate
+
+    input_path = Path(args.input).expanduser().resolve()
+    if not input_path.is_file():
+        raise WikiError(f"Security input is not a regular file: {input_path}")
+    try:
+        raw = input_path.read_bytes()
+        extracted = (
+            Path(args.extracted_text).expanduser().resolve().read_text(encoding="utf-8")
+            if args.extracted_text
+            else None
+        )
+        assessment = security_gate.assess_content(
+            raw,
+            source_ref=args.source_ref,
+            declared_media_type=args.media_type,
+            extracted_text=extracted,
+        )
+    except (OSError, UnicodeError, ValueError, TypeError) as exc:
+        raise WikiError(f"Security screening failed closed: {exc}") from exc
+
+    safe_assessment = assessment.to_dict(include_normalized_text=False)
+    content_hash = assessment.manifest["content_sha256"]
+    suffix = input_path.suffix.lower() if re.fullmatch(r"\.[a-z0-9]{1,12}", input_path.suffix.lower()) else ".bin"
+    quarantine_path = QUARANTINE / content_hash / f"artifact{suffix}"
+    quarantine_path.parent.mkdir(parents=True, exist_ok=True)
+    if quarantine_path.exists():
+        if digest_file(quarantine_path) != content_hash:
+            raise WikiError(f"Quarantine collision or mutation detected: {quarantine_path.relative_to(ROOT)}")
+    else:
+        shutil.copyfile(input_path, quarantine_path)
+        if digest_file(quarantine_path) != content_hash:
+            quarantine_path.unlink(missing_ok=True)
+            raise WikiError("Quarantine copy hash mismatch")
+        quarantine_path.chmod(0o444)
+
+    admission_id = stable_id("ADM", "security", args.source_ref, content_hash, canonical_json(safe_assessment))
+    admissions = collection("admissions")
+    prior = next((item for item in admissions if item.get("id") == admission_id), None)
+    if prior:
+        print(admission_id)
+        return
+    decision = assessment.gates["write"]
+    item = {
+        "id": admission_id,
+        "candidate": {
+            "id": stable_id("CAND", args.source_ref, content_hash),
+            "source_ref": args.source_ref,
+            "quarantine_artifact": {
+                "path": quarantine_path.relative_to(ROOT).as_posix(),
+                "sha256": content_hash,
+                "size_bytes": assessment.manifest["size_bytes"],
+                "media_type": assessment.manifest["media_type"],
+            },
+        },
+        "decision": {
+            "decision": decision["decision"],
+            "stage": "write",
+            "reasons": decision["reason_rule_ids"],
+            "security_assessment": safe_assessment,
+        },
+        "status": decision["decision"],
+        "created_by": args.actor,
+        "created_at": utc_now(),
+        "policy_effect": "quarantine_only_no_source_promotion",
+    }
+    item["record_digest"] = admission_record_digest(item)
+    admissions.append(item)
+    save_collection("admissions", admissions)
+    append_event(
+        args.actor,
+        "security.candidate.screen",
+        admission_id,
+        {
+            "decision": decision["decision"],
+            "sha256": content_hash,
+            "payload_executed": False,
+            "record_digest": item["record_digest"],
+        },
+    )
+    output = EVALUATION_REPORTS / f"{admission_id.lower()}.json"
+    atomic_write_json(output, item)
+    print(admission_id)
+
+
+def collaboration_add(args: argparse.Namespace) -> None:
+    """Create one actor-neutral direction/correction/lead/objection record."""
+
+    require_actor(args.actor)
+    import runtime
+
+    try:
+        record = runtime.make_collaboration_record(
+            actor_id=args.actor,
+            record_kind=args.record_kind,
+            intent=args.intent,
+            content=args.content,
+            targets=parse_csv(args.targets),
+            stance=args.stance,
+            status=args.status,
+            supersedes=parse_csv(args.supersedes),
+            metadata={"priority": args.priority},
+        )
+    except runtime.RuntimeErrorBase as exc:
+        raise WikiError(str(exc)) from exc
+    records = collection("collaborations")
+    if any(item.get("id") == record["id"] for item in records):
+        print(record["id"])
+        return
+    records.append(record)
+    save_collection("collaborations", records)
+    append_event(args.actor, "collaboration.add", record["id"], {"intent": args.intent, "kind": args.record_kind})
+    print(record["id"])
+
+
+def collaboration_transition(args: argparse.Namespace) -> None:
+    require_actor(args.actor)
+    import runtime
+
+    records = collection("collaborations")
+    record = find(records, args.record, "collaboration record")
+    try:
+        transitioned = runtime.transition_collaboration_record(
+            record,
+            args.status,
+            actor_id=args.actor,
+            reason=args.reason,
+        )
+    except runtime.RuntimeErrorBase as exc:
+        raise WikiError(str(exc)) from exc
+    records = [transitioned if item.get("id") == args.record else item for item in records]
+    save_collection("collaborations", records)
+    append_event(args.actor, "collaboration.transition", args.record, {"status": args.status})
+    print(args.record)
+
+
+def search_cmd(args: argparse.Namespace) -> None:
+    import runtime
+
+    try:
+        results = runtime.lexical_search(args.query, root=ROOT, limit=args.limit)
+    except runtime.RuntimeErrorBase as exc:
+        raise WikiError(str(exc)) from exc
+    print(json.dumps(results, ensure_ascii=False, indent=2, sort_keys=True))
+
+
+def impact_cmd(args: argparse.Namespace) -> None:
+    import runtime
+
+    try:
+        report = runtime.impact_preview(parse_csv(args.targets), args.text, root=ROOT, search_limit=args.limit)
+    except runtime.RuntimeErrorBase as exc:
+        raise WikiError(str(exc)) from exc
+    if args.output:
+        output = Path(args.output).expanduser().resolve()
+        atomic_write_json(output, report)
+        print(output.relative_to(ROOT) if ROOT in output.parents else output)
+    else:
+        print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
+
+
+def run_plan_cmd(args: argparse.Namespace) -> None:
+    """Create and receipt a bounded plan; never perform external research."""
+
+    require_actor(args.actor)
+    import runtime
+
+    prior_runs = collection("runs")
+    prior_receipts = [item.get("receipt", {}) for item in prior_runs if isinstance(item.get("receipt"), dict)]
+    limits = {
+        "max_campaigns": args.max_campaigns,
+        "max_actions": args.max_actions,
+        "max_minutes": args.max_minutes,
+        "max_sources": args.max_sources,
+        "action_minutes": args.action_minutes,
+        "sources_per_action": args.sources_per_action,
+    }
+    try:
+        plan = runtime.build_bounded_schedule(root=ROOT, receipts=prior_receipts, limits=limits, now=args.now)
+        store = runtime.ReceiptStore(EVALUATIONS / "receipts")
+        receipt = runtime.run_plan(
+            plan,
+            dry_run=True,
+            store=store,
+            idempotency_key=args.idempotency_key,
+            actor=actor_record(args.actor),
+            now=args.now,
+        )
+    except runtime.RuntimeErrorBase as exc:
+        raise WikiError(str(exc)) from exc
+    run_id = receipt["run_id"]
+    if not any(item.get("id") == run_id for item in prior_runs):
+        prior_runs.append(
+            {
+                "id": run_id,
+                "actor_id": args.actor,
+                "created_at": receipt["created_at"],
+                "status": receipt["status"],
+                "plan": plan,
+                "receipt": receipt,
+                "external_receipts": [],
+            }
+        )
+        save_collection("runs", prior_runs)
+        append_event(
+            args.actor,
+            "runtime.plan",
+            run_id,
+            {"actions": len(plan["actions"]), "status": receipt["status"], "side_effect_count": receipt["side_effect_count"]},
+        )
+    output = EVALUATION_REPORTS / f"{run_id.lower()}.json"
+    atomic_write_json(output, {"plan": plan, "receipt": receipt})
+    print(run_id)
+
+
+def run_action_report(args: argparse.Namespace) -> None:
+    """Attach an attributed report for externally performed work to a planned action."""
+
+    require_actor(args.actor)
+    import runtime
+
+    runs = collection("runs")
+    run = find(runs, args.run, "run")
+    actions = run.get("plan", {}).get("actions", [])
+    action = next((item for item in actions if item.get("id") == args.action), None)
+    if action is None:
+        raise WikiError(f"Unknown action in run {args.run}: {args.action}")
+    existing = run.setdefault("external_receipts", [])
+    completed = next(
+        (item for item in existing if item.get("action_id") == args.action and item.get("status") == "completed"),
+        None,
+    )
+    budget = action.get("budget", {})
+    used_minutes = int(budget.get("minutes", 0) if args.used_minutes is None else args.used_minutes)
+    used_sources = int(budget.get("sources", 0) if args.used_sources is None else args.used_sources)
+    if used_minutes < 0 or used_sources < 0:
+        raise WikiError("Reported usage must be non-negative")
+    if used_minutes > int(budget.get("minutes", 0)) or used_sources > int(budget.get("sources", 0)):
+        raise WikiError("Reported usage cannot exceed the planned action budget")
+    if completed and args.status == "completed":
+        changed = False
+        if not completed.get("usage_accounted_at"):
+            campaigns = collection("campaigns")
+            campaign = find(campaigns, action.get("campaign_id"), "campaign")
+            campaign_runtime = campaign.setdefault("runtime", {})
+            next_minutes = int(campaign_runtime.get("used_minutes", 0)) + used_minutes
+            next_sources = int(campaign_runtime.get("used_sources", 0)) + used_sources
+            if next_minutes > int(campaign.get("max_minutes", 0)) or next_sources > int(campaign.get("max_sources", 0)):
+                raise WikiError("Completed work usage would exceed the campaign budget")
+            completed["usage"] = {"minutes": used_minutes, "sources": used_sources}
+            completed["usage_accounted_at"] = utc_now()
+            campaign_runtime.update(
+                {"used_minutes": next_minutes, "used_sources": next_sources, "last_run_at": completed["created_at"]}
+            )
+            campaign["updated_at"] = completed["usage_accounted_at"]
+            save_collection("campaigns", campaigns)
+            save_collection("runs", runs)
+            append_event(
+                args.actor,
+                "runtime.usage.backfill",
+                completed["receipt_id"],
+                {"run": args.run, "usage": completed["usage"]},
+            )
+            changed = True
+        if not completed.get("report_digest"):
+            completed["report_digest"] = external_report_digest(completed)
+            run["status"] = "reported-complete"
+            run["updated_at"] = utc_now()
+            save_collection("runs", runs)
+            append_event(
+                args.actor,
+                "runtime.action.seal",
+                completed["receipt_id"],
+                {"run": args.run, "report_digest": completed["report_digest"]},
+            )
+            changed = True
+        if changed:
+            save_collection("runs", runs)
+        print(completed["receipt_id"])
+        return
+    try:
+        report = runtime.make_external_work_receipt(
+            action,
+            actor_id=args.actor,
+            status=args.status,
+            evidence_refs=parse_csv(args.evidence),
+            notes=args.notes,
+        )
+    except runtime.RuntimeErrorBase as exc:
+        raise WikiError(str(exc)) from exc
+    report["usage"] = {"minutes": used_minutes, "sources": used_sources}
+    if any(item.get("receipt_id") == report["receipt_id"] for item in existing):
+        print(report["receipt_id"])
+        return
+    existing.append(report)
+    run["updated_at"] = report["created_at"]
+    expected_actions = {item.get("id") for item in actions}
+    reported_actions = {item.get("action_id") for item in existing}
+    if expected_actions and expected_actions <= reported_actions:
+        run["status"] = "reported-complete" if all(item.get("status") == "completed" for item in existing) else "closed-with-findings"
+    if args.status == "completed":
+        campaigns = collection("campaigns")
+        campaign = find(campaigns, action.get("campaign_id"), "campaign")
+        campaign_runtime = campaign.setdefault("runtime", {})
+        next_minutes = int(campaign_runtime.get("used_minutes", 0)) + used_minutes
+        next_sources = int(campaign_runtime.get("used_sources", 0)) + used_sources
+        if next_minutes > int(campaign.get("max_minutes", 0)) or next_sources > int(campaign.get("max_sources", 0)):
+            raise WikiError("Completed work usage would exceed the campaign budget")
+        campaign_runtime["used_minutes"] = next_minutes
+        campaign_runtime["used_sources"] = next_sources
+        campaign_runtime["last_run_at"] = report["created_at"]
+        report["usage_accounted_at"] = report["created_at"]
+        campaign["updated_at"] = report["created_at"]
+        save_collection("campaigns", campaigns)
+    report["report_digest"] = external_report_digest(report)
+    save_collection("runs", runs)
+    append_event(
+        args.actor,
+        "runtime.action.report",
+        report["receipt_id"],
+        {
+            "run": args.run,
+            "status": args.status,
+            "usage": report["usage"],
+            "report_digest": report["report_digest"],
+            "verification_status": report.get("verification_status"),
+        },
+    )
+    print(report["receipt_id"])
+
+
+def _run_regression_suite(timeout_seconds: int) -> dict[str, Any]:
+    """Run the repository suite and return a normalized, auditable observation."""
+
+    command = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"]
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        output = (exc.stdout or "") + "\n" + (exc.stderr or "")
+        atomic_write_text(EVALUATION_REPORTS / "unit-test-latest.log", output)
+        return {
+            "passed": False,
+            "test_count": 0,
+            "failures": 0,
+            "errors": 1,
+            "skipped": 0,
+            "evidence": "unit-test-timeout",
+        }
+    output = completed.stdout + completed.stderr
+    atomic_write_text(EVALUATION_REPORTS / "unit-test-latest.log", output)
+    match = re.search(r"Ran\s+(\d+)\s+tests?\s+in\s+", output)
+    test_count = int(match.group(1)) if match else 0
+    failures_match = re.search(r"failures=(\d+)", output)
+    errors_match = re.search(r"errors=(\d+)", output)
+    skipped_match = re.search(r"skipped=(\d+)", output)
+    stable_lines = sorted(
+        line.strip()
+        for line in output.splitlines()
+        if re.match(r"^test_.*\.\.\.\s+(?:ok|skipped|FAIL|ERROR)$", line.strip())
+    )
+    result = {
+        "passed": completed.returncode == 0 and test_count > 0,
+        "test_count": test_count,
+        "failures": int(failures_match.group(1)) if failures_match else 0,
+        "errors": int(errors_match.group(1)) if errors_match else (0 if completed.returncode == 0 else 1),
+        "skipped": int(skipped_match.group(1)) if skipped_match else 0,
+        "evidence": digest_text("\n".join(stable_lines)),
+    }
+    atomic_write_json(EVALUATION_REPORTS / "unit-test-latest.json", result)
+    return result
+
+
+def _run_rollback_rehearsal(timeout_seconds: int) -> dict[str, Any]:
+    """Exercise committed v3.1 against current core state in an isolated tree."""
+
+    base_commit = "d18213a78376c0543a0aa590a3db7fcf7022c187"
+    live_paths = [STATE / "events.jsonl", WIKI / "index.md", ROOT / "config" / "wiki.json"]
+    before = {path.relative_to(ROOT).as_posix(): digest_file(path) for path in live_paths}
+    command_outputs: list[str] = []
+    try:
+        archive = subprocess.run(
+            ["git", "archive", "--format=tar", base_commit],
+            cwd=ROOT,
+            capture_output=True,
+            timeout=timeout_seconds,
+            check=False,
+        )
+        if archive.returncode != 0:
+            raise WikiError("Cannot export the committed v3.1 rollback baseline")
+        with tempfile.TemporaryDirectory(prefix="living-wiki-rollback-") as directory:
+            target = Path(directory)
+            with tarfile.open(fileobj=io.BytesIO(archive.stdout), mode="r:") as bundle:
+                for member in bundle.getmembers():
+                    member_path = Path(member.name)
+                    if member_path.is_absolute() or ".." in member_path.parts:
+                        raise WikiError("Unsafe path in local rollback archive")
+                if sys.version_info >= (3, 12):
+                    bundle.extractall(target, filter="data")
+                else:
+                    bundle.extractall(target)
+            for name in ("actors", "sources", "claims", "reviews", "campaigns", "proposals"):
+                shutil.copy2(STATE / f"{name}.json", target / "state" / f"{name}.json")
+            shutil.copy2(STATE / "events.jsonl", target / "state" / "events.jsonl")
+            if (ROOT / "raw").exists():
+                shutil.copytree(ROOT / "raw", target / "raw", dirs_exist_ok=True)
+            for arguments in (
+                ["tools/wiki.py", "render", "--actor", "agent:codex", "--no-log"],
+                ["tools/wiki.py", "validate"],
+                ["tools/wiki.py", "okf-validate"],
+            ):
+                completed = subprocess.run(
+                    [sys.executable, *arguments],
+                    cwd=target,
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout_seconds,
+                    check=False,
+                )
+                command_outputs.append(completed.stdout + completed.stderr)
+                if completed.returncode != 0:
+                    raise WikiError(f"Rollback rehearsal command failed: {' '.join(arguments)}")
+    except (OSError, subprocess.TimeoutExpired, tarfile.TarError, WikiError) as exc:
+        result = {
+            "passed": False,
+            "base_commit": base_commit,
+            "live_workspace_unchanged": False,
+            "commands_passed": len(command_outputs),
+            "evidence": digest_text("\n".join(command_outputs) + f"\n{type(exc).__name__}"),
+            "error": str(exc),
+        }
+        atomic_write_json(EVALUATION_REPORTS / "rollback-rehearsal-latest.json", result)
+        return result
+    after = {path.relative_to(ROOT).as_posix(): digest_file(path) for path in live_paths}
+    result = {
+        "passed": before == after and len(command_outputs) == 3,
+        "base_commit": base_commit,
+        "live_workspace_unchanged": before == after,
+        "commands_passed": len(command_outputs),
+        "evidence": digest_text("\n".join(command_outputs)),
+        "error": None,
+    }
+    atomic_write_json(EVALUATION_REPORTS / "rollback-rehearsal-latest.json", result)
+    return result
+
+
+def release_check(args: argparse.Namespace) -> None:
+    """Orchestrate validators, tests, and fixed fixtures into a truthful v4 gate."""
+
+    require_actor(args.actor)
+    import release_gate
+
+    structural = validation_findings()
+    core_errors, core_warnings, _ = okf_validation_findings()
+    profile_errors, profile_warnings = okf_profile_findings()
+    okf = (
+        [*core_errors, *[f"profile: {item}" for item in profile_errors]],
+        [*core_warnings, *[f"profile: {item}" for item in profile_warnings]],
+    )
+    regression = _run_regression_suite(args.test_timeout)
+    rollback = _run_rollback_rehearsal(args.test_timeout)
+    regression["rollback_rehearsal_passed"] = rollback["passed"]
+    regression["rollback_evidence"] = rollback["evidence"]
+    regression["rollback_base_commit"] = rollback["base_commit"]
+    regression["rollback_live_workspace_unchanged"] = rollback["live_workspace_unchanged"]
+    try:
+        report = release_gate.evaluate_repository(
+            ROOT,
+            structural_findings=structural,
+            okf_findings=okf,
+            regression_result=regression,
+        )
+    except release_gate.ReleaseGateError as exc:
+        raise WikiError(f"Release gate failed closed: {exc}") from exc
+    json_path = EVALUATION_REPORTS / "v4-release-report.json"
+    atomic_write_json(json_path, report)
+    archived_json_path = EVALUATION_REPORTS / f"v4-release-{report['component_fingerprint'][:16]}.json"
+    if archived_json_path.exists() and load_json(archived_json_path) != report:
+        raise WikiError("Content-addressed release report collision")
+    if not archived_json_path.exists():
+        atomic_write_json(archived_json_path, report)
+    gate_rows = [
+        f"| {gate.get('name', '-')} | {'PASS' if gate.get('passed') else 'FAIL'} | "
+        f"{len(gate.get('errors', []))} | {len(gate.get('warnings', []))} |"
+        for gate in report.get("gates", [])
+    ]
+    markdown = f"""# Living Wiki v4 release report
+
+- Result: **{'PASS' if report.get('passed') else 'FAIL'}**
+- Readiness: `{report.get('readiness')}`
+- Production certified: **{str(report.get('production_certified')).lower()}**
+- Calibration: `{report.get('calibration_status')}`
+- Security: `{report.get('security_status')}`
+- Component fingerprint: `{report.get('component_fingerprint')}`
+
+| Gate | Result | Errors | Warnings |
+|---|---|---:|---:|
+{chr(10).join(gate_rows)}
+
+## Interpretation
+
+이 판정은 로컬 control plane과 고정 fixture의 회귀 통과를 뜻한다. 장기 empirical calibration, 보지 못한 semantic attack, live external executor, credential/publication 경로를 인증하지 않는다.
+"""
+    atomic_write_text(EVALUATION_REPORTS / "v4-release-report.md", markdown)
+    append_event(
+        args.actor,
+        "release.evaluate",
+        "living-wiki-v4",
+        {
+            "passed": report["passed"],
+            "component_fingerprint": report["component_fingerprint"],
+            "production_certified": False,
+            "test_count": regression["test_count"],
+        },
+    )
+    print(json_path.relative_to(ROOT))
+    if not report["passed"]:
+        raise WikiError("Living Wiki v4 release gate did not pass")
 
 
 def verify_event_chain(errors: list[str]) -> int:
@@ -905,6 +1941,10 @@ def okf_profile_findings() -> tuple[list[str], list[str]]:
         "actors": len(collection("actors")),
         "reviews": len(collection("reviews")),
         "campaigns": len(collection("campaigns")),
+        "proposals": len(collection("proposals")),
+        "collaborations": len(collection("collaborations")),
+        "admissions": len(collection("admissions")),
+        "runs": len(collection("runs")),
     }
     actual = {
         "sources": len(list((OKF_BUNDLE / "sources").glob("src-*.md"))),
@@ -912,6 +1952,10 @@ def okf_profile_findings() -> tuple[list[str], list[str]]:
         "actors": len(list((OKF_BUNDLE / "actors").glob("actor-*.md"))),
         "reviews": len(list((OKF_BUNDLE / "reviews").glob("rev-*.md"))),
         "campaigns": len(list((OKF_BUNDLE / "campaigns").glob("cmp-*.md"))),
+        "proposals": len(list((OKF_BUNDLE / "governance").glob("rfc-*.md"))),
+        "collaborations": len(list((OKF_BUNDLE / "collaborations").glob("col-*.md"))),
+        "admissions": len(list((OKF_BUNDLE / "admissions").glob("adm-*.md"))),
+        "runs": len(list((OKF_BUNDLE / "runs").glob("run-*.md"))),
     }
     for kind in expected:
         if actual[kind] != expected[kind]:
@@ -950,6 +1994,14 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         claims = collection("claims")
         reviews = collection("reviews")
         campaigns = collection("campaigns")
+        proposals = collection("proposals")
+        collaborations = collection("collaborations")
+        admissions = collection("admissions")
+        runs = collection("runs")
+    except WikiError as exc:
+        return [str(exc)], [], {}
+    try:
+        grandfathered_source_ids = source_grandfather_ids()
     except WikiError as exc:
         return [str(exc)], [], {}
 
@@ -964,10 +2016,22 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
     duplicate_ids(claims, "claim")
     duplicate_ids(reviews, "review")
     duplicate_ids(campaigns, "campaign")
+    duplicate_ids(proposals, "proposal")
+    duplicate_ids(collaborations, "collaboration")
+    duplicate_ids(admissions, "admission")
+    duplicate_ids(runs, "run")
 
     actor_ids = {a.get("id") for a in actors}
     source_ids = {s.get("id") for s in sources}
     claim_ids = {c.get("id") for c in claims}
+    campaign_ids = {c.get("id") for c in campaigns}
+    admission_by_id = {item.get("id"): item for item in admissions}
+    try:
+        ledger_events = event_lines()
+    except WikiError as exc:
+        errors.append(str(exc))
+        ledger_events = []
+    legacy_source_count = 0
     for source in sources:
         if source.get("assessment", {}).get("assessed_by") not in actor_ids:
             errors.append(f"{source.get('id')}: assessment has unknown actor")
@@ -982,8 +2046,42 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
                 errors.append(f"{source.get('id')}: raw artifact hash mismatch")
         else:
             warnings.append(f"{source.get('id')}: metadata-only source; immutable snapshot absent")
+        admission_ids = source.get("admission_ids", [])
+        if not admission_ids:
+            if source.get("id") in grandfathered_source_ids:
+                legacy_source_count += 1
+            else:
+                errors.append(f"{source.get('id')}: non-grandfathered source lacks admission_ids")
+        else:
+            linked_admissions = []
+            for admission_id in admission_ids:
+                admission = admission_by_id.get(admission_id)
+                if admission is None:
+                    errors.append(f"{source.get('id')}: unknown admission {admission_id}")
+                else:
+                    linked_admissions.append(admission)
+            if not any(
+                item.get("status") == "allow" and item.get("policy_effect") == "advisory_only"
+                for item in linked_admissions
+            ):
+                errors.append(f"{source.get('id')}: no allowing source-admission gate")
+            if artifact and not any(
+                item.get("status") == "allow" and item.get("policy_effect") == "quarantine_only_no_source_promotion"
+                for item in linked_admissions
+            ):
+                errors.append(f"{source.get('id')}: file-backed source lacks an allowing security admission")
         if source.get("source_level") == "S0":
             warnings.append(f"{source.get('id')}: source credibility unassessed")
+
+    if legacy_source_count:
+        warnings.append(
+            f"{legacy_source_count} source(s) predate v4 admission enforcement and remain grandfathered"
+        )
+    missing_grandfathered = sorted(grandfathered_source_ids - source_ids)
+    if missing_grandfathered:
+        errors.append(
+            "Pinned grandfathered source(s) missing from the ledger: " + ", ".join(missing_grandfathered)
+        )
 
     for claim in claims:
         if claim.get("created_by") not in actor_ids:
@@ -1020,6 +2118,131 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
             if claim_id not in claim_ids:
                 errors.append(f"{campaign.get('id')}: unknown claim {claim_id}")
 
+    for proposal in proposals:
+        if proposal.get("created_by") not in actor_ids:
+            errors.append(f"{proposal.get('id')}: unknown proposal creator")
+        if proposal.get("status") not in {"proposed", "approved", "changes-requested", "rejected", "implemented", "superseded"}:
+            errors.append(f"{proposal.get('id')}: invalid proposal status")
+        for evidence_id in proposal.get("evidence", []):
+            if evidence_id not in claim_ids:
+                errors.append(f"{proposal.get('id')}: unknown evidence claim {evidence_id}")
+        for decision in proposal.get("approvals", []):
+            if decision.get("actor_id") not in actor_ids:
+                errors.append(f"{proposal.get('id')}: review has unknown actor")
+            if decision.get("decision") not in {"approve", "request-changes", "reject"}:
+                errors.append(f"{proposal.get('id')}: invalid proposal review decision")
+        if proposal.get("status") == "implemented":
+            evidence = proposal.get("implementation_evidence", {})
+            report_path = ROOT / str(evidence.get("release_report", ""))
+            if not report_path.is_file():
+                errors.append(f"{proposal.get('id')}: implemented proposal lacks release report")
+            else:
+                release_report = load_json(report_path)
+                if release_report.get("passed") is not True:
+                    errors.append(f"{proposal.get('id')}: implementation release report did not pass")
+                if release_report.get("component_fingerprint") != evidence.get("component_fingerprint"):
+                    errors.append(f"{proposal.get('id')}: implementation fingerprint mismatch")
+                if release_report.get("production_certified") is not False:
+                    errors.append(f"{proposal.get('id')}: implementation evidence misstates certification")
+
+    try:
+        import runtime
+    except ImportError as exc:
+        errors.append(f"runtime validation unavailable: {exc}")
+    else:
+        try:
+            collaboration_ids = {item.get("id") for item in collaborations}
+            for record in collaborations:
+                try:
+                    runtime.validate_collaboration_record(record)
+                except runtime.RuntimeErrorBase as exc:
+                    errors.append(f"{record.get('id')}: invalid collaboration record: {exc}")
+                if record.get("actor_id") not in actor_ids:
+                    errors.append(f"{record.get('id')}: unknown collaboration actor")
+                for superseded in record.get("supersedes", []):
+                    if superseded not in collaboration_ids:
+                        errors.append(f"{record.get('id')}: unknown superseded collaboration {superseded}")
+
+            receipt_store = runtime.ReceiptStore(EVALUATIONS / "receipts")
+            errors.extend(f"runtime receipt chain: {item}" for item in receipt_store.verify())
+        except (runtime.RuntimeErrorBase, OSError) as exc:
+            errors.append(f"runtime validation failed closed: {exc}")
+
+    for admission in admissions:
+        if admission.get("created_by") not in actor_ids:
+            errors.append(f"{admission.get('id')}: unknown admission actor")
+        if admission.get("status") not in {"allow", "review", "reject"}:
+            errors.append(f"{admission.get('id')}: invalid admission status")
+        if admission.get("policy_effect") not in {"advisory_only", "quarantine_only_no_source_promotion"}:
+            errors.append(f"{admission.get('id')}: admission may not mutate trust or promote a source")
+        for finding in admission_integrity_findings(admission):
+            errors.append(f"{admission.get('id')}: {finding}")
+        if admission.get("record_digest") and not any(
+            event.get("subject") == admission.get("id")
+            and event.get("details", {}).get("record_digest") == admission.get("record_digest")
+            for event in ledger_events
+        ):
+            errors.append(f"{admission.get('id')}: admission digest is not anchored in the event chain")
+        assessment = admission.get("decision", {}).get("security_assessment")
+        if isinstance(assessment, dict):
+            invariants = assessment.get("invariants", {})
+            if invariants.get("payload_executed") is not False:
+                errors.append(f"{admission.get('id')}: security assessment lacks no-execution invariant")
+            artifact = admission.get("candidate", {}).get("quarantine_artifact", {})
+            artifact_path = ROOT / str(artifact.get("path", ""))
+            if not artifact_path.is_file():
+                errors.append(f"{admission.get('id')}: quarantine artifact missing")
+            elif digest_file(artifact_path) != artifact.get("sha256"):
+                errors.append(f"{admission.get('id')}: quarantine artifact hash mismatch")
+
+    for run in runs:
+        if run.get("actor_id") not in actor_ids:
+            errors.append(f"{run.get('id')}: unknown run actor")
+        plan = run.get("plan", {})
+        receipt = run.get("receipt", {})
+        if run.get("status") not in {"planned", "dry_run", "review_required", "blocked", "reported-complete", "closed-with-findings"}:
+            errors.append(f"{run.get('id')}: invalid run lifecycle status {run.get('status')}")
+        if plan.get("side_effects_executed") is not False:
+            errors.append(f"{run.get('id')}: plan must not execute side effects")
+        if int(receipt.get("side_effect_count", -1)) != 0:
+            errors.append(f"{run.get('id')}: external planning receipt recorded a side effect")
+        action_by_id = {item.get("id"): item for item in plan.get("actions", []) if isinstance(item, dict)}
+        for action in action_by_id.values():
+            if action.get("campaign_id") not in campaign_ids:
+                errors.append(f"{run.get('id')}: action has unknown campaign {action.get('campaign_id')}")
+            if action.get("external_work") is not True or action.get("execution") != "planned_only":
+                errors.append(f"{run.get('id')}: external research action is not planned-only")
+        for report in run.get("external_receipts", []):
+            action = action_by_id.get(report.get("action_id"))
+            if action is None:
+                errors.append(f"{run.get('id')}: external report has unknown action {report.get('action_id')}")
+                continue
+            if report.get("actor_id") not in actor_ids:
+                errors.append(f"{run.get('id')}: external report has unknown actor")
+            if report.get("execution_performed_by_runtime") is not False:
+                errors.append(f"{run.get('id')}: runtime claimed external execution")
+            if report.get("verification_status") != "unverified_report":
+                errors.append(f"{run.get('id')}: external result must retain explicit verification status")
+            if report.get("report_digest") != external_report_digest(report):
+                errors.append(f"{run.get('id')}: external report digest mismatch")
+            elif not any(
+                event.get("subject") == report.get("receipt_id")
+                and event.get("details", {}).get("report_digest") == report.get("report_digest")
+                for event in ledger_events
+            ):
+                errors.append(f"{run.get('id')}: external report digest is not anchored in the event chain")
+            usage = report.get("usage")
+            if report.get("status") == "completed" and not isinstance(usage, dict):
+                errors.append(f"{run.get('id')}: completed external report lacks usage accounting")
+            if report.get("status") == "completed" and isinstance(usage, dict):
+                budget = action.get("budget", {})
+                if int(usage.get("minutes", -1)) > int(budget.get("minutes", 0)):
+                    errors.append(f"{run.get('id')}: reported minutes exceed action budget")
+                if int(usage.get("sources", -1)) > int(budget.get("sources", 0)):
+                    errors.append(f"{run.get('id')}: reported sources exceed action budget")
+                if not report.get("usage_accounted_at"):
+                    errors.append(f"{run.get('id')}: completed external report usage was not applied to campaign runtime")
+
     event_count = verify_event_chain(errors)
     okf_errors, okf_warnings, okf_count = okf_validation_findings()
     profile_errors, profile_warnings = okf_profile_findings()
@@ -1033,6 +2256,10 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         "claims": len(claims),
         "reviews": len(reviews),
         "campaigns": len(campaigns),
+        "proposals": len(proposals),
+        "collaborations": len(collaborations),
+        "admissions": len(admissions),
+        "runs": len(runs),
         "events": event_count,
         "okf_concepts": okf_count,
     }
@@ -1114,7 +2341,10 @@ Knowledge state timestamp: {timestamp}
 * [OKF profile](okf-profile.md) - 이 bundle의 OKF v0.1 확장 규약.
 * [Claims](claims/index.md) - atomic claim과 exact evidence projection.
 * [Actors](actors/index.md) - 사람과 Agent contributor registry.
+* [Collaboration](collaborations/index.md) - actor-neutral direction, lead, correction, objection ledger.
 * [Campaigns](campaigns/index.md) - bounded autonomous research queue.
+* [Admissions](admissions/index.md) - source/security admission decisions without automatic promotion.
+* [Runs](runs/index.md) - bounded plans and attributed external-work receipts.
 * [Trust policy](trust/index.md) - S0-S4/C0-C4 producer profile.
 * [Governance](governance/index.md) - 헌장과 결정 기록.
 
@@ -1143,6 +2373,10 @@ def render_okf_state_projection() -> None:
     claims = collection("claims")
     reviews = collection("reviews")
     campaigns = collection("campaigns")
+    proposals = collection("proposals")
+    collaborations = collection("collaborations")
+    admissions = collection("admissions")
+    runs = collection("runs")
     source_by_id = {source["id"]: source for source in sources}
     claims_by_source: dict[str, list[str]] = {}
     for claim in claims:
@@ -1376,6 +2610,214 @@ Why now: {campaign.get('why_now') or '-'}
 """
         write_okf_concept(WIKI / "campaigns" / f"{campaign['id'].lower()}.md", metadata, body)
 
+    for proposal in proposals:
+        metadata = {
+            "type": "Harness Proposal",
+            "title": f"{proposal['id']}: {proposal.get('title', '')}",
+            "description": proposal.get("problem", "")[:300],
+            "tags": ["governance", "harness-proposal", proposal.get("status", "proposed")],
+            "timestamp": proposal.get("updated_at") or proposal.get("created_at") or "2026-07-11T00:00:00+09:00",
+            "proposal_id": proposal["id"],
+            "lifecycle_status": proposal.get("status", "proposed"),
+            "generated": True,
+        }
+        reviews = proposal.get("approvals", [])
+        body = f"""<!-- AUTOGENERATED from state/proposals.json. -->
+# {proposal['id']}: {proposal.get('title', '')}
+
+- Status: **{proposal.get('status', 'proposed')}**
+- Proposed by: [{proposal.get('created_by', '-')}](../actors/{actor_page_name(proposal.get('created_by', 'unknown'))})
+- Created: `{proposal.get('created_at', '-')}`
+
+## Problem
+
+{proposal.get('problem', '-')}
+
+## Proposed change
+
+{proposal.get('proposed_change', '-')}
+
+## Evidence claims
+
+{chr(10).join(f'- [{claim_id}](../claims/{claim_id.lower()}.md)' for claim_id in proposal.get('evidence', [])) or '- None'}
+
+## Acceptance gate
+
+{proposal.get('benchmark', '-')}
+
+## Risks
+
+{chr(10).join(f'- {risk}' for risk in proposal.get('risks', [])) or '- None'}
+
+## Rollback
+
+{proposal.get('rollback', '-')}
+
+## Review decisions
+
+{chr(10).join(f"- **{item.get('decision', '-')}** by `{item.get('actor_id', '-')}` at `{item.get('at', '-')}` — {item.get('rationale', '-')}" for item in reviews) or '- None'}
+
+## Implementation evidence
+
+{f"- Release report: `{proposal.get('implementation_evidence', {}).get('release_report')}`" if proposal.get('implementation_evidence') else '- Not implemented yet.'}
+{f"- Component fingerprint: `{proposal.get('implementation_evidence', {}).get('component_fingerprint')}`" if proposal.get('implementation_evidence') else ''}
+{f"- Production certified: `{proposal.get('implementation_evidence', {}).get('production_certified')}`" if proposal.get('implementation_evidence') else ''}
+"""
+        write_okf_concept(WIKI / "governance" / f"{proposal['id'].lower()}.md", metadata, body)
+
+    for record in collaborations:
+        transitions = record.get("metadata", {}).get("transitions", [])
+        body = f"""<!-- AUTOGENERATED from state/collaborations.json. -->
+# {record['id']}
+
+> {record.get('content', '')}
+
+| Field | Value |
+|---|---|
+| Actor | [{record.get('actor_id', '-')}](../actors/{actor_page_name(record.get('actor_id', 'unknown'))}) |
+| Record kind | `{record.get('record_kind', '-')}` |
+| Intent | `{record.get('intent', '-')}` |
+| Stance | `{record.get('stance') or '-'}` |
+| Status | **{record.get('status', '-')}** |
+| Created | `{record.get('created_at', '-')}` |
+| Updated | `{record.get('updated_at', '-')}` |
+
+## Targets
+
+{chr(10).join(f'- `{target}`' for target in record.get('targets', [])) or '- None'}
+
+## Transition history
+
+{chr(10).join(f"- `{item.get('at', '-')}` — `{item.get('from', '-')}` → `{item.get('to', '-')}` by `{item.get('actor_id', '-')}`: {item.get('reason', '-')}" for item in transitions) or '- None'}
+"""
+        write_okf_concept(
+            WIKI / "collaborations" / f"{record['id'].lower()}.md",
+            {
+                "type": "Collaboration Record",
+                "title": record["id"],
+                "description": record.get("content", "")[:300],
+                "tags": ["collaboration", record.get("record_kind", "unknown"), record.get("intent", "unknown"), record.get("status", "unknown")],
+                "timestamp": record.get("updated_at") or record.get("created_at") or "2026-07-11T00:00:00+09:00",
+                "lifecycle_status": record.get("status", "unknown"),
+                "generated": True,
+            },
+            body,
+        )
+
+    for admission in admissions:
+        candidate = admission.get("candidate", {})
+        decision = admission.get("decision", {})
+        reason_items = decision.get("reasons", [])
+        reason_codes = []
+        for reason in reason_items:
+            reason_codes.append(str(reason.get("code")) if isinstance(reason, dict) else str(reason))
+        security_assessment = decision.get("security_assessment", {})
+        if isinstance(security_assessment, dict):
+            reason_codes.extend(
+                str(item.get("rule_id"))
+                for item in security_assessment.get("signals", [])
+                if isinstance(item, dict) and item.get("rule_id")
+            )
+        reason_codes = sorted(set(filter(None, reason_codes)))
+        artifact = candidate.get("quarantine_artifact", {})
+        source_url = candidate.get("url")
+        source_ref = candidate.get("source_ref")
+        citation_url = source_url or (source_ref if isinstance(source_ref, str) and source_ref.startswith(("https://", "http://")) else None)
+        body = f"""<!-- AUTOGENERATED from state/admissions.json; untrusted payload text is intentionally omitted. -->
+# {admission['id']}
+
+| Field | Value |
+|---|---|
+| Candidate | `{candidate.get('id', '-')}` |
+| Source reference | {md_cell(source_ref or source_url)} |
+| Decision | **{admission.get('status', '-')}** |
+| Policy effect | `{admission.get('policy_effect', '-')}` |
+| Evaluated by | [{admission.get('created_by', '-')}](../actors/{actor_page_name(admission.get('created_by', 'unknown'))}) |
+| Evaluated at | `{admission.get('created_at', '-')}` |
+
+## Explainable reasons
+
+{chr(10).join(f'- `{code}`' for code in reason_codes) or '- No blocking reason recorded.'}
+
+## Quarantine manifest
+
+- Path outside bundle: `{artifact.get('path', 'not applicable')}`
+- SHA-256: `{artifact.get('sha256', 'not applicable')}`
+- Size: `{artifact.get('size_bytes', 'not applicable')}` bytes
+- Media type: `{artifact.get('media_type', 'not applicable')}`
+
+The candidate was not automatically promoted to a canonical source and this decision did not mutate C0–C4.
+"""
+        if citation_url:
+            body += f"\n# Citations\n\n[1] [Candidate source]({citation_url})\n"
+        write_okf_concept(
+            WIKI / "admissions" / f"{admission['id'].lower()}.md",
+            {
+                "type": "Admission Decision",
+                "title": admission["id"],
+                "description": f"Source/security admission decision {admission.get('status', 'unknown')} with no automatic trust mutation.",
+                "tags": ["admission", admission.get("status", "unknown"), "audit"],
+                "timestamp": admission.get("created_at") or "2026-07-11T00:00:00+09:00",
+                "lifecycle_status": admission.get("status", "unknown"),
+                "generated": True,
+            },
+            body,
+        )
+
+    for run in runs:
+        action_rows = []
+        for action in run.get("plan", {}).get("actions", []):
+            budget = action.get("budget", {})
+            action_rows.append(
+                f"| `{action.get('id', '-')}` | `{action.get('campaign_id', '-')}` | `{action.get('execution', '-')}` | "
+                f"{budget.get('minutes', 0)} | {budget.get('sources', 0)} |"
+            )
+        report_rows = []
+        for report in run.get("external_receipts", []):
+            usage = report.get("usage", {})
+            report_rows.append(
+                f"| `{report.get('receipt_id', '-')}` | `{report.get('action_id', '-')}` | {report.get('status', '-')} | "
+                f"`{report.get('actor_id', '-')}` | {usage.get('minutes', '-')} | {usage.get('sources', '-')} |"
+            )
+        receipt = run.get("receipt", {})
+        body = f"""<!-- AUTOGENERATED from state/runs.json. -->
+# {run['id']}
+
+- Status: **{run.get('status', '-')}**
+- Planned by: [{run.get('actor_id', '-')}](../actors/{actor_page_name(run.get('actor_id', 'unknown'))})
+- Created: `{run.get('created_at', '-')}`
+- Plan ID: `{run.get('plan', {}).get('plan_id', '-')}`
+- Planning receipt hash: `{receipt.get('receipt_hash', '-')}`
+- Runtime side-effect count: **{receipt.get('side_effect_count', '-')}**
+
+## Planned-only actions
+
+| Action | Campaign | Execution | Minutes | Sources |
+|---|---|---|---:|---:|
+{chr(10).join(action_rows) or '| - | - | - | - | - |'}
+
+## Attributed external reports
+
+| Receipt | Action | Status | Actor | Used minutes | Used sources |
+|---|---|---|---|---:|---:|
+{chr(10).join(report_rows) or '| - | - | - | - | - | - |'}
+
+The runtime only planned external work. Any reported execution is attributed separately and remains unverified unless its evidence is reviewed.
+"""
+        write_okf_concept(
+            WIKI / "runs" / f"{run['id'].lower()}.md",
+            {
+                "type": "Runtime Receipt",
+                "title": run["id"],
+                "description": "Bounded research plan and attributed external-work receipts; runtime executes no external action.",
+                "tags": ["runtime", "receipt", run.get("status", "unknown")],
+                "timestamp": run.get("updated_at") or run.get("created_at") or "2026-07-11T00:00:00+09:00",
+                "lifecycle_status": run.get("status", "unknown"),
+                "generated": True,
+            },
+            body,
+        )
+
     trust = load_json(ROOT / "config" / "trust-policy.json")
     source_rows = "\n".join(f"| {level} | {md_cell(text)} |" for level, text in trust.get("source_levels", {}).items())
     claim_rows = "\n".join(f"| {level} | {md_cell(text)} |" for level, text in trust.get("claim_levels", {}).items())
@@ -1442,6 +2884,9 @@ def render_okf_subindexes() -> None:
         ("actors", "Actors"),
         ("reviews", "Reviews"),
         ("campaigns", "Research Campaigns"),
+        ("collaborations", "Collaboration Records"),
+        ("admissions", "Admission Decisions"),
+        ("runs", "Runtime Receipts"),
         ("trust", "Trust Policies"),
         ("governance", "Governance"),
     ]:
@@ -1559,6 +3004,7 @@ def snapshot(args: argparse.Namespace) -> None:
             "wiki",
             "research",
             "governance",
+            "migrations",
             "evolution",
             "evaluations",
             "reports",
@@ -1602,6 +3048,10 @@ def status(args: argparse.Namespace) -> None:
     sources = collection("sources")
     claims = collection("claims")
     campaigns = collection("campaigns")
+    reviews = collection("reviews")
+    collaborations = collection("collaborations")
+    admissions = collection("admissions")
+    runs = collection("runs")
     events = event_lines()
     levels = {level: 0 for level in CLAIM_LEVELS}
     for claim in claims:
@@ -1609,6 +3059,10 @@ def status(args: argparse.Namespace) -> None:
     version = load_json(ROOT / "config" / "wiki.json").get("harness_version", "unknown")
     print(f"Living Wiki {version}")
     print(f"Actors: {len(actors)} | Sources: {len(sources)} | Claims: {len(claims)} | Events: {len(events)}")
+    print(
+        f"Reviews: {len(reviews)} | Collaborations: {len(collaborations)} | "
+        f"Admissions: {len(admissions)} | Runs: {len(runs)}"
+    )
     print("Claim levels: " + " ".join(f"{level}={count}" for level, count in levels.items()))
     print("Campaigns: " + ", ".join(f"{state}={sum(c.get('status') == state for c in campaigns)}" for state in ["active", "queued", "blocked", "completed"]))
     if events:
@@ -1637,6 +3091,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--title", required=True)
     p.add_argument("--url")
     p.add_argument("--file")
+    p.add_argument("--admission", required=True, help="allow decision from admission-check")
+    p.add_argument("--security-admission", help="matching allow decision from security-screen; required with --file")
     p.add_argument("--source-type", required=True, choices=sorted(SOURCE_TYPES))
     p.add_argument("--authors")
     p.add_argument("--publisher")
@@ -1719,6 +3175,12 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=next_task)
 
+    p = sub.add_parser("interest-seed", help="queue cadence-due interest questions without executing research")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--now", help="fixed ISO-8601 evaluation time for deterministic scheduling")
+    p.add_argument("--max-campaigns", type=int, default=1)
+    p.set_defaults(func=interest_seed)
+
     p = sub.add_parser("proposal-add", help="propose, but do not auto-apply, a harness change")
     p.add_argument("--actor", default="agent:codex")
     p.add_argument("--title", required=True)
@@ -1729,6 +3191,110 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--risks")
     p.add_argument("--rollback", required=True)
     p.set_defaults(func=proposal_add)
+
+    p = sub.add_parser("proposal-review", help="record an attributed approval or objection to a harness proposal")
+    p.add_argument("--actor", required=True)
+    p.add_argument("--proposal", required=True)
+    p.add_argument("--decision", required=True, choices=["approve", "request-changes", "reject"])
+    p.add_argument("--rationale", required=True)
+    p.set_defaults(func=proposal_review)
+
+    p = sub.add_parser("proposal-implement", help="mark an approved RFC implemented after a passing release gate")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--proposal", required=True)
+    p.add_argument("--release-report", default=str(EVALUATION_REPORTS / "v4-release-report.json"))
+    p.set_defaults(func=proposal_implement)
+
+    p = sub.add_parser("calibration-run", help="evaluate a frozen ordinal-calibration and admission fixture")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--input", default=str(EVALUATIONS / "fixtures" / "calibration-gold.json"))
+    p.add_argument("--output")
+    p.add_argument("--small-n", type=int, default=5)
+    p.set_defaults(func=calibration_run)
+
+    p = sub.add_parser("admission-check", help="record an advisory source-admission decision for one JSON candidate")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--candidate", required=True)
+    p.add_argument("--registry-fixture")
+    p.set_defaults(func=admission_check)
+
+    p = sub.add_parser("admission-seal", help="anchor a structurally valid admission digest in the event chain")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--admission", required=True)
+    p.set_defaults(func=admission_seal)
+
+    p = sub.add_parser("security-evaluate", help="run the fixed non-executing poisoning/security corpus")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--corpus", default=str(EVALUATIONS / "fixtures" / "security-corpus.json"))
+    p.add_argument("--output")
+    p.set_defaults(func=security_evaluate)
+
+    p = sub.add_parser("security-screen", help="quarantine and screen one local candidate without source promotion")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--input", required=True)
+    p.add_argument("--source-ref", required=True)
+    p.add_argument("--media-type")
+    p.add_argument("--extracted-text", help="UTF-8 output from a separately sandboxed binary parser")
+    p.set_defaults(func=security_screen)
+
+    p = sub.add_parser("collaboration-add", help="record an actor-neutral direction, correction, lead, or objection")
+    p.add_argument("--actor", required=True)
+    p.add_argument("--record-kind", required=True, choices=["commitment", "contribution", "review"])
+    p.add_argument("--intent", required=True, choices=["direction", "correction", "lead", "objection"])
+    p.add_argument("--content", required=True)
+    p.add_argument("--targets", required=True, help="comma-separated claim/source/campaign/wiki references")
+    p.add_argument("--stance")
+    p.add_argument("--status", default="proposed", choices=["draft", "proposed", "acknowledged", "active"])
+    p.add_argument("--supersedes")
+    p.add_argument("--priority", type=float, default=0.5)
+    p.set_defaults(func=collaboration_add)
+
+    p = sub.add_parser("collaboration-transition", help="transition a collaboration record with attribution")
+    p.add_argument("--actor", required=True)
+    p.add_argument("--record", required=True)
+    p.add_argument("--status", required=True, choices=["proposed", "acknowledged", "active", "resolved", "withdrawn", "rejected", "superseded"])
+    p.add_argument("--reason", required=True)
+    p.set_defaults(func=collaboration_transition)
+
+    p = sub.add_parser("search", help="run deterministic lexical retrieval across canonical state and wiki")
+    p.add_argument("query")
+    p.add_argument("--limit", type=int, default=10)
+    p.set_defaults(func=search_cmd)
+
+    p = sub.add_parser("impact", help="preview dependency impact and possible semantic conflicts")
+    p.add_argument("--targets", required=True, help="comma-separated claim/source/campaign references")
+    p.add_argument("--text", required=True)
+    p.add_argument("--limit", type=int, default=12)
+    p.add_argument("--output")
+    p.set_defaults(func=impact_cmd)
+
+    p = sub.add_parser("run-plan", help="create a bounded, hash-receipted external research plan without executing it")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--now")
+    p.add_argument("--idempotency-key")
+    p.add_argument("--max-campaigns", type=int, default=1)
+    p.add_argument("--max-actions", type=int, default=1)
+    p.add_argument("--max-minutes", type=int, default=45)
+    p.add_argument("--max-sources", type=int, default=3)
+    p.add_argument("--action-minutes", type=int, default=15)
+    p.add_argument("--sources-per-action", type=int, default=1)
+    p.set_defaults(func=run_plan_cmd)
+
+    p = sub.add_parser("run-action-report", help="attach an attributed report to one externally performed planned action")
+    p.add_argument("--actor", required=True)
+    p.add_argument("--run", required=True)
+    p.add_argument("--action", required=True)
+    p.add_argument("--status", required=True, choices=["reported", "completed", "failed", "cancelled"])
+    p.add_argument("--evidence")
+    p.add_argument("--notes")
+    p.add_argument("--used-minutes", type=int, help="actual minutes, bounded by the action allocation")
+    p.add_argument("--used-sources", type=int, help="actual source count, bounded by the action allocation")
+    p.set_defaults(func=run_action_report)
+
+    p = sub.add_parser("release-check", help="run the integrated v4 structural, fixture, receipt, and regression gates")
+    p.add_argument("--actor", default="agent:codex")
+    p.add_argument("--test-timeout", type=int, default=300)
+    p.set_defaults(func=release_check)
 
     p = sub.add_parser("render", help="regenerate deterministic human-readable views")
     p.add_argument("--actor", default="agent:codex")

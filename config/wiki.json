@@ -1,6 +1,6 @@
 {
   "name": "Living Wiki",
-  "harness_version": "3.1.0",
+  "harness_version": "4.0.0",
   "knowledge_bundle": {
     "format": "Open Knowledge Format",
     "path": "wiki",

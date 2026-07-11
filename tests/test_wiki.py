@@ -135,19 +135,41 @@ class ConfidenceTests(unittest.TestCase):
 class EventChainTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.old = (wiki.ROOT, wiki.STATE, wiki.RAW, wiki.WIKI, wiki.REPORTS, wiki.EVALUATIONS, wiki.OKF_BUNDLE)
+        self.old = (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        )
         root = Path(self.temp.name)
         wiki.ROOT = root
         wiki.STATE = root / "state"
         wiki.RAW = root / "raw" / "sources"
+        wiki.QUARANTINE = root / "raw" / "quarantine"
         wiki.WIKI = root / "wiki"
         wiki.REPORTS = root / "reports"
         wiki.EVALUATIONS = root / "evaluations"
+        wiki.EVALUATION_REPORTS = wiki.EVALUATIONS / "reports"
         wiki.OKF_BUNDLE = wiki.WIKI
         wiki.ensure_layout()
 
     def tearDown(self):
-        wiki.ROOT, wiki.STATE, wiki.RAW, wiki.WIKI, wiki.REPORTS, wiki.EVALUATIONS, wiki.OKF_BUNDLE = self.old
+        (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        ) = self.old
         self.temp.cleanup()
 
     def test_valid_chain(self):
@@ -168,6 +190,350 @@ class EventChainTests(unittest.TestCase):
         self.assertTrue(any("invalid event_hash" in error for error in errors))
 
 
+class ProposalGovernanceTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.old = (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        )
+        root = Path(self.temp.name)
+        wiki.ROOT = root
+        wiki.STATE = root / "state"
+        wiki.RAW = root / "raw" / "sources"
+        wiki.QUARANTINE = root / "raw" / "quarantine"
+        wiki.WIKI = root / "wiki"
+        wiki.REPORTS = root / "reports"
+        wiki.EVALUATIONS = root / "evaluations"
+        wiki.EVALUATION_REPORTS = wiki.EVALUATIONS / "reports"
+        wiki.OKF_BUNDLE = wiki.WIKI
+        wiki.ensure_layout()
+        wiki.atomic_write_json(
+            wiki.STATE / "actors.json",
+            {
+                "version": 1,
+                "actors": [
+                    {
+                        "id": "human:owner",
+                        "kind": "human",
+                        "display_name": "Owner",
+                        "roles": ["policy-approver"],
+                        "status": "active",
+                        "metadata": {"independence_group": "human:owner"},
+                    },
+                    {
+                        "id": "agent:writer",
+                        "kind": "agent",
+                        "display_name": "Writer",
+                        "roles": ["contributor"],
+                        "status": "active",
+                        "metadata": {"independence_group": "model-a"},
+                    },
+                ],
+            },
+        )
+        self.proposal = {
+            "id": "RFC-1",
+            "title": "Test change",
+            "problem": "A reproducible problem",
+            "proposed_change": "A minimal change",
+            "evidence": [],
+            "benchmark": "Tests pass",
+            "risks": ["regression"],
+            "rollback": "Disable it",
+            "created_by": "agent:writer",
+            "created_at": "2026-01-01T00:00:00+00:00",
+            "status": "proposed",
+            "approvals": [],
+        }
+        wiki.save_collection("proposals", [self.proposal])
+
+    def tearDown(self):
+        (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        ) = self.old
+        self.temp.cleanup()
+
+    @staticmethod
+    def args(actor="human:owner", decision="approve"):
+        return type(
+            "Args",
+            (),
+            {"actor": actor, "proposal": "RFC-1", "decision": decision, "rationale": "Explicit review"},
+        )()
+
+    def test_policy_approver_can_approve(self):
+        wiki.proposal_review(self.args())
+        proposal = wiki.collection("proposals")[0]
+        self.assertEqual(proposal["status"], "approved")
+        self.assertEqual(proposal["approvals"][0]["actor_id"], "human:owner")
+
+    def test_non_approver_cannot_approve(self):
+        with self.assertRaises(wiki.WikiError):
+            wiki.proposal_review(self.args(actor="agent:writer"))
+
+    def test_same_review_is_idempotent(self):
+        wiki.proposal_review(self.args())
+        wiki.proposal_review(self.args())
+        self.assertEqual(len(wiki.collection("proposals")[0]["approvals"]), 1)
+
+    def test_implemented_requires_passing_non_certifying_release_report(self):
+        wiki.proposal_review(self.args())
+        report_path = wiki.EVALUATION_REPORTS / "v4-release-report.json"
+        wiki.atomic_write_json(
+            report_path,
+            {
+                "release_id": "living-wiki-v4",
+                "passed": True,
+                "production_certified": False,
+                "component_fingerprint": "f" * 64,
+            },
+        )
+        args = type(
+            "Args",
+            (),
+            {"actor": "human:owner", "proposal": "RFC-1", "release_report": str(report_path)},
+        )()
+        wiki.proposal_implement(args)
+        proposal = wiki.collection("proposals")[0]
+        self.assertEqual(proposal["status"], "implemented")
+        self.assertFalse(proposal["implementation_evidence"]["production_certified"])
+
+
+class IntegratedGateTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.old = (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        )
+        root = Path(self.temp.name)
+        wiki.ROOT = root
+        wiki.STATE = root / "state"
+        wiki.RAW = root / "raw" / "sources"
+        wiki.QUARANTINE = root / "raw" / "quarantine"
+        wiki.WIKI = root / "wiki"
+        wiki.REPORTS = root / "reports"
+        wiki.EVALUATIONS = root / "evaluations"
+        wiki.EVALUATION_REPORTS = wiki.EVALUATIONS / "reports"
+        wiki.OKF_BUNDLE = wiki.WIKI
+        wiki.ensure_layout()
+        wiki.save_collection(
+            "actors",
+            [
+                {
+                    "id": "agent:test",
+                    "kind": "agent",
+                    "display_name": "Test Agent",
+                    "roles": ["researcher"],
+                    "capabilities": ["submit"],
+                    "status": "active",
+                    "metadata": {"independence_group": "test-group"},
+                }
+            ],
+        )
+
+    def tearDown(self):
+        (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        ) = self.old
+        self.temp.cleanup()
+
+    def test_security_screen_quarantines_without_source_promotion(self):
+        candidate = wiki.ROOT / "candidate.txt"
+        candidate.write_text("A plain research note with no executable instruction.", encoding="utf-8")
+        args = type(
+            "Args",
+            (),
+            {
+                "actor": "agent:test",
+                "input": str(candidate),
+                "source_ref": "fixture:plain-note",
+                "media_type": "text/plain",
+                "extracted_text": None,
+            },
+        )()
+        wiki.security_screen(args)
+        admissions = wiki.collection("admissions")
+        self.assertEqual(len(admissions), 1)
+        self.assertEqual(admissions[0]["status"], "allow")
+        self.assertEqual(wiki.collection("sources"), [])
+        artifact = wiki.ROOT / admissions[0]["candidate"]["quarantine_artifact"]["path"]
+        self.assertTrue(artifact.is_file())
+        self.assertEqual(wiki.digest_file(artifact), admissions[0]["candidate"]["quarantine_artifact"]["sha256"])
+
+    def test_completed_external_report_accounts_usage_once(self):
+        wiki.save_collection(
+            "campaigns",
+            [
+                {
+                    "id": "CMP-1",
+                    "status": "active",
+                    "max_minutes": 20,
+                    "max_sources": 2,
+                    "runtime": {},
+                }
+            ],
+        )
+        action = {
+            "id": "ACT-1",
+            "campaign_id": "CMP-1",
+            "external_work": True,
+            "execution": "planned_only",
+            "budget": {"minutes": 10, "sources": 1},
+        }
+        wiki.save_collection(
+            "runs",
+            [
+                {
+                    "id": "RUN-1",
+                    "actor_id": "agent:test",
+                    "status": "planned",
+                    "plan": {"actions": [action]},
+                    "receipt": {"side_effect_count": 0},
+                    "external_receipts": [],
+                }
+            ],
+        )
+        args = type(
+            "Args",
+            (),
+            {
+                "actor": "agent:test",
+                "run": "RUN-1",
+                "action": "ACT-1",
+                "status": "completed",
+                "evidence": "SRC-1",
+                "notes": "Externally completed and reported.",
+                "used_minutes": 7,
+                "used_sources": 1,
+            },
+        )()
+        wiki.run_action_report(args)
+        wiki.run_action_report(args)
+        runtime = wiki.collection("campaigns")[0]["runtime"]
+        self.assertEqual(runtime["used_minutes"], 7)
+        self.assertEqual(runtime["used_sources"], 1)
+        self.assertEqual(len(wiki.collection("runs")[0]["external_receipts"]), 1)
+
+    def test_source_writer_requires_matching_allow_admission(self):
+        base = {
+            "actor": "agent:test",
+            "title": "Admitted official page",
+            "url": "https://example.org/reference",
+            "file": None,
+            "security_admission": None,
+            "source_type": "official-doc",
+            "authors": None,
+            "publisher": "Example",
+            "published": "2026-01-01",
+            "publication_status": "active",
+            "independence_group": None,
+            "level": "S1",
+            "rationale": "Identity and scope were checked.",
+            "quality_markers": "official",
+            "conflicts": None,
+            "license": None,
+            "notes": None,
+        }
+        with self.assertRaises(wiki.WikiError):
+            wiki.source_add(type("Args", (), {**base, "admission": None})())
+        decision = {"decision": "allow"}
+        admission_id = wiki.stable_id("ADM", "CAND-1", wiki.canonical_json(decision))
+        admission = {
+            "id": admission_id,
+            "candidate": {"id": "CAND-1", "title": base["title"], "url": base["url"]},
+            "decision": decision,
+            "status": "allow",
+            "created_by": "agent:test",
+            "created_at": "2026-01-01T00:00:00+00:00",
+            "policy_effect": "advisory_only",
+        }
+        admission["record_digest"] = wiki.admission_record_digest(admission)
+        wiki.save_collection(
+            "admissions",
+            [admission],
+        )
+        wiki.append_event(
+            "agent:test",
+            "source.admission.evaluate",
+            admission_id,
+            {"decision": "allow", "record_digest": admission["record_digest"]},
+        )
+        wiki.source_add(type("Args", (), {**base, "admission": admission_id})())
+        source = wiki.collection("sources")[0]
+        self.assertEqual(source["admission_ids"], [admission_id])
+
+    def test_interest_seed_is_due_bounded_and_idempotent(self):
+        config = wiki.ROOT / "config"
+        config.mkdir(parents=True)
+        wiki.atomic_write_json(
+            config / "interests.json",
+            {
+                "interests": [
+                    {
+                        "id": "INT-1",
+                        "priority": 1.0,
+                        "cadence_days": 7,
+                        "questions": ["What new counterevidence exists?"],
+                    }
+                ]
+            },
+        )
+        wiki.atomic_write_json(
+            config / "wiki.json",
+            {
+                "research_limits": {
+                    "default_max_sources_per_cycle": 4,
+                    "default_max_minutes_per_cycle": 20,
+                    "min_independent_source_groups": 2,
+                    "stop_after_no_novel_claim_rounds": 2,
+                }
+            },
+        )
+        args = type(
+            "Args",
+            (),
+            {"actor": "agent:test", "now": "2026-07-12T00:00:00+00:00", "max_campaigns": 1},
+        )()
+        wiki.interest_seed(args)
+        wiki.interest_seed(args)
+        campaigns = wiki.collection("campaigns")
+        self.assertEqual(len(campaigns), 1)
+        self.assertEqual(campaigns[0]["status"], "queued")
+        self.assertEqual(campaigns[0]["max_sources"], 4)
+
+
 class UtilityTests(unittest.TestCase):
     def test_stable_id_is_deterministic(self):
         self.assertEqual(wiki.stable_id("CLM", "x", "y"), wiki.stable_id("CLM", "x", "y"))
@@ -186,6 +552,34 @@ class UtilityTests(unittest.TestCase):
     def test_okf_frontmatter_missing_is_detected(self):
         _, _, errors = wiki.split_okf_frontmatter("# No frontmatter\n")
         self.assertTrue(errors)
+
+    def test_admission_integrity_detects_status_or_decision_tamper(self):
+        decision = {"decision": "review", "reasons": [{"code": "duplicate"}]}
+        item = {
+            "id": wiki.stable_id("ADM", "CAND-1", wiki.canonical_json(decision)),
+            "candidate": {"id": "CAND-1", "title": "Candidate"},
+            "decision": decision,
+            "status": "review",
+            "created_by": "agent:test",
+            "created_at": "2026-01-01T00:00:00+00:00",
+            "policy_effect": "advisory_only",
+        }
+        item["record_digest"] = wiki.admission_record_digest(item)
+        self.assertEqual(wiki.admission_integrity_findings(item), [])
+        item["status"] = "allow"
+        self.assertTrue(wiki.admission_integrity_findings(item))
+
+    def test_external_report_digest_detects_payload_tamper(self):
+        report = {
+            "receipt_id": "EXT-1",
+            "status": "completed",
+            "notes": "original",
+            "verification_status": "unverified_report",
+        }
+        report["report_digest"] = wiki.external_report_digest(report)
+        self.assertEqual(report["report_digest"], wiki.external_report_digest(report))
+        report["notes"] = "tampered"
+        self.assertNotEqual(report["report_digest"], wiki.external_report_digest(report))
 
 
 if __name__ == "__main__":
