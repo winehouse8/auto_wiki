@@ -2,30 +2,36 @@
 
 사람과 Agent가 같은 종류의 **기여 행위자(actor)** 로 참여하고, Agent가 일상적인 조사·정리·검증·합성을 수행하는 로컬 우선 연구 위키입니다. 이 저장소는 Codex가 매 사용자 요청마다 `wiki/index.md`를 먼저 읽고, 관련 위키 지식을 우선 검토하도록 루트 `AGENTS.md`에 부트스트랩 계약을 포함합니다.
 
-Wiki 자체를 유지보수할 때는 이 저장소를 Codex의 작업 루트로 지정하는 것이 가장 단순합니다. 하지만 **한 번 전역 loader를 설치한 뒤에는 어느 디렉터리에서 Codex를 열어도 이 Wiki를 먼저 참조하게 할 수 있습니다.**
+Wiki 자체를 유지보수할 때는 이 저장소를 Codex의 작업 루트로 지정하는 것이 가장 단순합니다. 하지만 **한 번 전역 loader를 설치한 뒤에는 어느 디렉터리에서 Codex를 열어도 이 Wiki를 먼저 참조하게 할 수 있습니다.** 처음 사용하는 사람은 환경변수를 만들거나 절대경로를 입력할 필요가 없습니다.
 
 ```bash
-export WIKI_ROOT=/Users/jaewoo/Desktop/SSHWorkspace/projects/wiki_v1
-codex -C "$WIKI_ROOT"
+cd /path/to/wiki_v1
+codex -C .
 ```
 
 정확한 파일명은 **`AGENTS.md`** 입니다. `Agent.md`, `agent.md`, `AGENT.md`는 기본 자동 탐색 대상이 아닙니다. 이 `README.md`도 사람을 위한 설치 설명서일 뿐 자동으로 context에 들어가지 않습니다.
 
 ## 권장 1회 설치 — 이 README를 Codex에 먹이기
 
-결론적으로 매번 Wiki 프로젝트에서 Codex를 열 필요는 없습니다. 첫 설치 때만 이 저장소에서 Codex를 열어 README 설치 계약을 실행하는 방식이 가장 확실합니다.
+결론적으로 매번 Wiki 프로젝트에서 Codex를 열 필요는 없습니다. 첫 설치 때만 터미널에서 이 저장소로 이동해 한 줄로 Codex를 엽니다.
 
 ```bash
-export WIKI_ROOT=/Users/jaewoo/Desktop/SSHWorkspace/projects/wiki_v1
-codex -C "$WIKI_ROOT"
+codex -C .
 ```
 
-Codex에 다음 요청을 그대로 보냅니다.
+그리고 Codex에 다음 한 문장만 보냅니다.
 
 ```text
-이 저장소의 README.md에서 "권장 1회 설치 — 이 README를 Codex에 먹이기"와
-"전역 loader 수동 설치·복구" 절을 읽고 Living Wiki 전역 loader를 설치해줘.
+README.md를 읽고 Living Wiki 전역 loader를 설치해줘.
+```
 
+이것으로 사용자 단계는 끝입니다. Codex가 아래 설치 계약을 README에서 직접 읽고 수행합니다. 사용자가 긴 prompt를 복사할 필요는 없습니다.
+
+### Agent용 설치 계약
+
+이 절은 설치를 수행하는 Codex가 따라야 하는 작업 명세입니다.
+
+```text
 설치 규칙:
 1. 현재 Git root를 WIKI_ROOT로 확정하고 wiki/index.md가 실제로 있는지 검사한다.
 2. CODEX_HOME을 확인한다. 기본값을 추측하지 말고 ${CODEX_HOME:-$HOME/.codex}를 실제로 평가한다.
@@ -39,9 +45,14 @@ Codex에 다음 요청을 그대로 보냅니다.
 10. loader 설치는 다른 프로젝트나 Wiki의 수정 권한을 자동 부여하지 않는다는 점을 보존한다.
 ```
 
-README 파일을 첨부하거나 내용을 붙여 넣어 다른 위치의 Codex에 설치를 요청할 수도 있습니다. 이 경우 Codex가 실제 Wiki 경로를 추론하게 두지 말고 `WIKI_ROOT` 절대경로를 함께 알려야 합니다. sandbox가 Wiki 또는 `$CODEX_HOME`을 읽거나 쓰지 못하면 필요한 범위만 승인합니다.
+터미널을 사용하지 않는 Codex surface에서는 `README.md` 파일을 첨부하고 Wiki 폴더의 절대경로를 함께 알려준 뒤 같은 한 문장을 보내면 됩니다. sandbox가 Wiki 또는 `$CODEX_HOME`을 읽거나 쓰지 못하면 필요한 범위만 승인합니다.
 
 설치 후 Codex를 완전히 종료하고 새로 열면, 어느 프로젝트에서 시작하더라도 전역 loader가 먼저 다음을 지시합니다.
+
+```bash
+cd /path/to/any-project
+codex
+```
 
 ```text
 $CODEX_HOME/AGENTS.md 또는 활성 AGENTS.override.md
