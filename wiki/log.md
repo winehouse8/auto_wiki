@@ -1,5 +1,11 @@
 # Living Wiki update log
 
+## 2026-07-12
+* **wiki.render**: `derived-views` by `agent:codex`.
+* **claims.evaluate**: `all` by `agent:codex`.
+* **claim.evidence.add**: `CLM-409FCD3D2B82` by `agent:codex`.
+* **claim.add**: `CLM-409FCD3D2B82` by `agent:codex`.
+
 ## 2026-07-11
 * **wiki.render**: `derived-views` by `agent:codex`.
 * **proposal.implementation.reseal**: `RFC-5D91E03B5BC5` by `agent:codex`.

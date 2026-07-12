@@ -3,7 +3,7 @@ type: Epistemic Dashboard
 title: Epistemic dashboard
 description: Claim and source evidence-maturity levels derived from the canonical ledger.
 tags: [trust, provenance, claims]
-timestamp: '2026-07-11T18:24:04+00:00'
+timestamp: '2026-07-12T01:59:50+00:00'
 generated: true
 ---
 
@@ -19,6 +19,7 @@ generated: true
 | `CLM-1EB8BD726482` | C2 | supported | active | 지속적으로 편집되는 Wiki는 영향받은 의존성만 좁게 수정한 뒤 전체 불변조건과 사실 회귀를 다시 검사해야 한다. | 2 | 0 |
 | `CLM-25D2398ACBF4` | C2 | supported | active | Codex의 프로젝트 지침 결합 용량 기본값은 32 KiB이며, 한도에 도달하면 추가 지침 파일을 더하지 않는다. | 1 | 0 |
 | `CLM-3B0EC9C26226` | C2 | supported | active | AGENTS.md 변경 내용을 확실히 반영하려면 새 Codex 명령 또는 새 TUI 세션을 시작해야 하며, project_doc_fallback_filenames에 등록되지 않은 대체 파일명은 자동 지침 탐색 대상이 아니다. | 1 | 0 |
+| `CLM-409FCD3D2B82` | C2 | supported | active | Codex는 매 실행 시작 시 프로젝트 경로 탐색과 별도로 CODEX_HOME(기본 ~/.codex)의 전역 지침을 읽으며, non-empty AGENTS.override.md가 있으면 그것을 사용하고 그렇지 않으면 AGENTS.md를 사용한다. | 1 | 0 |
 | `CLM-4A3051A018DC` | C2 | supported | active | 출처의 권위와 평판은 검색 우선순위와 검토 깊이를 정하는 prior로 쓸 수 있지만 개별 주장의 증거를 대체할 수 없다. | 2 | 0 |
 | `CLM-61B3C391010C` | C2 | supported | active | 지속 메모리를 쓰는 Agent는 수집 시점과 검색 시점 모두에 오염 방지 gate가 필요하다. | 2 | 0 |
 | `CLM-6DDD53332A40` | C2 | contested | active | 원문 snapshot은 감사 가능한 증거이지 자동으로 참인 source of truth가 아니다. | 2 | 1 |

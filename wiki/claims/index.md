@@ -5,6 +5,7 @@
 * [CLM-207429D54323](clm-207429d54323.md) - append-only Agent log는 감사와 재투영의 권위 있는 기록이어야 하지만 외부 파일·서비스·side effect의 전체 상태는 아니므로 재개와 rollback에는 별도 snapshot, version, digest와 side-effect receipt가 필요하다.
 * [CLM-25D2398ACBF4](clm-25d2398acbf4.md) - Codex의 프로젝트 지침 결합 용량 기본값은 32 KiB이며, 한도에 도달하면 추가 지침 파일을 더하지 않는다.
 * [CLM-3B0EC9C26226](clm-3b0ec9c26226.md) - AGENTS.md 변경 내용을 확실히 반영하려면 새 Codex 명령 또는 새 TUI 세션을 시작해야 하며, project_doc_fallback_filenames에 등록되지 않은 대체 파일명은 자동 지침 탐색 대상이 아니다.
+* [CLM-409FCD3D2B82](clm-409fcd3d2b82.md) - Codex는 매 실행 시작 시 프로젝트 경로 탐색과 별도로 CODEX_HOME(기본 ~/.codex)의 전역 지침을 읽으며, non-empty AGENTS.override.md가 있으면 그것을 사용하고 그렇지 않으면 AGENTS.md를 사용한다.
 * [CLM-4A3051A018DC](clm-4a3051a018dc.md) - 출처의 권위와 평판은 검색 우선순위와 검토 깊이를 정하는 prior로 쓸 수 있지만 개별 주장의 증거를 대체할 수 없다.
 * [CLM-61B3C391010C](clm-61b3c391010c.md) - 지속 메모리를 쓰는 Agent는 수집 시점과 검색 시점 모두에 오염 방지 gate가 필요하다.
 * [CLM-6DDD53332A40](clm-6ddd53332a40.md) - 원문 snapshot은 감사 가능한 증거이지 자동으로 참인 source of truth가 아니다.

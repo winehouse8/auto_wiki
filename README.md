@@ -2,7 +2,7 @@
 
 사람과 Agent가 같은 종류의 **기여 행위자(actor)** 로 참여하고, Agent가 일상적인 조사·정리·검증·합성을 수행하는 로컬 우선 연구 위키입니다. 이 저장소는 Codex가 매 사용자 요청마다 `wiki/index.md`를 먼저 읽고, 관련 위키 지식을 우선 검토하도록 루트 `AGENTS.md`에 부트스트랩 계약을 포함합니다.
 
-가장 안전하고 확실한 시작 방식은 이 저장소를 Codex의 작업 루트로 지정하는 것입니다.
+Wiki 자체를 유지보수할 때는 이 저장소를 Codex의 작업 루트로 지정하는 것이 가장 단순합니다. 하지만 **한 번 전역 loader를 설치한 뒤에는 어느 디렉터리에서 Codex를 열어도 이 Wiki를 먼저 참조하게 할 수 있습니다.**
 
 ```bash
 export WIKI_ROOT=/Users/jaewoo/Desktop/SSHWorkspace/projects/wiki_v1
@@ -10,6 +10,55 @@ codex -C "$WIKI_ROOT"
 ```
 
 정확한 파일명은 **`AGENTS.md`** 입니다. `Agent.md`, `agent.md`, `AGENT.md`는 기본 자동 탐색 대상이 아닙니다. 이 `README.md`도 사람을 위한 설치 설명서일 뿐 자동으로 context에 들어가지 않습니다.
+
+## 권장 1회 설치 — 이 README를 Codex에 먹이기
+
+결론적으로 매번 Wiki 프로젝트에서 Codex를 열 필요는 없습니다. 첫 설치 때만 이 저장소에서 Codex를 열어 README 설치 계약을 실행하는 방식이 가장 확실합니다.
+
+```bash
+export WIKI_ROOT=/Users/jaewoo/Desktop/SSHWorkspace/projects/wiki_v1
+codex -C "$WIKI_ROOT"
+```
+
+Codex에 다음 요청을 그대로 보냅니다.
+
+```text
+이 저장소의 README.md에서 "권장 1회 설치 — 이 README를 Codex에 먹이기"와
+"전역 loader 수동 설치·복구" 절을 읽고 Living Wiki 전역 loader를 설치해줘.
+
+설치 규칙:
+1. 현재 Git root를 WIKI_ROOT로 확정하고 wiki/index.md가 실제로 있는지 검사한다.
+2. CODEX_HOME을 확인한다. 기본값을 추측하지 말고 ${CODEX_HOME:-$HOME/.codex}를 실제로 평가한다.
+3. CODEX_HOME의 non-empty AGENTS.override.md가 있으면 그것이 활성 파일이다. 없으면 AGENTS.md를 사용한다.
+4. 기존 전역 지침을 덮어쓰거나 삭제하지 않는다. 먼저 backup을 만들고 기존 내용을 보존한다.
+5. README의 LIVING_WIKI_BOOTSTRAP:BEGIN/END 블록을 실제 WIKI_ROOT 절대경로로 렌더링해 활성 파일에 idempotent하게 병합한다. 기존 marker가 있으면 그 블록만 교체한다.
+6. Wiki의 전체 AGENTS.md나 README를 전역 파일에 복사하지 말고 짧은 read-first loader만 설치한다.
+7. 변경 전 diff와 대상 경로를 보여주고, 홈 디렉터리 쓰기에 승인이 필요하면 요청한다.
+8. 설치 뒤 정적 검사와 README의 새 세션 canary를 실행한다.
+9. 현재 Codex 세션은 시작 시 읽은 instruction chain을 자동 재로딩하지 않는다고 명시하고, 검증을 위해 새 Codex 세션을 시작하라고 안내한다.
+10. loader 설치는 다른 프로젝트나 Wiki의 수정 권한을 자동 부여하지 않는다는 점을 보존한다.
+```
+
+README 파일을 첨부하거나 내용을 붙여 넣어 다른 위치의 Codex에 설치를 요청할 수도 있습니다. 이 경우 Codex가 실제 Wiki 경로를 추론하게 두지 말고 `WIKI_ROOT` 절대경로를 함께 알려야 합니다. sandbox가 Wiki 또는 `$CODEX_HOME`을 읽거나 쓰지 못하면 필요한 범위만 승인합니다.
+
+설치 후 Codex를 완전히 종료하고 새로 열면, 어느 프로젝트에서 시작하더라도 전역 loader가 먼저 다음을 지시합니다.
+
+```text
+$CODEX_HOME/AGENTS.md 또는 활성 AGENTS.override.md
+  → 매 사용자 turn에서 /absolute/path/to/wiki/index.md read
+  → 관련 concept → claim → source 순으로 Wiki 사용
+```
+
+중요한 경계가 있습니다.
+
+| 사용 방식 | 전역 loader만으로 가능한가? | 추가 조건 |
+|---|---|---|
+| 다른 프로젝트에서 Wiki를 읽고 질문에 답하기 | 대체로 가능 | sandbox가 Wiki 절대경로 read를 허용해야 함 |
+| 다른 프로젝트 코드 작업에 Wiki 지식을 참고하기 | 가능 | 현재 프로젝트 지침이 전역 loader를 무력화하지 않아야 함 |
+| 다른 프로젝트에서 Wiki 원장을 수정하기 | loader만으로는 불충분 | `--add-dir "$WIKI_ROOT"` 또는 동등한 명시적 write 권한 필요 |
+| Wiki 하네스·raw·state를 직접 유지보수하기 | 가능하지만 전용 실행 권장 | `codex -C "$WIKI_ROOT"`가 가장 명료함 |
+
+즉 전역 설치는 **어디서나 Wiki를 기억하고 읽게 하는 UX**이고, `-C`/`--add-dir`는 **이번 실행이 어떤 파일을 수정할 수 있는지 정하는 권한 UX**입니다.
 
 ## v4.1의 닫힌 루프
 
@@ -66,11 +115,13 @@ Codex는 실행을 시작할 때 `AGENTS.md` 계열 파일을 찾아 instruction
 | 재로딩 | instruction chain은 실행 시작 시 한 번, TUI에서는 보통 새 세션 시작 시 한 번 구성됩니다. | `AGENTS.md`를 바꿨다면 Codex를 재시작하거나 새 명령으로 검증해야 합니다. |
 | 대체 이름 | `project_doc_fallback_filenames`에 등록하지 않은 파일명은 무시됩니다. | 이 프로젝트는 fallback에 의존하지 않고 표준 이름 `AGENTS.md`를 사용합니다. |
 
-근거는 OpenAI 공식 [Custom instructions with AGENTS.md](https://developers.openai.com/codex/guides/agents-md), [Configuration Reference](https://developers.openai.com/codex/config-reference), [CLI reference](https://developers.openai.com/codex/cli/reference)입니다. 공식 동작은 제품 버전에 따라 바뀔 수 있으므로 이 Wiki에서는 [SRC-228828E53C40](wiki/sources/src-228828e53c40.md)과 [관련 C2 claim 묶음](wiki/concepts/codex-wiki-bootstrap.md)을 `freshness=fast`로 관리합니다.
+여기서 전역 파일을 읽는 이유는 `~`가 현재 작업 디렉터리의 상위이기 때문이 아닙니다. `$CODEX_HOME`은 Codex가 별도로 확인하는 global scope입니다. 프로젝트 scope에서는 임의의 파일시스템 상위 전체를 훑지 않고, project root(보통 Git root)에서 현재 디렉터리까지만 내려옵니다. project root를 찾지 못하면 현재 디렉터리만 검사합니다.
 
-## 설치 방식 A — Wiki 전용 bot/Agent
+근거는 OpenAI 공식 [Custom instructions with AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Configuration Reference](https://learn.chatgpt.com/docs/config-file/config-reference), [CLI reference](https://developers.openai.com/codex/cli/reference)입니다. 공식 동작은 제품 버전에 따라 바뀔 수 있으므로 이 Wiki에서는 [SRC-228828E53C40](wiki/sources/src-228828e53c40.md)과 [관련 C2 claim 묶음](wiki/concepts/codex-wiki-bootstrap.md)을 `freshness=fast`로 관리합니다.
 
-권장 방식입니다. 사람의 질문에 답하고 이 Wiki 자체도 관리하는 bot은 항상 Wiki를 primary workspace로 실행합니다.
+## 운영 방식 A — Wiki 전용 bot/Agent
+
+Wiki의 원장·raw·하네스까지 관리하는 작업에 권장합니다. 사람의 질문에 답하고 이 Wiki 자체도 관리하는 bot은 Wiki를 primary workspace로 실행합니다.
 
 ```bash
 export WIKI_ROOT=/Users/jaewoo/Desktop/SSHWorkspace/projects/wiki_v1
@@ -119,9 +170,11 @@ codex -C /path/to/other-project --add-dir "$WIKI_ROOT"
 
 `--add-dir`는 추가 폴더를 자동 instruction-discovery 경로로 만드는 옵션이 아니라 추가 쓰기 범위를 허용하는 옵션입니다. 따라서 loader 없이 `--add-dir`만 주면 이 Wiki의 루트 `AGENTS.md`가 자동으로 읽힐 것이라고 기대하면 안 됩니다.
 
-## 설치 방식 C — 모든 Codex 실행에 전역 적용
+## 전역 loader 수동 설치·복구
 
 어느 저장소에서 시작하든 Wiki를 먼저 보게 하려면 `$CODEX_HOME/AGENTS.md`에 짧은 loader를 둡니다. 기본 경로는 `~/.codex/AGENTS.md`입니다.
+
+위의 README 기반 1회 설치가 이 절을 자동으로 수행합니다. 아래 절차는 직접 설치하거나 기존 설치를 복구할 때 사용합니다.
 
 먼저 어떤 전역 파일이 실제 활성인지 확인합니다.
 
@@ -172,6 +225,17 @@ rg '^Knowledge state timestamp:' "$WIKI_ROOT/wiki/index.md"
 ```
 
 단순히 “규칙을 알고 있다”는 답보다 **현재 timestamp를 정확히 읽는지**가 더 강한 canary입니다. 더 엄격한 감사를 원하면 공식 문서의 안내대로 TUI log 또는 session JSONL에서 활성 instruction과 파일 read 흔적을 확인합니다.
+
+전역 설치가 정말 어디서나 적용되는지 확인하려면 Wiki 밖의 다른 Git 프로젝트에서 새 Codex를 열어 같은 질문을 실행합니다. 프로젝트 지침이 없는 임시 디렉터리를 사용할 수도 있습니다.
+
+```bash
+TEST_ROOT="$(mktemp -d)"
+codex exec --ephemeral -s read-only -C "$TEST_ROOT" \
+  '파일을 수정하지 마라. 전역 Living Wiki loader의 절대 index 경로와 그 파일에서 방금 읽은 Knowledge state timestamp를 출력하라.'
+rm -rf "$TEST_ROOT"
+```
+
+이 canary가 실패하면 기존 세션을 재사용했는지, 활성 전역 파일이 `AGENTS.override.md`인지, Wiki 절대경로 read가 sandbox에서 허용되는지, 더 가까운 프로젝트 지침이 충돌하는지를 순서대로 확인합니다.
 
 ### 3. 동작 canary
 

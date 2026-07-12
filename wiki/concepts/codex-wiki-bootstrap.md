@@ -4,7 +4,7 @@ title: Codex Living Wiki bootstrap
 description: A layered instruction and retrieval contract that makes wiki/index.md the first local knowledge route on every Codex user turn.
 tags: [codex, agents-md, bootstrap, context-management]
 timestamp: '2026-07-12T12:00:00+09:00'
-claim_ids: [CLM-DA4E9F9BA977, CLM-FF4A31447E3E, CLM-B97B5BE5E324, CLM-25D2398ACBF4, CLM-3B0EC9C26226]
+claim_ids: [CLM-409FCD3D2B82, CLM-DA4E9F9BA977, CLM-FF4A31447E3E, CLM-B97B5BE5E324, CLM-25D2398ACBF4, CLM-3B0EC9C26226]
 ---
 
 # Codex Living Wiki bootstrap
@@ -15,21 +15,23 @@ Codex가 매 사용자 turn에서 [Living Wiki index](../index.md)를 먼저 읽
 
 ## 작동 구조
 
-1. Codex가 실행 시작 시 루트 `AGENTS.md`를 instruction chain에 넣는다.
-2. `AGENTS.md`의 `living-wiki-bootstrap/v1` 계약이 매 사용자 turn의 index 재읽기를 요구한다.
-3. Agent는 index → concept/perspective → atomic claim → source → raw 순으로 점진적으로 탐색한다.
-4. 위키가 부족하거나 stale/contested이면 강한 외부 원자료로 보완한다.
-5. 조사 또는 변경이 요청된 경우에만 canonical state를 갱신하고 파생 OKF bundle을 다시 렌더링한다.
+1. Codex가 실행 시작 시 `$CODEX_HOME`의 전역 지침을 별도 scope로 읽고, 이어서 project root부터 현재 디렉터리까지의 프로젝트 지침을 결합한다.
+2. Wiki 전용 실행은 저장소 루트 `AGENTS.md`를, 어디서나 쓰는 설치는 전역 파일의 짧은 절대경로 loader를 통해 `living-wiki-bootstrap/v1` 계약을 활성화한다.
+3. 계약은 매 사용자 turn의 index 재읽기를 요구한다.
+4. Agent는 index → concept/perspective → atomic claim → source → raw 순으로 점진적으로 탐색한다.
+5. 위키가 부족하거나 stale/contested이면 강한 외부 원자료로 보완한다.
+6. 조사 또는 변경이 요청된 경우에만 canonical state를 갱신하고 파생 OKF bundle을 다시 렌더링한다.
 
 ## 근거가 있는 Codex 동작
 
+- [CLM-409FCD3D2B82](../claims/clm-409fcd3d2b82.md): `$CODEX_HOME`의 전역 override/AGENTS 선택은 프로젝트 경로 탐색과 별도다.
 - [CLM-DA4E9F9BA977](../claims/clm-da4e9f9ba977.md): instruction chain은 run 시작 시 구성된다.
 - [CLM-FF4A31447E3E](../claims/clm-ff4a31447e3e.md): project root부터 CWD까지 파일을 탐색하며 override가 우선한다.
 - [CLM-B97B5BE5E324](../claims/clm-b97b5be5e324.md): 가까운 디렉터리 지침이 뒤에 결합된다.
 - [CLM-25D2398ACBF4](../claims/clm-25d2398acbf4.md): project instruction 기본 결합 한도는 32 KiB다.
 - [CLM-3B0EC9C26226](../claims/clm-3b0ec9c26226.md): 변경 뒤 새 run이 필요하고 등록되지 않은 파일명은 자동 탐색되지 않는다.
 
-현재 다섯 claim은 Codex의 공식 제품 문서 하나에 직접 근거한 C2 범위 한정 주장이다. 제품 업데이트에 따라 바뀔 수 있으므로 `freshness=fast`다.
+현재 여섯 claim은 Codex의 공식 제품 문서 하나에 직접 근거한 C2 범위 한정 주장이다. 제품 업데이트에 따라 바뀔 수 있으므로 `freshness=fast`다.
 
 ## 강제의 경계
 

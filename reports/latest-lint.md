@@ -1,11 +1,11 @@
-# Wiki lint report — 2026-07-11
+# Wiki lint report — 2026-07-12
 
 ## Summary
 
 - Errors: 0
 - Warnings: 45
 - Epistemic findings: 1
-- Counts: actors=2, sources=47, claims=33, reviews=0, campaigns=7, proposals=2, collaborations=3, admissions=67, runs=1, memory_feedback=1, events=303, okf_concepts=184
+- Counts: actors=2, sources=47, claims=34, reviews=0, campaigns=7, proposals=2, collaborations=3, admissions=67, runs=1, memory_feedback=1, events=311, okf_concepts=185
 
 ## Errors
 
