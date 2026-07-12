@@ -1,7 +1,7 @@
 ---
 type: Reference
-title: Karpathy — LLM Wiki
-description: Persistent LLM-maintained Markdown Wiki pattern and its epistemic limitations.
+title: Karpathy의 LLM Wiki 분석
+description: LLM이 지속 관리하는 Markdown Wiki 패턴과 그 인식론적 한계.
 resource: https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
 tags: [llm-wiki, practitioner-source, persistent-synthesis]
 timestamp: '2026-07-11T23:40:00+09:00'
@@ -9,10 +9,12 @@ source_id: SRC-CFB88DDE3FF1
 source_level: S2
 ---
 
-# Karpathy — LLM Wiki
+# Karpathy의 LLM Wiki 분석
 
-Source ID: `SRC-CFB88DDE3FF1`  
-Source level: S2 — practitioner idea file  
+출처 ID: `SRC-CFB88DDE3FF1`
+
+출처 수준: S2 — 실무자 아이디어 문서
+
 [원문](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
 
 ## 무엇을 제안하는가
@@ -32,7 +34,7 @@ RAG가 질문마다 raw chunk를 다시 조립하는 한계를 지적하고, 불
 ## 비판
 
 - raw를 source of truth라 부르지만 provenance와 truth는 다르다.
-- source credibility, atomic claim, exact locator, uncertainty model이 없다.
+- 출처 신뢰성, 원자적 주장, 정확한 위치 지정자, 불확실성 모델이 없다.
 - 사람이 source와 방향을 고르고 LLM이 관리하는 역할 분리라 actor parity와 다르다.
 - 자율 source discovery, 주기, 예산, stop condition이 없다.
 - 같은 모델이 쓰고 lint할 때의 correlated error를 다루지 않는다.
@@ -44,6 +46,6 @@ RAG가 질문마다 raw chunk를 다시 조립하는 한계를 지적하고, 불
 
 설계 뼈대로는 매우 유용하지만 경험적 증명은 아니다. author reputation과 별 개수는 읽을 우선순위를 높일 뿐 claim confidence를 올리지 않는다.
 
-# Citations
+# 인용
 
 [1] [Karpathy, LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)

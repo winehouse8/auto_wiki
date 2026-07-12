@@ -1,3 +1,3 @@
-# Reviews
+# 검토
 
-* No concepts yet.
+* 아직 문서 없음.

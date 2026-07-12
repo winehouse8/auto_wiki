@@ -1,0 +1,42 @@
+name: Wiki PR 품질 검증
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wiki-pr-quality-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  repository-quality:
+    name: 전체 저장소 품질 게이트
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: PR head 체크아웃
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: 전체 품질 게이트 실행
+        shell: bash
+        run: |
+          set -euo pipefail
+          NOW="$(date --utc +'%Y-%m-%dT%H:%M:%S+00:00')"
+          python3 tools/wiki.py evaluate
+          python3 tools/wiki.py render --no-log
+          git diff --exit-code
+          python3 tools/wiki.py memory-hygiene --now "$NOW"
+          python3 tools/wiki.py hygiene-plan --now "$NOW"
+          python3 tools/wiki.py lint --quarantine-profile public-clean-clone --no-log
+          python3 tools/wiki.py language-validate
+          python3 tools/wiki.py validate --quarantine-profile public-clean-clone
+          python3 tools/wiki.py okf-validate
+          python3 -m unittest discover -s tests -v
+          python3 tools/wiki.py release-check --quarantine-profile public-clean-clone --no-log

@@ -1,57 +1,57 @@
-# Harness release gates
+# 하네스 릴리스 게이트
 
 하네스 버전은 아래 기준을 모두 측정한 뒤에만 승격한다. 아직 수치가 없는 지표는 `unknown`이지 `pass`가 아니다.
 
-## Structural
+## 구조
 
 - `validate` 오류 0
-- raw artifact hash mismatch 0
-- broken event-chain link 0
+- 원문 자료 해시 불일치 0
+- 끊어진 사건 체인 링크 0
 - claim evidence의 locator 누락 0
-- dangling actor/source/claim reference 0
+- 대상을 잃은 행위자·출처·주장 참조 0
 
-## Epistemic
+## 인식론
 
-- provenance closure: factual sentence가 claim→evidence→raw/URL로 닫히는 비율
-- citation entailment와 citation completeness
-- known contradiction recall
-- source independence clustering precision
-- retraction/stale detection latency
-- confidence level별 empirical accuracy와 calibration
+- 출처 추적성 폐쇄율: 사실 문장이 주장→근거→원문·URL로 닫히는 비율
+- 인용의 함의 관계와 인용 완전성
+- 알려진 모순 재현율
+- 출처 독립성 묶음 정밀도
+- 철회·오래됨 탐지 지연
+- 신뢰도 수준별 경험적 정확도와 보정
 - 반대 증거 검색 포함률
 
-## Collaboration
+## 협업
 
 - 인간 방향 전환이 캠페인과 synthesis에 반영된 비율
-- human correction rate와 correction survival
-- unresolved commitment/질문의 평균 체류 시간
-- 사람/Agent 기여의 attribution coverage
+- 인간 교정률과 교정 생존율
+- 미해결 약속·질문의 평균 체류 시간
+- 사람·Agent 기여의 귀속 포괄률
 
-## Regression
+## 회귀
 
-- 수정 후 기존 valid claim 보존율
-- 기존 citation 보존율
-- fixed query set의 answer quality·latency·token cost
+- 수정 후 기존 유효 주장 보존율
+- 기존 인용 보존율
+- 고정 질의 집합의 답변 품질·지연 시간·토큰 비용
 - rollback 성공 여부
 
-## Security
+## 보안
 
-- indirect prompt injection corpus
-- memory poisoning write/retrieve/activate 단계별 성공률
-- duplicate/syndicated source attack
-- malicious PDF/YouTube frame/repository fixture
-- secret exfiltration and excessive-agency test
+- 간접 프롬프트 주입 말뭉치
+- 메모리 오염의 쓰기·검색·활성화 단계별 성공률
+- 중복·재배포 출처 공격
+- 악성 PDF·YouTube 프레임·저장소 고정 자료
+- 비밀 유출 및 과도한 자율 행동 테스트
 
-## 현재 v4 fixed-fixture baseline (2026-07-12)
+## 현재 v4 고정 fixture 기준선 (2026-07-12)
 
 - 구조/event/admission/report-digest 검증: 오류 0, 공개된 경고 36
-- OKF v0.1 core + Living Wiki profile: 92 concept documents, 오류/경고 0
-- unit test: 162개, failure/error/skip 0; Python 3.9.6 호환 확인, 지원 범위 Python 3.10+, Python 3.13.12 release 실행
-- calibration: 15건 중 resolved 14, scorable 13, observed `p_correct=0.769231`; pilot regression only
-- security: 공격 18/정상 13, stage 전체 attack allow 0, benign reject 0, benign review 0.384615
-- runtime: actor parity/permission/schedule/receipt fixture 통과, unauthorized side effect 0
-- rollback: committed v3.1 `d18213a78376c0543a0aa590a3db7fcf7022c187`의 격리 render/validate/OKF 3개 command 통과, live workspace hash 불변
-- source migration: admission 이전 35개 ID만 hash-pinned grandfather, 새 무-admission source는 hard error
-- canonical independent claim review 0, C3/C4 0
+- OKF v0.1 핵심 규격과 Living Wiki 프로필: 개념 문서 92개, 오류·경고 0
+- 단위 테스트: 162개, 실패·오류·건너뜀 0; Python 3.9.6 호환 확인, 지원 범위 Python 3.10 이상, Python 3.13.12 릴리스 실행
+- 보정: 15건 중 해결 14건, 채점 가능 13건, 관측값 `p_correct=0.769231`; 예비 회귀 검사일 뿐임
+- 보안: 공격 18건·정상 13건, 모든 단계에서 공격 허용 0, 정상 거부 0, 정상 검토 비율 0.384615
+- 실행 시간: 행위자 동등성·권한·일정·영수증 fixture 통과, 승인되지 않은 부수 효과 0
+- 롤백: 확정된 v3.1 `d18213a78376c0543a0aa590a3db7fcf7022c187`의 격리된 렌더링·검증·OKF 명령 3개 통과, 실제 작업공간 해시 불변
+- 출처 마이그레이션: 입수 판정 이전 35개 ID만 해시 고정 유예 목록에 포함하고, 새 무입수 판정 출처는 중대 오류 처리
+- 정식 독립 주장 검토 0, C3/C4 0
 
-기계 판정과 component fingerprint의 source of truth는 `evaluations/reports/v4-release-report.json`이다. 이 baseline은 고정 fixture의 regression pass이며 실제 장기 dataset, unseen semantic attack, live external executor를 인증하지 않는다. 결론은 항상 `production_certified=false`다.
+기계 판정과 구성요소 지문의 기준 원장은 `evaluations/reports/v4-release-report.json`이다. 이 기준선은 고정 자료의 회귀 통과이며 실제 장기 데이터셋, 미관측 의미 공격, 실시간 외부 실행기를 인증하지 않는다. 결론은 항상 `production_certified=false`다.

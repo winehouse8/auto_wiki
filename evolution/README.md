@@ -1,13 +1,16 @@
-# Harness evolution
+# 하네스 발전 이력
 
-이 디렉터리는 버전 이름만 붙인 복사본이 아니라, 각 단계에서 실제로 발견한 실패와 다음 설계의 인과관계를 기록한다. 현재 실행 코드는 v4이며 과거 버전은 설계 snapshot으로 남긴다.
+이 디렉터리는 버전 이름만 붙인 복사본이 아니라, 각 단계에서 실제로 발견한 실패와 다음 설계의 인과관계를 기록한다. 현재 하네스 버전은 v4.3이며 과거 버전은 설계 스냅샷으로 남긴다.
 
-| Version | 중심 구조 | 자체 연구에서 발견한 한계 | 다음 변화 |
+| 버전 | 중심 구조 | 자체 연구에서 발견한 한계 | 다음 변화 |
 |---|---|---|---|
-| v1 | raw → index → Markdown wiki | 관련도와 신뢰도 혼동, page-level citation, 수동 실행 | claim/evidence/actor 원장 |
-| v2 | provenance·trust·review·contradiction | 자율 연구 부재, 수정 회귀, poisoning, 자기평가 편향 | bounded campaign, eval, security gate, RFC |
+| v1 | 원문 → 색인 → Markdown Wiki | 관련도와 신뢰도 혼동, 페이지 단위 인용, 수동 실행 | 주장·증거·행위자 원장 |
+| v2 | 출처 추적성·신뢰·검토·모순 | 자율 연구 부재, 수정 회귀, 오염, 자기평가 편향 | 범위 제한 캠페인, 평가, 보안 게이트, RFC |
 | v3 | 지속 연구·품질 게이트·안전한 자기진화 | 아직 실제 장기 운영/보정 데이터 부족 | 운영 로그로 v4 RFC를 만들되 자동 승격 금지 |
-| v3.1 | OKF v0.1 portable knowledge bundle | OKF는 trust/governance schema가 아니며 아직 Draft | control plane은 유지하고 spec migration을 RFC로 관리 |
-| v4 | admission·security·collaboration·bounded runtime·통합 release gate | pilot fixture, 외부 executor와 multi-writer 인증 부재 | 장기 운영 데이터와 독립 adjudication으로만 다음 RFC 제안 |
+| v3.1 | OKF v0.1 이동 가능한 지식 bundle | OKF는 신뢰·거버넌스 스키마가 아니며 아직 Draft | 제어 계층은 유지하고 명세 마이그레이션을 RFC로 관리 |
+| v4 | 입수·보안·협업·범위 제한 실행환경·통합 릴리스 게이트 | 예비 fixture, 외부 실행기와 다중 작성자 인증 부재 | 장기 운영 데이터와 독립 판정으로만 다음 RFC 제안 |
+| [v4.1](v4.1-memory-hygiene.md) | 메모리 피드백·생명주기·노후도 위생 | 의미 검토 대상을 제한하는 결정론적 후보 계획 부재 | 구조 전수 검사와 범위 제한 후보 라우팅 |
+| [v4.2](v4.2-bounded-hygiene-routing.md) | 최근·노후·위험 시드, 최대 2-hop 그래프, OKF 시간 의미 | 자동 작업이 로컬 변경·commit에서 끝날 수 있음 | 모든 실제 변경을 GitHub PR 감사 경로로 전달 |
+| [v4.3](v4.3-github-pr-delivery.md) | exact-repository PR, 위험 기반 사람 검토·조건부 자동 병합 | 첫 사람 검토 통합 PR과 live canary, PAT 행위자 분리 미완료 | canary 뒤 운영 자료를 모으고 GitHub App 전환을 후속 RFC로 검토 |
 
-버전 간 schema와 migration 없이 단순 복사본을 늘리지 않는다. 실제 릴리스 snapshot은 `evaluations/snapshots/`의 content hash와 Git tag로 보존한다.
+버전 간 스키마와 마이그레이션 없이 단순 복사본을 늘리지 않는다. 실제 릴리스 스냅샷은 `evaluations/snapshots/`의 콘텐츠 해시와 Git 태그로 보존한다.

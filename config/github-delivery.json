@@ -1,0 +1,71 @@
+{
+  "policy_version": "SPEC-GH-DELIVERY-001/v1.1.0",
+  "repository": "winehouse8/auto_wiki",
+  "base_branch": "main",
+  "branch_prefix": "wiki-auto/",
+  "merge_method": "squash",
+  "reviewer": "winehouse8",
+  "labels": {
+    "automation": "자동화",
+    "auto_merge": "자동-병합-후보",
+    "human_review": "사람-검토-필요",
+    "blocked": "전달-차단"
+  },
+  "repository_settings": {
+    "allow_auto_merge": true,
+    "delete_branch_on_merge": true,
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "main_requires_pull_request": true,
+    "required_conversation_resolution": true,
+    "allow_force_pushes": false,
+    "allow_deletions": false
+  },
+  "required_checks_after_integration": [
+    "전체 저장소 품질 게이트"
+  ],
+  "approval_refs": [
+    "COL-27B9ADD786ED",
+    "RFC-03F4FE85BB44"
+  ],
+  "safe_path_patterns": [
+    "wiki/index.md",
+    "wiki/log.md",
+    "wiki/epistemic-dashboard.md",
+    "wiki/open-questions.md",
+    "wiki/contradictions.md",
+    "wiki/**/index.md",
+    "evaluations/reports/**"
+  ],
+  "protected_path_patterns": [
+    ".github/**",
+    "AGENTS.md",
+    "governance/**",
+    "config/**",
+    "tools/**",
+    "scripts/**",
+    "prompts/**",
+    "skills/**",
+    "tests/**",
+    "wiki/specs/**",
+    "auth/**",
+    "raw/**",
+    "state/**",
+    ".gitmodules",
+    "**/*.key",
+    "**/*.pem"
+  ],
+  "token": {
+    "source": "auth/github_token.yaml",
+    "yaml_key": "key",
+    "environment_variable": "GH_TOKEN",
+    "persist_value": false
+  },
+  "bootstrap": {
+    "consumed": true,
+    "allowed_seed_commit": "5f1d7f0b26a601f4e60a64713c30da8d7f10d1ff",
+    "target_ref_must_be_absent": true,
+    "receipt_issue": "https://github.com/winehouse8/auto_wiki/issues/1"
+  }
+}

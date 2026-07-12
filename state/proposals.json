@@ -4,12 +4,197 @@
       "approvals": [
         {
           "actor_id": "human:owner",
-          "at": "2026-07-11T17:21:41+00:00",
+          "at": "2026-07-12T14:00:30+00:00",
           "decision": "approve",
-          "rationale": "사용자가 2026-07-12 현재 요청에서 신뢰 검증을 통과한 ai.engineer memory/wiki/second-brain 연구 결과를 Wiki와 하네스에 적용하라고 명시적으로 승인했다. 범위는 로컬 additive schema, 비파괴 lifecycle, audit-only feedback, read-only hygiene와 문서화된 memory mode이며 삭제·외부 공개·credential·자동 trust 승격은 제외한다."
+          "rationale": "사용자가 2026-07-12 현재 요청에서 winehouse8/auto_wiki를 새 운영 저장소로 지정하고 제공한 classic GitHub token을 사용해 모든 자동 변경을 PR로 기록하며, 저위험 변경은 검증 후 자동 병합하고 사람 판단이 필요한 변경은 상세 PR만 남기도록 명시적으로 지시했다. 승인은 정확한 저장소, SPEC-GH-DELIVERY-001의 fail-closed 분류, 일회성 clean baseline seed와 비밀 비노출 경계에 한정한다. 임의 저장소·권한 확대, raw 파괴, trust 자동 변경, self-approval, admin bypass와 production 인증은 제외한다."
         }
       ],
-      "benchmark": "기존 release gate와 전체 테스트가 유지되고, 새 모듈은 고정 시각에서 deterministic byte-identical report를 만든다. stale/active/inactive, feedback schema·attribution·privacy, lifecycle transition·replacement validation, no-auto-promotion/deletion을 테스트한다. validate와 OKF가 통과하고 rollback rehearsal에서 새 state와 optional fields를 제거해도 v4 reader가 동작해야 한다.",
+      "benchmark": "Red에서 safe/review/block/no-op, token 비노출, repo mismatch-before-token-read, clean manifest, 멱등성, base/head drift, 실패 check, Korean PR template와 secret-free pinned workflow fixture를 고정한다. Green에서 대상 테스트와 전체 release gate를 통과한다. 실제 배포는 clean HEAD seed receipt→첫 사람 검토 통합 PR까지 수행하고, 병합 뒤 별도 canary에서 remote check→auto-merge를 검증한다.",
+      "created_at": "2026-07-12T14:00:23+00:00",
+      "created_by": "agent:codex",
+      "evidence": [
+        "CLM-207429D54323",
+        "CLM-A49ACF085321",
+        "CLM-DA7C92E9A901",
+        "CLM-F464CCF0AA1A"
+      ],
+      "id": "RFC-03F4FE85BB44",
+      "problem": "현재 자동 관리 작업은 로컬 변경·commit에서 끝나 GitHub PR 단위의 명시적 감사, 원격 품질 check, 안전 변경의 조건부 병합과 사람 검토 보류가 없다. 대상 winehouse8/auto_wiki는 빈 public 저장소이며 classic PAT 사용·외부 공개·자동 병합은 기존 RFC-6BD49C04ED49의 읽기 전용 승인 범위를 넘는다.",
+      "proposed_change": "SPEC-GH-DELIVERY-001에 따라 exact-repo allowlist, token 안전 loader, clean-run receipt, 결정론적 diff 위험 분류, 고유 branch/PR publisher, safe auto-merge와 human-review draft 경로, 비밀 없는 PR CI, CODEOWNERS·보호 설정 manifest를 추가한다. 빈 저장소에는 기존 clean HEAD 5f1d7f0만 일회성 seed하고 이후 main 직접 push를 금지한다. Codex 관리인 실행의 마지막을 검증→GitHub 전달로 연결한다.",
+      "risks": [
+        "classic PAT가 과권한이며 GitHub에서 winehouse8 인간과 Agent 행위자를 구분하지 못함",
+        "첫 통합 PR은 아직 기준 브랜치에 없는 새 workflow를 필수 원격 check로 사용할 수 없음",
+        "GitHub 장애·rate limit·기준 또는 head drift·동시 실행 때문에 전달 상태가 불명확해질 수 있음",
+        "자격증명이 로그·원격 URL·Git 설정·영수증 또는 PR 본문에 누출될 수 있음",
+        "잘못된 위험 분류가 제어면 변경을 자동 병합 후보로 오판할 수 있음",
+        "admin 우회·main 직접 push·self-approval·신뢰하지 않은 privileged workflow를 사용하면 사람 검토 경계가 무력화될 수 있음"
+      ],
+      "rollback": "delivery를 비활성화하고 Codex 예약을 중지한다. 열린 자동 PR은 삭제하지 않고 close하며 PAT를 revoke·rotate한다. adapter·workflow·config 제거도 사람 검토 PR로 수행하고 이미 병합된 GitHub·Wiki 감사 이력은 보존한다. 내용 되돌림은 새 revert PR로 수행한다.",
+      "status": "approved",
+      "title": "Living Wiki GitHub 네이티브 PR 전달과 위험 기반 자동 병합",
+      "updated_at": "2026-07-12T14:44:35+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T02:42:54+00:00",
+          "decision": "approve",
+          "rationale": "사용자가 Codex 기본 Scheduled Tasks 조사 결과를 수용하고 필요한 Skill을 제품 요구사항과 명세 주도 테스트 개발 방식으로 즉시 만들라고 명시했다. 승인은 SPEC-LWS-001의 저장소 관리 Skill, 개인 검색 링크, 읽기 전용 전진 시험과 문서·테스트 변경에 한정하며 Scheduled Task 생성·실행, 새 네트워크·자격증명·비용 권한과 신뢰도 자동 승격은 포함하지 않는다."
+        }
+      ],
+      "benchmark": "AC-LWS-001~010을 계약 테스트로 고정한다. Red에서 Skill 패키지 부재와 메타데이터·작업 절차·안전장치·예약 프롬프트·설치 링크 계약 실패를 보존하고, Green에서 init_skill.py 생성물, quick_validate, 저장소 테스트, 독립 읽기 전용 전진 시험, render, lint, 고정 시각 memory-hygiene, validate, okf-validate, 전체 단위 테스트와 release-check가 통과해야 한다.",
+      "created_at": "2026-07-12T02:42:48+00:00",
+      "created_by": "agent:codex",
+      "evidence": [
+        "CLM-1EB8BD726482",
+        "CLM-CB6E34C87DA3",
+        "CLM-DA7C92E9A901",
+        "CLM-F464CCF0AA1A",
+        "CLM-F79558D817DF"
+      ],
+      "id": "RFC-1B8A142F2DD6",
+      "implementation_evidence": {
+        "component_fingerprint": "65af31652c9b7040b8c70d80db641370ef14c260ee7bff7c201b4213df2f8225",
+        "production_certified": false,
+        "release_report": "evaluations/reports/v4-release-65af31652c9b7040.json"
+      },
+      "implemented_at": "2026-07-12T02:51:41+00:00",
+      "implemented_by": "agent:codex",
+      "problem": "Codex Scheduled Tasks는 예약 실행을 제공하지만 현재 Wiki에는 예약 작업이 재사용할 단일 Skill이 없다. 기존 AGENTS와 연구 프롬프트는 분산되어 있고 위생, 도래한 연구, 자기 발전, 무변경 차이와 권한 경계를 하나의 호출 가능한 작업 절차와 수용 계약으로 묶지 못한다.",
+      "proposed_change": "SPEC-LWS-001을 표준 제품 요구사항으로 두고 저장소에서 관리하는 skills/living-wiki-steward 패키지를 생성한다. SKILL.md는 색인 우선 부트스트랩, 의도 분기, 결정론적 위생, 단일 캠페인 제한 연구, 자연어 관심사 제어, RFC로 통제되는 자기 발전과 간결한 차이를 규정한다. agents/openai.yaml과 예약 작업 프롬프트 참고 문서를 포함하고 CODEX_HOME 개인 Skill에는 표준 원본 링크로 설치한다. 새 스케줄러, 상태 스키마와 네트워크 권한은 만들지 않는다.",
+      "risks": [
+        "홈 설치본과 저장소 원본의 차이 발생",
+        "무변경 실행이 불필요한 변경을 만듦",
+        "예약 프롬프트가 과도한 권한으로 해석됨",
+        "의미 관계 링크의 잘못된 수정",
+        "Skill과 제품 요구사항의 차이 발생",
+        "장기 연구 비용 확대"
+      ],
+      "rollback": "Scheduled Task를 일시 정지하고 CODEX_HOME의 living-wiki-steward 링크와 저장소 관리 Skill 디렉터리를 제거한다. SPEC/RFC와 사건 이력은 감사용으로 남기거나 대체 상태로 전환한다. 새 표준 상태 스키마가 없으므로 기존 주장·출처·원문·캠페인은 마이그레이션 없이 유지된다.",
+      "status": "implemented",
+      "title": "Living Wiki 관리인 Codex Skill v1",
+      "updated_at": "2026-07-12T02:51:41+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T12:22:03+00:00",
+          "decision": "approve",
+          "rationale": "사용자가 관리인 Skill의 여러 내부 모드가 혼란스럽다고 지적하고, 하나의 공개 진입점은 유지하되 예약·수동 사용자 여정과 내부 라우팅을 사용자 UX 관점에서 최적화하라고 명시적으로 요청했다. 승인은 SPEC-LWS-001 v1.1.0, Skill·예약 프롬프트·UI 메타데이터와 관련 계약 테스트의 범위에 한정하며 실제 Scheduled Task 생성, 권한 확대, 네트워크·비용 사용과 신뢰도 자동 변경은 포함하지 않는다."
+        }
+      ],
+      "benchmark": "AC-LWS-011~014를 추가한다. 새 계약 테스트는 평면적인 실행 모드 메뉴를 거부하고, 호출 방식·작업 종류·Wiki 의존도의 분리, 예약 순서의 고정, 자연어 수동 라우팅, Skill 구현과 Scheduled 활성 상태의 구분을 검사한다. 기존 AC-LWS-001~010과 안전 불변조건을 유지하며 Red 후 Skill quick_validate, 대상 테스트, 독립 전진 시험과 전체 릴리스 게이트를 통과한다.",
+      "created_at": "2026-07-12T12:21:56+00:00",
+      "created_by": "agent:codex",
+      "evidence": [
+        "CLM-1EB8BD726482",
+        "CLM-DA7C92E9A901",
+        "CLM-F464CCF0AA1A"
+      ],
+      "id": "RFC-32B34B7A1DAA",
+      "implementation_evidence": {
+        "component_fingerprint": "57f37e63de782dcaeeb45394bf3573bbc9dd8d96df95d1862eb27fe1f5712c5b",
+        "production_certified": false,
+        "release_report": "evaluations/reports/v4-release-57f37e63de782dca.json"
+      },
+      "implemented_at": "2026-07-12T12:34:25+00:00",
+      "implemented_by": "agent:codex",
+      "problem": "관리인 Skill이 예약 관리, 위생 전용, 반복 연구, 새로 확인, 자가 발전을 같은 수준의 실행 모드로 나열해 사용자가 내부 모드를 직접 선택해야 하는 것처럼 보인다. 호출 방식, 작업 종류와 Wiki 의존도 정책이 섞여 있고 Skill 구현 상태와 실제 Codex 예약 활성 상태의 경계도 사용자 여정에서 불명확하다.",
+      "proposed_change": "SPEC-LWS-001을 v1.1.0으로 개정해 예약·수동 호출 방식, 위생·지속 연구·독립 검증·하네스 개선 작업 종류와 wiki-first·fresh-check·strict-evidence 정책을 별도 축으로 정의한다. 하나의 공개 관리인 Skill은 유지하되 예약 호출의 고정 오케스트레이션과 수동 자연어 라우터를 전면에 두고, Skill 본문·예약 프롬프트·UI 메타데이터·하네스 사용자 여정을 같은 계약으로 정리한다.",
+      "risks": [
+        "과도한 요약으로 안전 절차가 누락될 수 있음",
+        "기존 예약 프롬프트와 의미가 달라질 수 있음",
+        "새 용어가 또 다른 모드 메뉴처럼 보일 수 있음",
+        "현재 미완성 기능을 실제 제공 기능으로 오해할 수 있음"
+      ],
+      "rollback": "SPEC-LWS-001 v1.0.0의 다섯 실행 방식 표현과 기존 Skill·예약 프롬프트·UI 메타데이터로 되돌리되 원장, 원문, 캠페인과 사건 이력은 보존한다. 실제 Codex 예약 작업은 변경하지 않는다.",
+      "status": "implemented",
+      "title": "Living Wiki 관리인 단일 진입점 UX와 분리된 의도 라우팅",
+      "updated_at": "2026-07-12T12:34:25+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T03:47:20+00:00",
+          "decision": "approve",
+          "rationale": "사용자의 한국어 전용 문서 요구는 문서 위치나 Markdown 문법에 따른 우회를 허용하지 않는다. 감사에서 확인한 잔여 우회와 노후 문서를 같은 요구 범위에서 수정하도록 승인한다."
+        }
+      ],
+      "benchmark": "AC-KO-012 Red 테스트가 summary 등 사람이 읽는 frontmatter, 출처와 정확한 locator가 함께 없는 영문 인용, 일반 표의 영문 외부 링크 라벨, 두 단어 영문 목록을 모두 거부한다. 릴리스 문서는 실제 8개 게이트를 설명하고 Wiki 개요 수치는 현재 원장과 일치하며 전체 품질 게이트를 통과한다.",
+      "created_at": "2026-07-12T03:47:15+00:00",
+      "created_by": "agent:codex",
+      "evidence": [],
+      "id": "RFC-4550532AD310",
+      "implementation_evidence": {
+        "component_fingerprint": "66bb07834d81ed2655ba6a604152e0b49c72bddec03c44a571a2676bb9f4d3a4",
+        "production_certified": false,
+        "release_report": "evaluations/reports/v4-release-66bb07834d81ed26.json"
+      },
+      "implemented_at": "2026-07-12T04:00:23+00:00",
+      "implemented_by": "agent:codex",
+      "problem": "최종 Red Team 감사에서 임의 frontmatter 필드, locator 없는 원문 표식, 표의 임의 외부 링크 라벨과 두 단어 영문 목록이 한국어 계약을 우회하며 릴리스 문서의 게이트 수와 Wiki 개요 수치도 현재 상태와 어긋남을 확인했다.",
+      "proposed_change": "SPEC-KO-DOCS-001에 문맥별 수용 기준을 추가하고 각 우회의 실패 테스트를 고정하며 검사기와 노후 운영 문서를 최소 수정한다.",
+      "risks": [
+        "외부 원제 또는 짧은 기술 값을 오탐할 수 있음",
+        "현재 수치 수동 수정이 다시 노후할 수 있음"
+      ],
+      "rollback": "문맥 검사 확장을 되돌리되 한국어 운영 문서와 append-only 사건 원장은 보존한다. 외부 원제·기계 값·코드 예제는 변경하지 않는다.",
+      "status": "implemented",
+      "title": "한국어 문서 게이트의 잔여 문맥 우회 차단",
+      "updated_at": "2026-07-12T04:00:23+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T02:20:09+00:00",
+          "decision": "approve",
+          "rationale": "사용자가 이번 요청에서 6개 제품 요구사항과 중앙 명세 주도 테스트 개발 문서 및 README·전역 AGENTS 연결을 명시적으로 지시했다. 승인은 문서 계약과 로컬 회귀 테스트에 한정하며 데몬 설치, 유료·자격증명 네트워크 실행과 자동 정책 승인까지 확대하지 않는다."
+        }
+      ],
+      "benchmark": "새 계약 테스트는 중앙 명세 존재, README/AGENTS 양쪽의 직접 링크, 자연어 사용자 경험, 신뢰도 분리, 매일·변경 임계값, 반복 캠페인, RFC로 통제되는 자기 발전, Red-Green-Refactor와 전체 품질 게이트를 검사한다. 이후 전체 단위 테스트, render, lint, memory-hygiene, validate와 okf-validate가 통과해야 한다.",
+      "created_at": "2026-07-12T02:19:59+00:00",
+      "created_by": "agent:codex",
+      "evidence": [
+        "CLM-CB6E34C87DA3",
+        "CLM-DA7C92E9A901",
+        "CLM-F464CCF0AA1A",
+        "CLM-F79558D817DF"
+      ],
+      "id": "RFC-486C24C969AE",
+      "implementation_evidence": {
+        "component_fingerprint": "8f6070847e2931a554317f53f20ba0765f4770a6eee61d5c2be5f5971fa09425",
+        "production_certified": false,
+        "release_report": "evaluations/reports/v4-release-8f6070847e2931a5.json"
+      },
+      "implemented_at": "2026-07-12T02:21:23+00:00",
+      "implemented_by": "agent:codex",
+      "problem": "현재 신뢰도, 위생, 캠페인과 RFC 기본 요소는 존재하지만 사용자가 자연어만으로 연구와 유지보수를 지시하는 제품 사용자 경험, 매일·변경 임계값 트리거 의미, 중앙 하네스 제품 명세와 README/AGENTS의 필수 명세 주도 테스트 개발 진입점이 하나의 검증 가능한 계약으로 묶여 있지 않다.",
+      "proposed_change": "wiki/specs에 중앙 하네스 사용자 경험 제품 명세를 추가하고 README와 AGENTS 부트스트랩에서 이를 직접 연결한다. 자연어 의도 분기, S/C 신뢰 표시, 매일·누적 변경 위생 트리거, 지속 연구 관심사 주기, 자기 발전 RFC 경계, Red-Green-Refactor와 릴리스 게이트를 문서 계약 테스트로 고정한다. 실제 데몬·네트워크 실행기 설치는 별도 승인과 플랫폼별 RFC로 남긴다.",
+      "risks": [
+        "트리거 중복 실행",
+        "문서가 실제 데몬을 과장할 위험",
+        "자기수정 자동승인 오해",
+        "전역 로더 크기 증가"
+      ],
+      "rollback": "새 명세와 계약 테스트를 제거하고 README/AGENTS의 짧은 링크 블록만 되돌린다. 기존 원장, 출처, 주장, 원문, 캠페인과 v4.1 실행 환경 동작은 변경하지 않는다.",
+      "status": "implemented",
+      "title": "Codex 중심 Living Wiki 사용자 경험과 명세 주도 하네스 발전",
+      "updated_at": "2026-07-12T02:21:23+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-11T17:21:41+00:00",
+          "decision": "approve",
+          "rationale": "사용자가 2026-07-12 현재 요청에서 신뢰 검증을 통과한 ai.engineer 메모리·위키·세컨드 브레인 연구 결과를 Wiki와 하네스에 적용하라고 명시적으로 승인했다. 범위는 로컬 추가형 스키마, 비파괴 생명주기, 감사 전용 피드백, 읽기 전용 위생과 문서화된 메모리 모드이며 삭제·외부 공개·자격증명·자동 신뢰도 승격은 제외한다."
+        }
+      ],
+      "benchmark": "기존 릴리스 게이트와 전체 테스트가 유지되고, 새 모듈은 고정 시각에서 결정론적으로 바이트가 같은 보고서를 만든다. 오래됨·활성·비활성 상태, 피드백 스키마·귀속·개인정보 보호, 생명주기 전이·대체 검증과 자동 승격·삭제 금지를 테스트한다. validate와 OKF가 통과하고 롤백 예행연습에서 새 상태와 선택 필드를 제거해도 v4 판독기가 동작해야 한다.",
       "created_at": "2026-07-11T17:21:34+00:00",
       "created_by": "agent:codex",
       "evidence": [
@@ -28,21 +213,21 @@
       },
       "implemented_at": "2026-07-11T17:55:17+00:00",
       "implemented_by": "agent:codex",
-      "problem": "v4는 provenance와 release gate를 갖췄지만 configured staleness를 실제로 검사하지 않고, retrieval이 도움이 됐는지 안전하게 기록할 ledger와 obsolete 지식을 비파괴적으로 비활성화하는 lifecycle 명령이 없으며, 사용자가 Wiki 의존도를 fresh-check 방식으로 낮출 명시적 UX도 없다.",
-      "proposed_change": "additive memory-feedback ledger와 결정론적 memory-hygiene report를 추가하고, claim/source에 active/deprecated/superseded/invalidated/archived lifecycle transition을 이유·replacement와 함께 기록한다. AGENTS/README에는 wiki-first, fresh-check, strict-evidence 모드를 정의한다. feedback은 raw query를 저장하지 않고 ranking, C-level, source level, 삭제를 자동 변경하지 않는다. harness proposal은 관찰된 failure/replay와 최소 change layer를 명시하도록 prompt와 문서를 강화한다.",
+      "problem": "v4는 출처 추적성과 릴리스 게이트를 갖췄지만 설정된 오래됨을 실제로 검사하지 않고, 검색이 도움이 됐는지 안전하게 기록할 원장과 낡은 지식을 비파괴적으로 비활성화하는 생명주기 명령이 없으며, 사용자가 Wiki 의존도를 fresh-check 방식으로 낮출 명시적 사용자 경험도 없다.",
+      "proposed_change": "추가형 메모리 피드백 원장과 결정론적 memory-hygiene 보고서를 추가하고, 주장·출처에 active/deprecated/superseded/invalidated/archived 생명주기 전이를 이유·대체 항목과 함께 기록한다. AGENTS/README에는 wiki-first, fresh-check, strict-evidence 모드를 정의한다. 피드백은 원시 질의를 저장하지 않고 순위, C 단계, 출처 단계와 삭제를 자동 변경하지 않는다. 하네스 제안은 관찰된 실패·재실행과 최소 변경 계층을 명시하도록 프롬프트와 문서를 강화한다.",
       "revalidated_at": "2026-07-11T18:32:01+00:00",
       "revalidated_by": "agent:codex",
       "risks": [
-        "feedback selection bias",
-        "staleness를 거짓으로 오해",
-        "사용자 모드가 bootstrap을 우회",
-        "새 state schema 호환성",
-        "자동 lifecycle 오용",
+        "피드백 선택 편향",
+        "오래됨을 거짓으로 오해",
+        "사용자 모드가 부트스트랩을 우회",
+        "새 상태 스키마 호환성",
+        "자동 생명주기 오용",
         "평가 fixture 과적합"
       ],
-      "rollback": "새 memory-feedback.json과 선택적 lifecycle fields는 additive다. 새 CLI/AGENTS mode 블록을 제거하고 v4.0 tools/wiki.py 및 config version으로 되돌리면 기존 source/claim/event 원장은 유지된다. feedback은 trust 계산 입력이 아니므로 제거해도 C-level이 변하지 않으며 lifecycle transition은 append-only event와 이전 status로 수동 복원한다.",
+      "rollback": "새 memory-feedback.json과 선택적 생명주기 필드는 추가형이다. 새 CLI/AGENTS 모드 블록을 제거하고 v4.0 tools/wiki.py 및 설정 버전으로 되돌리면 기존 출처·주장·사건 원장은 유지된다. 피드백은 신뢰도 계산 입력이 아니므로 제거해도 C 단계가 변하지 않으며 생명주기 전이는 추가 전용 사건과 이전 상태로 수동 복원한다.",
       "status": "implemented",
-      "title": "Living Wiki v4.1 memory hygiene and controlled learning",
+      "title": "Living Wiki v4.1 메모리 위생과 통제된 학습",
       "updated_at": "2026-07-11T18:32:01+00:00"
     },
     {
@@ -54,7 +239,7 @@
           "rationale": "사용자가 2026-07-12 대화에서 해야 할 작업을 순서대로 수행해 프로젝트와 하네스를 완결성 있게 완수하라고 명시적으로 지시했다. 고위험 외부 공개·비밀·유료 작업은 승인 범위에 포함하지 않는다."
         }
       ],
-      "benchmark": "기존 12개 테스트 유지, 새 calibration/admission/security/collaboration/runtime 테스트 전체 통과, deterministic fixture report, event chain과 OKF strict validation 통과, dry-run에서 권한 밖 action 0건, rollback rehearsal 문서화.",
+      "benchmark": "기존 12개 테스트 유지, 새 보정·입수·보안·협업·실행 환경 테스트 전체 통과, 결정론적 fixture 보고서, 사건 사슬과 OKF 엄격 검증 통과, 모의 실행에서 권한 밖 동작 0건과 롤백 예행연습 문서화를 요구한다.",
       "created_at": "2026-07-11T15:41:50+00:00",
       "created_by": "agent:codex",
       "evidence": [
@@ -72,19 +257,167 @@
       },
       "implemented_at": "2026-07-11T16:31:41+00:00",
       "implemented_by": "agent:codex",
-      "problem": "v3.1은 근거 원장과 OKF projection은 갖췄지만 calibration, source admission 자동 평가, poisoning 회귀검사, 인간 commitment/review queue, bounded runner와 release orchestration이 연결되지 않아 자가진화 루프가 실제로 닫히지 않는다.",
-      "proposed_change": "고정 calibration/security/admission fixture, 결정론적 평가기, 안전한 quarantine ingest, provenance-aware retrieval, commitment와 impact preview, run receipt를 갖는 bounded scheduler, 통합 gate와 migration을 추가한다. 외부 검색과 고위험 변경은 자동 실행하지 않고 계획·초안·제안까지만 허용한다.",
+      "problem": "v3.1은 근거 원장과 OKF 투영은 갖췄지만 보정, 출처 입수 자동 평가, 오염 회귀검사, 인간 약속·검토 대기열, 제한 실행기와 릴리스 조율이 연결되지 않아 자가진화 순환이 실제로 닫히지 않는다.",
+      "proposed_change": "고정 보정·보안·입수 fixture, 결정론적 평가기, 안전한 격리 입수, 출처 추적성 인식 검색, 약속과 영향 미리보기, 실행 영수증을 갖는 제한 스케줄러, 통합 게이트와 마이그레이션을 추가한다. 외부 검색과 고위험 변경은 자동 실행하지 않고 계획·초안·제안까지만 허용한다.",
       "risks": [
         "규칙 복잡도 증가",
-        "기존 JSON schema 호환성",
-        "보안 scanner 오탐",
+        "기존 JSON 스키마 호환성",
+        "보안 검사기 오탐",
         "자동화 권한 확대 오해",
         "평가셋 과적합"
       ],
-      "rollback": "v3.1 state는 append-only로 보존하고 새 v4 state 파일은 additive schema로 도입한다. 새 command와 runner를 비활성화하면 기존 tools/wiki.py와 OKF projection만으로 동작하며, release snapshot hash로 이전 파생 뷰를 재생성한다.",
+      "rollback": "v3.1 상태는 추가 전용으로 보존하고 새 v4 상태 파일은 추가형 스키마로 도입한다. 새 명령과 실행기를 비활성화하면 기존 tools/wiki.py와 OKF 투영만으로 동작하며, 릴리스 스냅숏 해시로 이전 파생 뷰를 재생성한다.",
       "status": "implemented",
-      "title": "Living Wiki v4 closed-loop harness",
+      "title": "Living Wiki v4 폐쇄 순환 하네스",
       "updated_at": "2026-07-11T16:31:41+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T13:22:43+00:00",
+          "decision": "approve",
+          "rationale": "사용자가 2026-07-12 이번 요청에서 앞서 제안한 위생 알고리즘을 명세 주도 방식으로 구현하라고 명시적으로 승인했다. 승인은 Codex 예약 작업을 유지한 채 로컬 읽기 전용 후보 계획, 2-hop 상한, 검토 전용 충돌 후보와 보수적 OKF 시간 투영에 한정한다. 데몬, 네트워크 실행기, 자동 의미 수정, 자동 신뢰·생명주기 변경은 제외한다."
+        }
+      ],
+      "benchmark": "SPEC-LWS-001 v1.2.0의 AC-LWS-015~022를 Red 테스트로 먼저 고정한다. 동일 입력·고정 시각 결정성, 읽기 전용성, 최근·노후 시드 할당량, 강한 관계 2-hop과 노드 상한, 선택 경로, 제한된 충돌 후보, 자동 신뢰 효과 없음, 시간대 ISO-8601 frontmatter, render·confidence 시간 불변을 검증한다. 대상 테스트와 evaluate, render, memory-hygiene, lint, language-validate, validate, okf-validate, 전체 단위 테스트, release-check가 통과해야 한다.",
+      "created_at": "2026-07-12T13:22:37+00:00",
+      "created_by": "agent:codex",
+      "evidence": [
+        "CLM-1EB8BD726482",
+        "CLM-207429D54323",
+        "CLM-952258184EF2",
+        "CLM-F79558D817DF"
+      ],
+      "id": "RFC-6BD49C04ED49",
+      "implementation_evidence": {
+        "component_fingerprint": "4c4c3fd4dceba0c58dcae3060ac95483f06c9eb31a742ebf704223bbbc87a4ad",
+        "production_certified": false,
+        "release_report": "evaluations/reports/v4-release-4c4c3fd4dceba0c5.json"
+      },
+      "implemented_at": "2026-07-12T15:25:35+00:00",
+      "implemented_by": "agent:codex",
+      "problem": "현재 위생은 상태·링크를 전수 구조 검사하지만 최신 문서와 검토 기한 초과 주장을 시드로 고르고 강한 관계를 N-hop 확장해 제한된 논리 충돌 후보만 깊게 읽는 절차가 없다. OKF timestamp도 마지막 의미 변경·생성·실제 검증 시각을 분리해 후보 필터에 쓰지 못한다.",
+      "proposed_change": "Codex 예약 작업은 호출 계층으로 유지한다. 저장소에는 읽기 전용 hygiene-plan을 추가해 구조 위험, 최근 문서, review-due 주장과 의존성 지연을 시드로 만들고 최대 2-hop·노드·쌍 상한으로 그래프를 확장한다. 극성·수치·조건 차이는 검토 후보로만 반환하고 선택 경로·입력 지문·무신뢰효과 불변조건을 남긴다. OKF timestamp는 마지막 의미 변경으로 검증하고 생성 투영에 알려진 created_at, last_verified_at, freshness, lifecycle_updated_at을 추가한다. render와 confidence 재계산은 실제 의미 변경·검증 없이 시간값을 진전시키지 않는다.",
+      "risks": [
+        "시간 마이그레이션에서 과거 생성 시각을 추정할 위험",
+        "일괄 렌더가 최신성으로 오인됨",
+        "태그·어휘 기반 거짓 양성",
+        "후보 계획을 사실 판정으로 오해할 위험",
+        "후보 그래프 팽창"
+      ],
+      "rollback": "새 hygiene_selection 설정, tools/wiki_hygiene.py, hygiene-plan CLI와 테스트를 제거하고 Skill을 기존 위생 명령으로 되돌린다. 생성 frontmatter의 선택적 시간 확장을 제거하되 정규 claim/source/event 원장은 유지한다. 후보 보고서는 비권위적 평가이므로 삭제하지 않아도 신뢰·생명주기에는 영향이 없다.",
+      "status": "implemented",
+      "title": "Living Wiki v4.2 범위 제한 위생 후보 라우팅과 OKF 시간 계약",
+      "updated_at": "2026-07-12T15:25:35+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T03:44:52+00:00",
+          "decision": "approve",
+          "rationale": "사용자가 모든 Wiki와 하네스 문서를 한국어로 작성하라고 명시했다. 사람이 읽는 다이어그램도 문서이므로 기존 지시의 범위 안에서 이 누락을 수정하도록 승인한다."
+        }
+      ],
+      "benchmark": "AC-KO-011 실패 테스트를 먼저 고정하고 text·plaintext·Mermaid 다이어그램의 영문 전용 라벨을 거부하되 bash·python·json·yaml 등 실행 가능한 코드 펜스와 기계 토큰은 보존한다. 전체 283개 이상 테스트와 8개 릴리스 게이트를 다시 통과한다.",
+      "created_at": "2026-07-12T03:44:48+00:00",
+      "created_by": "agent:codex",
+      "evidence": [],
+      "id": "RFC-7D5F70EF4EEA",
+      "implementation_evidence": {
+        "component_fingerprint": "66bb07834d81ed2655ba6a604152e0b49c72bddec03c44a571a2676bb9f4d3a4",
+        "production_certified": false,
+        "release_report": "evaluations/reports/v4-release-66bb07834d81ed26.json"
+      },
+      "implemented_at": "2026-07-12T04:00:23+00:00",
+      "implemented_by": "agent:codex",
+      "problem": "SPEC-KO-DOCS-001의 검사기가 text와 Mermaid 코드 펜스를 전부 코드로 간주해 사람이 읽는 영문 다이어그램 문구를 놓친다.",
+      "proposed_change": "사람이 읽는 다이어그램 펜스를 한국어 계약 범위에 포함하고 기존 다이어그램을 한국어화하며 Red 회귀검사와 전체 릴리스 게이트를 다시 통과한다.",
+      "risks": [
+        "다이어그램 번역으로 의미가 바뀔 수 있음",
+        "코드 예제를 오탐할 수 있음"
+      ],
+      "rollback": "다이어그램 검사 확장을 되돌리되 한국어로 바꾼 설명 문구와 append-only 사건 원장은 보존한다. 코드·경로·식별자는 변경하지 않는다.",
+      "status": "implemented",
+      "title": "한국어 문서 게이트의 사람이 읽는 다이어그램 검사",
+      "updated_at": "2026-07-12T04:00:23+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T02:31:09+00:00",
+          "decision": "approve",
+          "rationale": "사용자는 이번 요청에서 링크 누락과 분류 이상을 포함한 정교한 매일·누적 변경 위생, 자연어 기반 지속 연구와 자기개선의 확장 가능성을 명시적으로 요구했다. 승인은 로컬 읽기 전용 감사, 트리거 영수증, 관심사 작성기와 계획 전용 진입점에 한정하며 데몬 설치, 자격증명·비용 사용, 무인 네트워크 실행기, 자동 의미 수정·신뢰도 승격은 제외한다."
+        },
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T02:37:50+00:00",
+          "decision": "request-changes",
+          "rationale": "사용자가 구현보다 Codex 자체 예약 실행 기능 조사를 먼저 요구했다. 2026-07-12 공식 Scheduled Tasks 문서를 확인한 결과 데스크톱 앱이 반복 백그라운드 작업, 로컬 프로젝트·작업 트리, 사용자 정의 RRULE, 스레드 상태 신호, Skill과 Scheduled 받은 편지함을 제공하므로 사용자 정의 데몬·트리거 실행 환경을 우선 구현하는 변경안은 과도하다. Codex 기본 예약 작업을 중심으로 재설계하고 저장소 코드는 위생 평가기와 관심사 계약처럼 제품이 제공하지 않는 부분에만 한정해야 한다."
+        }
+      ],
+      "benchmark": "Red 테스트는 매일 트리거와 변경 트리거가 하나로 합쳐지고, 이전 영수증이 없으면 도래한 실행 하나가 생성되며, 실패 시도가 성공 상태를 진전시키지 않음을 입증해야 한다. 매니페스트 변경 수는 중복 없이 세고 생성된 영수증을 제외해야 한다. 공유 주장 ID와 강한 태그 중첩은 링크되지 않은 후보를 드러내고, 폴더·유형과 알 수 없는 주장 참조는 분류 체계 문제를 드러내야 한다. interest-add는 결정론적이고 멱등적이며 색인을 렌더링해야 한다. 대상 테스트, 전체 단위 테스트, 고정 시각 메모리 위생, render, lint, validate, okf-validate와 통합 릴리스 게이트를 통과해야 한다.",
+      "created_at": "2026-07-12T02:31:04+00:00",
+      "created_by": "agent:codex",
+      "evidence": [
+        "CLM-1EB8BD726482",
+        "CLM-CB6E34C87DA3",
+        "CLM-DA7C92E9A901",
+        "CLM-F464CCF0AA1A",
+        "CLM-F79558D817DF"
+      ],
+      "id": "RFC-925A95472E90",
+      "problem": "v4.1은 오래됨 관찰기와 캠페인 계획기는 있지만 매일·변경 임계값 트리거 영수증, 중복 트리거 병합, 고립 문서·관련 미연결·분류 체계 변화 감사, 자연어를 Codex가 안전하게 기록할 관심사 작성기와 Wiki 투영이 없다. 그 결과 위생 계약은 문서에만 있고 정보 증가에 따른 링크·분류 이상이 운영 신호로 드러나지 않는다.",
+      "proposed_change": "순수 결정론적 위생 조율 모듈과 버전이 있는 자동화 설정을 추가한다. 매일 기준과 서로 다른 파일 수 임계값을 하나의 계획으로 병합하고 성공·실패 보고서를 콘텐츠 주소형 보관소와 최신 포인터에 기록한다. Wiki 그래프 감사는 끊어진·고립된 링크, 공유 주장·공유 태그 기반 미연결 후보, 경로·유형 불일치, 알 수 없는 주장 참조와 중복 제목을 보고하되 자동 의미 수정은 하지 않는다. interest-add 작성기와 생성형 Wiki 관심사 투영을 추가하고 Codex 자연어 분기와 계획 전용 주기를 문서화한다. 데몬 설치와 네트워크 가능 실행기는 비활성화하며 범위 밖이다.",
+      "risks": [
+        "문서가 무인 실행을 과장할 위험",
+        "관련 링크 제안의 거짓 양성",
+        "생성 파일이 위생 작업을 다시 유발함",
+        "관심사 중복",
+        "대용량 매니페스트 영수증",
+        "시간대 경계 오류"
+      ],
+      "rollback": "hygiene_automation 모듈, 자동화 설정, 새 CLI 명령·테스트와 생성된 관심사 투영을 제거하고 연구 주기 계획 진입점과 v4.1 문서·설정을 복원한다. 보관된 위생 보고서는 비권위적 평가이므로 감사를 위해 남길 수 있다. 주장·출처·원문 내용이나 신뢰 단계는 마이그레이션하지 않는다.",
+      "status": "changes-requested",
+      "title": "Living Wiki v4.2 결정론적 위생 조율과 연구 접수",
+      "updated_at": "2026-07-12T02:37:50+00:00"
+    },
+    {
+      "approvals": [
+        {
+          "actor_id": "human:owner",
+          "at": "2026-07-12T03:02:34+00:00",
+          "decision": "approve",
+          "rationale": "사용자가 모든 위키와 하네스 문서를 한국어로 작성하라고 명시적으로 교정했다. SPEC-KO-DOCS-001의 기술·출처 추적 예외를 보존하는 범위에서 구현을 승인한다."
+        }
+      ],
+      "benchmark": "AC-KO-001부터 AC-KO-010까지의 실패 테스트를 먼저 고정한다. 현재 템플릿 재렌더, 생성 문서 포괄 예외 금지, 전체 필수 릴리스 게이트의 유일성까지 검증하고, 대상 테스트·Skill quick_validate·render 멱등성·language-validate·evaluate·memory-hygiene·lint·validate·okf-validate·전체 단위 테스트·release-check를 통과한다.",
+      "created_at": "2026-07-12T03:02:24+00:00",
+      "created_by": "agent:codex",
+      "evidence": [],
+      "id": "RFC-9DF9F569807F",
+      "implementation_evidence": {
+        "component_fingerprint": "66bb07834d81ed2655ba6a604152e0b49c72bddec03c44a571a2676bb9f4d3a4",
+        "production_certified": false,
+        "release_report": "evaluations/reports/v4-release-66bb07834d81ed26.json"
+      },
+      "implemented_at": "2026-07-12T03:42:11+00:00",
+      "implemented_by": "agent:codex",
+      "problem": "Skill·PRD·자동 생성 Wiki 문서와 하네스 보고서에 영문 중심 문구가 남아 사용자의 한국어 전용 문서 요구를 위반하고, render와 evaluate가 영문을 다시 생성한다.",
+      "proposed_change": "SPEC-KO-DOCS-001에 따라 사람이 읽는 문서·Skill UI·프롬프트·생성 템플릿·내부 운영 서술을 한국어화하고, 명시적 기술·출처 예외를 보존하는 결정론적 language-validate 게이트를 전체 릴리스에 연결한다.",
+      "revalidated_at": "2026-07-12T04:00:23+00:00",
+      "revalidated_by": "agent:codex",
+      "risks": [
+        "번역으로 증거 의미가 바뀔 수 있음",
+        "생성 템플릿 누락으로 영문이 재발할 수 있음",
+        "외부 원제나 명령을 오탐할 수 있음"
+      ],
+      "rollback": "언어 검사기와 한국어 생성 템플릿 변경을 되돌리되 원문 자료와 추가 전용 사건 원장은 보존한다. 원제·식별자·명령은 번역하지 않으며, 의미가 불확실한 표준 증거 문구는 원문 보존과 한국어 설명을 분리한다.",
+      "status": "implemented",
+      "title": "Living Wiki 한국어 문서 계약과 자동 검증 게이트",
+      "updated_at": "2026-07-12T04:00:23+00:00"
     }
   ],
   "version": 1

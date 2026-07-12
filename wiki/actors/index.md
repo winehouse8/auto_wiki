@@ -1,4 +1,4 @@
-# Actors
+# 행위자
 
-* [Codex Research Maintainer](actor-agent-codex.md) - agent contributor agent:codex in the Living Wiki.
-* [Wiki Owner](actor-human-owner.md) - human contributor human:owner in the Living Wiki.
+* [행위자 agent:codex](actor-agent-codex.md) - Living Wiki 기여자 agent:codex의 행위자·역할 기록.
+* [행위자 human:owner](actor-human-owner.md) - Living Wiki 기여자 human:owner의 행위자·역할 기록.

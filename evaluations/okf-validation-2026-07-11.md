@@ -1,46 +1,43 @@
-# OKF export validation — 2026-07-11
+# OKF 내보내기 검증 — 2026-07-11
 
-Harness: 3.1.0  
-Pinned spec: OKF 0.1 Draft  
-Bundle: `wiki/`
+하네스: 3.1.0
+고정 명세: OKF 0.1 Draft
+번들: `wiki/`
 
-## Conformance result
+## 적합성 결과
 
 ```text
-OKF v0.1 bundle: wiki/ (75 concept documents)
-OKF core and Living Wiki profile validation passed with 0 warning(s).
+OKF v0.1 번들: wiki/ (개념 문서 75개)
+OKF 핵심과 Living Wiki 프로필 검증 통과: 경고 0건.
 ```
 
-The 75 concepts are accompanied by 11 reserved `index.md`/`log.md` files, for 86 Markdown files total.
+개념 75개와 예약 `index.md`·`log.md` 파일 11개를 합쳐 Markdown 파일은 모두 86개다.
 
-## Projection parity
+## 투영 일치성
 
-| Object | Canonical state | Generated OKF concepts |
+| 객체 | 정식 상태 | 생성한 OKF 개념 |
 |---|---:|---:|
-| Sources | 31 | 31 |
-| Claims | 18 | 18 |
-| Actors | 2 | 2 |
-| Reviews | 0 | 0 |
-| Campaigns | 5 | 5 |
+| 출처 | 31 | 31 |
+| 주장 | 18 | 18 |
+| 행위자 | 2 | 2 |
+| 검토 | 0 | 0 |
+| 캠페인 | 5 | 5 |
 
-Curated synthesis/reference/concept/policy documents account for the remaining concepts.
+나머지 개념은 선별된 종합·참고·개념·정책 문서다.
 
-## Idempotence check
+## 멱등성 검사
 
-`python3 tools/wiki.py render --no-log` was run twice. SHA-256 manifests of all 86 Markdown files were byte-identical; `diff` returned no differences.
+`python3 tools/wiki.py render --no-log`를 두 번 실행했다. Markdown 파일 86개의 SHA-256 manifest는 바이트 단위로 같았고 `diff`는 차이를 반환하지 않았다.
 
-Manifest-list SHA-256 for this run:
+이 실행의 목록 SHA-256:
 
-```text
-d3a0f55e6e925ad4bd2dd817cd38b545153b68f1cd5b94fec5b83a3b6c5815a5
-```
+`d3a0f55e6e925ad4bd2dd817cd38b545153b68f1cd5b94fec5b83a3b6c5815a5`
 
-The normal `render` command records a new audit event, so `log.md` intentionally changes. `--no-log` is the pure projection mode used for idempotence tests.
+일반 `render` 명령은 새 감사 사건을 기록하므로 `log.md`가 의도적으로 바뀐다. `--no-log`는 멱등성 테스트에 사용하는 순수 투영 모드다.
 
-## Known limits
+## 알려진 한계
 
-- The validator enforces the pinned v0.1 core plus the stricter Living Wiki profile; it is not an official Google conformance suite.
-- The official project exposes no standalone conformance CLI as of the pinned revision.
-- The fallback YAML validator accepts the flat producer profile used here; PyYAML, when present, performs strict YAML parsing.
-- Semantic citation entailment, trust calibration, and memory-poisoning resistance are separate evaluations and remain pending.
-
+- 검증기는 고정한 v0.1 핵심과 더 엄격한 Living Wiki 프로필을 적용하며, Google의 공식 적합성 모음은 아니다.
+- 고정한 리비전 기준 공식 프로젝트는 독립 실행형 적합성 CLI를 제공하지 않는다.
+- 예비 YAML 검증기는 여기에서 사용하는 평면 생산자 프로필을 허용하며, PyYAML이 있으면 엄격한 YAML 파싱을 수행한다.
+- 인용의 의미적 함의, 신뢰 보정, 메모리 오염 저항성은 별도 평가이며 아직 완료되지 않았다.

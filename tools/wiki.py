@@ -168,6 +168,112 @@ def admission_digest_is_anchored(item: dict[str, Any]) -> bool:
     )
 
 
+STRICT_QUARANTINE_PROFILE = "strict-local-custody"
+PUBLIC_QUARANTINE_PROFILE = "public-clean-clone"
+
+
+def quarantine_anchor_is_valid(
+    admission: dict[str, Any],
+    event: dict[str, Any],
+) -> bool:
+    """격리 admission을 사건 원장의 정확한 보안 판정과 연결한다."""
+
+    if not isinstance(admission, dict) or not isinstance(event, dict):
+        return False
+    candidate = admission.get("candidate", {})
+    artifact = candidate.get("quarantine_artifact", {}) if isinstance(candidate, dict) else {}
+    details = event.get("details", {})
+    if not isinstance(artifact, dict) or not isinstance(details, dict):
+        return False
+    return bool(
+        event.get("action") == "security.candidate.screen"
+        and event.get("actor") == admission.get("created_by")
+        and event.get("subject") == admission.get("id")
+        and details.get("record_digest") == admission.get("record_digest")
+        and details.get("sha256") == artifact.get("sha256")
+        and details.get("decision") == admission.get("status")
+        and details.get("payload_executed") is False
+    )
+
+
+def portable_quarantine_metadata(
+    admission: dict[str, Any],
+    distribution_policy: dict[str, Any],
+    *,
+    validation_profile: str,
+    anchor_verified: bool,
+) -> bool:
+    """public Git에 payload 없이 보존할 격리 기록의 엄격한 메타데이터 계약."""
+
+    expected_policy = {
+        "mode": "local-only-metadata-in-git",
+        "path": "raw/quarantine",
+        "public_repository": "winehouse8/auto_wiki",
+        "missing_artifact_policy": "anchored-content-addressed-admission-only",
+        "default_validation_profile": STRICT_QUARANTINE_PROFILE,
+        "portable_validation_profile": PUBLIC_QUARANTINE_PROFILE,
+    }
+    if distribution_policy != expected_policy:
+        return False
+    if validation_profile != PUBLIC_QUARANTINE_PROFILE or not anchor_verified:
+        return False
+    if admission_integrity_findings(admission):
+        return False
+    if admission.get("policy_effect") != "quarantine_only_no_source_promotion":
+        return False
+    decision = admission.get("decision", {})
+    if (
+        not isinstance(decision, dict)
+        or admission.get("status") != decision.get("decision")
+        or decision.get("stage") != "write"
+    ):
+        return False
+    assessment = decision.get("security_assessment", {})
+    invariants = assessment.get("invariants", {}) if isinstance(assessment, dict) else {}
+    manifest = assessment.get("manifest", {}) if isinstance(assessment, dict) else {}
+    if (
+        not isinstance(assessment, dict)
+        or assessment.get("schema_version") != "living-wiki-security-gate/v1"
+        or assessment.get("classification") != "untrusted_external_content"
+        or not isinstance(invariants, dict)
+        or invariants.get("allow_means_data_use_only") is not True
+        or invariants.get("credentials_accessed") is not False
+        or invariants.get("network_used") is not False
+        or invariants.get("payload_executed") is not False
+        or not isinstance(manifest, dict)
+        or manifest.get("classification") != "untrusted_external_content"
+    ):
+        return False
+    candidate = admission.get("candidate", {})
+    if not isinstance(candidate, dict):
+        return False
+    artifact = candidate.get("quarantine_artifact", {})
+    if not isinstance(artifact, dict):
+        return False
+    sha256 = str(artifact.get("sha256", ""))
+    path = str(artifact.get("path", ""))
+    match = re.fullmatch(
+        r"raw/quarantine/([0-9a-f]{64})/artifact(?:\.[A-Za-z0-9._-]+)?",
+        path,
+    )
+    size = artifact.get("size_bytes")
+    media_type = artifact.get("media_type")
+    return bool(
+        match
+        and match.group(1) == sha256
+        and re.fullmatch(r"[0-9a-f]{64}", sha256)
+        and isinstance(size, int)
+        and not isinstance(size, bool)
+        and size >= 0
+        and isinstance(media_type, str)
+        and bool(media_type.strip())
+        and manifest.get("content_sha256") == sha256
+        and manifest.get("size_bytes") == size
+        and manifest.get("media_type") == media_type
+        and manifest.get("source_ref") == candidate.get("source_ref")
+    )
+
+
 def slugify(value: str, limit: int = 72) -> str:
     value = value.lower().strip()
     value = re.sub(r"[^a-z0-9가-힣]+", "-", value).strip("-")
@@ -204,12 +310,71 @@ def latest_meaningful_timestamp(*groups: Iterable[dict[str, Any]]) -> str:
 
 
 def record_latest_timestamp(*values: Any) -> str:
-    timestamps = [
-        value
-        for value in values
-        if isinstance(value, str) and re.match(r"^\d{4}-\d{2}-\d{2}T", value)
+    timestamps: list[tuple[dt.datetime, str]] = []
+    for value in values:
+        parsed = parse_timezone_aware_iso8601(value)
+        if parsed is not None and isinstance(value, str):
+            timestamps.append((parsed, value))
+    return max(timestamps, default=(dt.datetime.min.replace(tzinfo=dt.timezone.utc), "2026-07-11T00:00:00+09:00"))[1]
+
+
+def parse_timezone_aware_iso8601(value: Any) -> dt.datetime | None:
+    """Return a comparable aware datetime for the portable temporal profile."""
+
+    if isinstance(value, dt.datetime):
+        parsed = value
+    elif isinstance(value, str) and re.match(r"^\d{4}-\d{2}-\d{2}T", value):
+        normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+        try:
+            parsed = dt.datetime.fromisoformat(normalized)
+        except ValueError:
+            return None
+    else:
+        return None
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        return None
+    return parsed
+
+
+def claim_semantic_timestamp(claim: dict[str, Any]) -> Any:
+    """Project an explicit semantic timestamp, with a conservative legacy fallback."""
+
+    if claim.get("content_updated_at") is not None:
+        return claim["content_updated_at"]
+    confidence = claim.get("confidence") if isinstance(claim.get("confidence"), dict) else {}
+    evidence_times = [
+        edge.get("added_at")
+        for edge in claim.get("evidence", [])
+        if isinstance(edge, dict)
     ]
-    return max(timestamps, default="2026-07-11T00:00:00+09:00")
+    return record_latest_timestamp(
+        claim.get("created_at"),
+        *evidence_times,
+        confidence.get("computed_at"),
+        claim.get("lifecycle_updated_at"),
+    )
+
+
+def source_semantic_timestamp(source: dict[str, Any]) -> Any:
+    """Project an explicit semantic timestamp without inventing source creation."""
+
+    if source.get("content_updated_at") is not None:
+        return source["content_updated_at"]
+    assessment = source.get("assessment") if isinstance(source.get("assessment"), dict) else {}
+    return record_latest_timestamp(
+        source.get("created_at"),
+        source.get("retrieved_at"),
+        assessment.get("assessed_at"),
+        source.get("lifecycle_updated_at"),
+    )
+
+
+def project_known_fields(metadata: dict[str, Any], values: dict[str, Any], fields: Iterable[str]) -> None:
+    """Copy only canonical values that are actually known; never synthesize them."""
+
+    for field in fields:
+        if values.get(field) is not None:
+            metadata[field] = values[field]
 
 
 def ensure_layout() -> None:
@@ -635,6 +800,7 @@ def source_add(args: argparse.Namespace) -> None:
             ),
         }
 
+    recorded_at = utc_now()
     item = {
         "id": source_id,
         "title": args.title,
@@ -643,13 +809,15 @@ def source_add(args: argparse.Namespace) -> None:
         "authors": parse_csv(args.authors),
         "publisher": args.publisher,
         "published_at": args.published,
-        "retrieved_at": utc_now(),
+        "created_at": recorded_at,
+        "content_updated_at": recorded_at,
+        "retrieved_at": recorded_at,
         "publication_status": args.publication_status,
         "independence_group": args.independence_group or source_id,
         "source_level": args.level,
         "assessment": {
             "assessed_by": args.actor,
-            "assessed_at": utc_now(),
+            "assessed_at": recorded_at,
             "rationale": args.rationale,
             "quality_markers": parse_csv(args.quality_markers),
             "conflicts_of_interest": parse_csv(args.conflicts),
@@ -677,11 +845,13 @@ def source_assess(args: argparse.Namespace) -> None:
     sources = collection("sources")
     item = find(sources, args.source, "source")
     previous = item.get("source_level", "S0")
+    assessed_at = utc_now()
     item["source_level"] = args.level
+    item["content_updated_at"] = assessed_at
     item["assessment"] = {
         **item.get("assessment", {}),
         "assessed_by": args.actor,
-        "assessed_at": utc_now(),
+        "assessed_at": assessed_at,
         "rationale": args.rationale,
         "quality_markers": parse_csv(args.quality_markers) or item.get("assessment", {}).get("quality_markers", []),
         "conflicts_of_interest": parse_csv(args.conflicts) or item.get("assessment", {}).get("conflicts_of_interest", []),
@@ -699,12 +869,13 @@ def claim_add(args: argparse.Namespace) -> None:
     normalized = re.sub(r"\s+", " ", args.statement).strip()
     if len(normalized) < 8:
         raise WikiError("Claim statement is too short")
-    scope = args.scope.strip() or "general"
+    scope = args.scope.strip() or "일반"
     claim_id = stable_id("CLM", normalized.casefold(), scope.casefold())
     claims = collection("claims")
     if any(c.get("id") == claim_id for c in claims):
         print(claim_id)
         return
+    created_at = utc_now()
     item = {
         "id": claim_id,
         "statement": normalized,
@@ -712,7 +883,8 @@ def claim_add(args: argparse.Namespace) -> None:
         "scope": scope,
         "created_by": args.actor,
         "created_by_group": actor_independence_group(creator),
-        "created_at": utc_now(),
+        "created_at": created_at,
+        "content_updated_at": created_at,
         "last_verified_at": None,
         "freshness": args.freshness,
         "valid_at": args.valid_at,
@@ -724,7 +896,7 @@ def claim_add(args: argparse.Namespace) -> None:
             "supporting_groups": 0,
             "contradicting_groups": 0,
             "independent_reviews": 0,
-            "rationale": "No linked evidence.",
+            "rationale": "연결된 증거가 없음.",
         },
         "supersedes": parse_csv(args.supersedes),
         "notes": args.notes,
@@ -748,13 +920,14 @@ def evidence_add(args: argparse.Namespace) -> None:
     find(sources, args.source, "source")
     if not args.locator.strip():
         raise WikiError("Evidence requires an exact page/section/timestamp locator")
+    added_at = utc_now()
     edge = {
         "source_id": args.source,
         "relation": args.relation,
         "locator": args.locator.strip(),
         "strength": args.strength,
         "added_by": args.actor,
-        "added_at": utc_now(),
+        "added_at": added_at,
         "note": args.note,
     }
     signature = (args.source, args.relation, args.locator.strip())
@@ -764,6 +937,7 @@ def evidence_add(args: argparse.Namespace) -> None:
             return
     claim.setdefault("evidence", []).append(edge)
     claim["evidence"] = sorted(claim["evidence"], key=lambda e: (e["source_id"], e["relation"], e["locator"]))
+    claim["content_updated_at"] = added_at
     save_collection("claims", claims)
     append_event(args.actor, "claim.evidence.add", args.claim, {"source": args.source, "relation": args.relation})
     print(args.claim)
@@ -845,13 +1019,13 @@ def calculate_confidence(claim: dict[str, Any], sources_by_id: dict[str, dict[st
     reasons: list[str] = []
     if supporting:
         level = 1
-        reasons.append("at least one traceable supporting source")
+        reasons.append("추적 가능한 지지 출처가 하나 이상 있음")
     if high_support or len(support_groups) >= 2:
         level = 2
-        reasons.append("a strong direct source or two independent source groups")
+        reasons.append("강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임")
     if len(support_groups) >= 2 and high_support and positive_reviews and not strong_contradiction:
         level = 3
-        reasons.append("independent corroboration and independent review")
+        reasons.append("독립 교차확인과 독립 검토를 충족함")
     robust_marker = bool(quality_markers & {"peer-reviewed", "official-record", "reproduced", "standard"})
     high_source_ids = {source["id"] for _, source in high_support}
     if (
@@ -863,7 +1037,7 @@ def calculate_confidence(claim: dict[str, Any], sources_by_id: dict[str, dict[st
         and not strong_contradiction
     ):
         level = 4
-        reasons.append("multiple high-quality sources, adversarial review, and robust validation marker")
+        reasons.append("고품질 출처 다수, 적대적 검토와 견고한 검증 표지를 충족함")
 
     status = "open"
     if supporting:
@@ -883,7 +1057,7 @@ def calculate_confidence(claim: dict[str, Any], sources_by_id: dict[str, dict[st
         "adversarial_reviewed": bool(adversarial_reviews),
         "strong_contradiction": strong_contradiction,
         "quality_markers": sorted(quality_markers),
-        "rationale": "; ".join(reasons) if reasons else "No qualifying supporting evidence.",
+        "rationale": "; ".join(reasons) if reasons else "조건을 충족하는 지지 증거가 없음.",
         "computed_at": utc_now(),
     }
 
@@ -902,7 +1076,6 @@ def evaluate(args: argparse.Namespace) -> None:
         if old != comparable:
             changed += 1
             claim["confidence"] = new
-            claim["last_verified_at"] = utc_now()
         elif "computed_at" not in claim.get("confidence", {}):
             claim["confidence"] = new
     save_collection("claims", claims)
@@ -931,7 +1104,7 @@ def campaign_add(args: argparse.Namespace) -> None:
         "max_sources": args.max_sources,
         "max_minutes": args.max_minutes,
         "required_independent_groups": args.independent_groups,
-        "stop_conditions": parse_csv(args.stop) or ["two rounds with no novel claims", "budget exhausted"],
+        "stop_conditions": parse_csv(args.stop) or ["새 주장이 없는 상태가 두 회차 지속됨", "예산 소진"],
         "counter_search_required": True,
         "source_ids": [],
         "claim_ids": [],
@@ -1033,7 +1206,7 @@ def interest_seed(args: argparse.Namespace) -> None:
             "id": campaign_id,
             "interest_id": interest_id,
             "question": question,
-            "why_now": f"Interest cadence of {cadence_days} day(s) became due at {now.isoformat()}.",
+            "why_now": f"{cadence_days}일 연구 주기가 {now.isoformat()}에 도래함.",
             "priority": float(interest.get("priority", 0.5)),
             "status": "queued",
             "created_by": args.actor,
@@ -1044,9 +1217,9 @@ def interest_seed(args: argparse.Namespace) -> None:
             "max_minutes": int(limits.get("default_max_minutes_per_cycle", 45)),
             "required_independent_groups": int(limits.get("min_independent_source_groups", 2)),
             "stop_conditions": [
-                "counter-search completed",
-                f"{int(limits.get('stop_after_no_novel_claim_rounds', 2))} rounds with no novel claims",
-                "budget exhausted",
+                "반증 검색 완료",
+                f"새 주장이 없는 상태가 {int(limits.get('stop_after_no_novel_claim_rounds', 2))}회 지속됨",
+                "예산 소진",
             ],
             "counter_search_required": True,
             "source_ids": [],
@@ -1070,58 +1243,76 @@ def interest_seed(args: argparse.Namespace) -> None:
 
 
 def render_proposal_record(item: dict[str, Any]) -> None:
-    path = ROOT / "governance" / "proposals" / f"{item['id'].lower()}-{slugify(item['title'])}.md"
+    proposal_folder = ROOT / "governance" / "proposals"
+    existing_paths = sorted(proposal_folder.glob(f"{item['id'].lower()}-*.md"))
+    if len(existing_paths) > 1:
+        raise WikiError(f"{item['id']}: 같은 RFC를 가리키는 제안 문서가 여러 개임")
+    path = existing_paths[0] if existing_paths else proposal_folder / f"{item['id'].lower()}-{slugify(item['title'])}.md"
     reviews = item.get("approvals", [])
     review_lines = [
-        f"- `{review.get('at', '-')}` — **{review.get('decision', '-')}** by "
-        f"`{review.get('actor_id', '-')}`: {review.get('rationale', '-') }"
+        f"- `{review.get('at', '-')}` — **{review.get('decision', '-')}** / "
+        f"검토자 `{review.get('actor_id', '-')}`: {review.get('rationale', '-') }"
         for review in reviews
     ]
-    body = f"""# {item['id']}: {item['title']}
+    body = f"""<!-- state/proposals.json에서 자동 생성함. -->
+# {item['id']}: 하네스 제안 — {item['title']}
 
-Status: {item.get('status', 'proposed')}
-Proposed by: `{item['created_by']}`
-Created: {item['created_at']}
+상태: `{item.get('status', 'proposed')}`
+제안자: `{item['created_by']}`
+생성 시각: {item['created_at']}
 
-## Problem
+## 문제
 
-{item['problem']}
+기록된 문제: {item['problem']}
 
-## Proposed change
+## 제안 변경
 
-{item['proposed_change']}
+기록된 변경안: {item['proposed_change']}
 
-## Evidence
+## 근거
 
 {chr(10).join(f'- `{e}`' for e in item.get('evidence', [])) or '- 아직 연결된 근거 없음'}
 
-## Benchmark and acceptance gate
+## 벤치마크와 수용 게이트
 
-{item['benchmark']}
+기록된 수용 기준: {item['benchmark']}
 
-## Risks
+## 위험
 
-{chr(10).join(f'- {risk}' for risk in item.get('risks', [])) or '- 미기록'}
+{chr(10).join(f'- 기록된 위험: {risk}' for risk in item.get('risks', [])) or '- 미기록'}
 
-## Rollback
+## 롤백
 
-{item['rollback']}
+기록된 롤백: {item['rollback']}
 
-## Review decisions
+## 검토 결정
 
 {chr(10).join(review_lines) or '- 아직 검토 결정 없음'}
 
-## Implementation evidence
+## 구현 근거
 
-{f"- Release report: `{item.get('implementation_evidence', {}).get('release_report')}`" if item.get('implementation_evidence') else '- 아직 구현 완료 증거 없음'}
-{f"- Component fingerprint: `{item.get('implementation_evidence', {}).get('component_fingerprint')}`" if item.get('implementation_evidence') else ''}
-{f"- Production certified: `{item.get('implementation_evidence', {}).get('production_certified')}`" if item.get('implementation_evidence') else ''}
+{f"- 릴리스 보고서: `{item.get('implementation_evidence', {}).get('release_report')}`" if item.get('implementation_evidence') else '- 아직 구현 완료 근거 없음'}
+{f"- 구성요소 지문: `{item.get('implementation_evidence', {}).get('component_fingerprint')}`" if item.get('implementation_evidence') else ''}
+{f"- 운영 환경 인증: `{item.get('implementation_evidence', {}).get('production_certified')}`" if item.get('implementation_evidence') else ''}
 """
     atomic_write_text(path, body)
 
 
+def validate_proposal_evidence_ids(evidence_ids: list[str]) -> list[str]:
+    """제안 근거가 현재 원장의 claim ID만 참조하는지 쓰기 전에 확인한다."""
+
+    known_claim_ids = {item.get("id") for item in collection("claims")}
+    unknown = sorted({item for item in evidence_ids if item not in known_claim_ids})
+    if unknown:
+        raise WikiError(
+            "제안 근거는 기존 claim ID만 사용할 수 있음: " + ", ".join(unknown)
+        )
+    return sorted(set(evidence_ids))
+
+
 def proposal_add(args: argparse.Namespace) -> None:
     require_actor(args.actor)
+    evidence_ids = validate_proposal_evidence_ids(parse_csv(args.evidence))
     proposal_id = stable_id("RFC", args.title.casefold(), args.problem.casefold())
     proposals = collection("proposals")
     if any(p.get("id") == proposal_id for p in proposals):
@@ -1132,7 +1323,7 @@ def proposal_add(args: argparse.Namespace) -> None:
         "title": args.title,
         "problem": args.problem,
         "proposed_change": args.change,
-        "evidence": parse_csv(args.evidence),
+        "evidence": evidence_ids,
         "benchmark": args.benchmark,
         "risks": parse_csv(args.risks),
         "rollback": args.rollback,
@@ -1204,10 +1395,23 @@ def proposal_implement(args: argparse.Namespace) -> None:
     expected_report_digest = digest_text(
         canonical_json({key: value for key, value in report.items() if key != "report_digest"})
     )
-    memory_gate = next(
-        (gate for gate in report.get("gates", []) if gate.get("name") == "memory_feedback_lifecycle_hygiene"),
-        None,
-    )
+    gate_records = [gate for gate in report.get("gates", []) if isinstance(gate, dict)]
+    gate_names = [gate.get("name") for gate in gate_records]
+    gates_by_name = {
+        gate.get("name"): gate
+        for gate in gate_records
+        if isinstance(gate, dict) and isinstance(gate.get("name"), str)
+    }
+    mandatory_gate_names = {
+        "structural_and_ledger",
+        "okf_bundle",
+        "calibration",
+        "security",
+        "runtime",
+        "regression_tests",
+        "memory_feedback_lifecycle_hygiene",
+        "korean_documentation_contract",
+    }
     current_harness_manifest = harness_component_manifest()
     current_harness_digest = digest_text(canonical_json(current_harness_manifest))
     if (
@@ -1219,10 +1423,14 @@ def proposal_implement(args: argparse.Namespace) -> None:
         or report.get("report_digest") != expected_report_digest
         or report.get("harness_manifest_sha256") != current_harness_digest
         or report.get("harness_file_count") != len(current_harness_manifest)
-        or not isinstance(memory_gate, dict)
-        or memory_gate.get("passed") is not True
+        or len(gate_names) != len(set(gate_names))
+        or any(
+            not isinstance(gates_by_name.get(name), dict)
+            or gates_by_name[name].get("passed") is not True
+            for name in mandatory_gate_names
+        )
     ):
-        raise WikiError("Proposal implementation requires a fresh, integrity-checked v4.1 release report")
+        raise WikiError("Proposal implementation requires a fresh, integrity-checked v4.2 release report")
     approval_times = [
         item.get("at")
         for item in proposal.get("approvals", [])
@@ -1723,6 +1931,25 @@ def memory_hygiene_cmd(args: argparse.Namespace) -> None:
     print(memory_hygiene.canonical_json(report, pretty=not args.compact), end="")
 
 
+def hygiene_plan_cmd(args: argparse.Namespace) -> None:
+    """Print a bounded, deterministic, read-only semantic hygiene plan."""
+
+    import wiki_hygiene
+
+    config = load_json(ROOT / "config" / "wiki.json")
+    limits = config.get("hygiene_selection") if isinstance(config, dict) else None
+    if not isinstance(limits, dict):
+        raise WikiError("config/wiki.json에 hygiene_selection 설정이 필요함")
+    try:
+        plan = wiki_hygiene.build_hygiene_plan(ROOT, now=args.now, limits=limits)
+    except wiki_hygiene.HygienePlanError as exc:
+        raise WikiError(str(exc)) from exc
+    if args.pretty:
+        print(json.dumps(plan, ensure_ascii=False, indent=2, sort_keys=True))
+    else:
+        sys.stdout.write(wiki_hygiene.canonical_plan_bytes(plan).decode("utf-8"))
+
+
 def search_cmd(args: argparse.Namespace) -> None:
     import runtime
 
@@ -2065,10 +2292,11 @@ def _run_rollback_rehearsal(timeout_seconds: int) -> dict[str, Any]:
 
 
 def _memory_control_release_gate() -> dict[str, Any]:
-    """Exercise the pinned v4.1 feedback/lifecycle fixture and live hygiene observer."""
+    """Exercise pinned memory controls and the bounded v4.2 hygiene planner."""
 
     import memory_feedback
     import memory_hygiene
+    import wiki_hygiene
 
     errors: list[str] = []
     warnings = ["memory feedback is selectively observed diagnostic data, not epistemic ground truth"]
@@ -2135,6 +2363,49 @@ def _memory_control_release_gate() -> dict[str, Any]:
         for field in required_false:
             if first.get("invariants", {}).get(field) is not False:
                 errors.append(f"memory_hygiene_invariant_failed:{field}")
+        hygiene_limits = load_json(ROOT / "config" / "wiki.json").get("hygiene_selection")
+        if not isinstance(hygiene_limits, dict):
+            errors.append("hygiene_selection_config_missing")
+            hygiene_limits = {}
+        hygiene_before = wiki_hygiene.repository_fingerprints(ROOT)
+        hygiene_first = wiki_hygiene.build_hygiene_plan(
+            ROOT,
+            now="2026-08-11T00:00:00+00:00",
+            limits=hygiene_limits,
+        )
+        hygiene_second = wiki_hygiene.build_hygiene_plan(
+            ROOT,
+            now="2026-08-11T00:00:00+00:00",
+            limits=hygiene_limits,
+        )
+        hygiene_after = wiki_hygiene.repository_fingerprints(ROOT)
+        hygiene_bytes = wiki_hygiene.canonical_plan_bytes(hygiene_first)
+        if hygiene_bytes != wiki_hygiene.canonical_plan_bytes(hygiene_second):
+            errors.append("bounded_hygiene_plan_not_deterministic")
+        if hygiene_before != hygiene_after:
+            errors.append("bounded_hygiene_plan_not_read_only")
+        if len(hygiene_first.get("selected_nodes", [])) > int(hygiene_limits.get("max_nodes", -1)):
+            errors.append("bounded_hygiene_node_limit_exceeded")
+        if len(hygiene_first.get("conflict_candidates", [])) > int(hygiene_limits.get("max_pairs", -1)):
+            errors.append("bounded_hygiene_pair_limit_exceeded")
+        if len(hygiene_first.get("semantic_review_queue", [])) > int(
+            hygiene_limits.get("semantic_review_limit", -1)
+        ):
+            errors.append("bounded_hygiene_review_limit_exceeded")
+        if any(
+            int(node.get("hop", 0)) > int(hygiene_limits.get("max_hops", -1))
+            for node in hygiene_first.get("selected_nodes", [])
+        ):
+            errors.append("bounded_hygiene_hop_limit_exceeded")
+        expected_hygiene_invariants = {
+            "read_only": True,
+            "conflicts_are_review_only": True,
+            "automatic_evidence_mutation": False,
+            "automatic_trust_mutation": False,
+            "automatic_lifecycle_mutation": False,
+        }
+        if hygiene_first.get("invariants") != expected_hygiene_invariants:
+            errors.append("bounded_hygiene_safety_invariant_failed")
         harness_manifest = harness_component_manifest()
         summary = {
             "fixture_sha256": fixture_hash,
@@ -2144,18 +2415,33 @@ def _memory_control_release_gate() -> dict[str, Any]:
             "feedback_records": first.get("summary", {}).get("feedback"),
             "active_stale_claims": first.get("summary", {}).get("active_stale_claims"),
             "metadata_only_sources": first.get("summary", {}).get("metadata_only_sources"),
+            "bounded_hygiene_plan_sha256": digest_text(hygiene_bytes.decode("utf-8")),
+            "bounded_hygiene_seeds": len(hygiene_first.get("seeds", [])),
+            "bounded_hygiene_selected_nodes": len(hygiene_first.get("selected_nodes", [])),
+            "bounded_hygiene_conflict_candidates": len(
+                hygiene_first.get("conflict_candidates", [])
+            ),
+            "bounded_hygiene_review_queue": len(hygiene_first.get("semantic_review_queue", [])),
             "automatic_action": False,
             "trust_effect": "none",
             "content_deleted": False,
             "harness_file_count": len(harness_manifest),
             "harness_manifest_sha256": digest_text(canonical_json(harness_manifest)),
         }
-    except (OSError, KeyError, TypeError, WikiError, memory_feedback.MemoryFeedbackError, memory_hygiene.MemoryHygieneError) as exc:
+    except (
+        OSError,
+        KeyError,
+        TypeError,
+        WikiError,
+        memory_feedback.MemoryFeedbackError,
+        memory_hygiene.MemoryHygieneError,
+        wiki_hygiene.HygienePlanError,
+    ) as exc:
         errors.append(f"memory_control_evaluation_failed:{type(exc).__name__}:{exc}")
     return {
         "name": "memory_feedback_lifecycle_hygiene",
         "passed": not errors,
-        "status": "fixed_fixture_and_live_read_only_observation",
+        "status": "fixed_fixture_and_bounded_live_read_only_observation",
         "production_memory_certified": False,
         "errors": sorted(set(errors)),
         "warnings": warnings,
@@ -2163,11 +2449,76 @@ def _memory_control_release_gate() -> dict[str, Any]:
     }
 
 
+def _korean_documentation_release_gate() -> dict[str, Any]:
+    """한국어 문서 계약을 독립 릴리스 게이트로 평가한다."""
+
+    import korean_docs
+
+    findings = [
+        item
+        for item in korean_docs.validate_repository(ROOT)
+        if not item.startswith("evaluations/reports/v4-release-report.md:")
+    ]
+    return {
+        "name": "korean_documentation_contract",
+        "passed": not findings,
+        "status": "한국어 문서 계약 통과" if not findings else "한국어 문서 계약 위반",
+        "errors": findings,
+        "warnings": [],
+        "summary": {
+            "spec_id": "SPEC-KO-DOCS-001",
+            "finding_count": len(findings),
+        },
+    }
+
+
+def _release_report_markdown(report: dict[str, Any]) -> str:
+    gate_rows = [
+        f"| `{gate.get('name', '-')}` | {'통과' if gate.get('passed') else '실패'} | "
+        f"{len(gate.get('errors', []))} | {len(gate.get('warnings', []))} |"
+        for gate in report.get("gates", [])
+    ]
+    quarantine = report.get("quarantine_validation", {})
+    return f"""# Living Wiki v4 릴리스 보고서
+
+- 결과: **{'통과' if report.get('passed') else '실패'}**
+- 준비 상태: `{report.get('readiness')}`
+- 운영 환경 인증: **{str(report.get('production_certified')).lower()}**
+- 보정: `{report.get('calibration_status')}`
+- 보안: `{report.get('security_status')}`
+- 메모리 위생: `{report.get('memory_hygiene_status')}`
+- 범위 제한 후보 계획: `{report.get('bounded_hygiene_status')}`
+- 격리 검증 프로필: `{quarantine.get('profile', '-')}`
+- 격리 payload bytes 검증: **{str(quarantine.get('quarantine_payload_verified')).lower()}** (전체 {quarantine.get('total', 0)}개, 실제 확인 {quarantine.get('present', 0)}개, 누락 {quarantine.get('missing', 0)}개)
+- 하네스 버전: `{report.get('harness_version')}`
+- 하네스 명세표: `{report.get('harness_manifest_sha256')}` (파일 {report.get('harness_file_count')}개)
+- 구성요소 지문: `{report.get('component_fingerprint')}`
+- 보고서 다이제스트: `{report.get('report_digest')}`
+
+| 게이트 | 결과 | 오류 | 경고 |
+|---|---|---:|---:|
+{chr(10).join(gate_rows)}
+
+## 해석
+
+이 판정은 로컬 제어 계층과 고정 fixture의 회귀 통과를 뜻한다. 장기 경험적 보정, 아직 보지 못한 의미 공격, 실제 외부 실행기와 자격증명·공개 경로는 인증하지 않는다.
+"""
+
+
 def harness_component_manifest() -> dict[str, str]:
     """Hash release-relevant harness inputs without mutable state or generated views."""
 
     files: list[Path] = []
-    for folder in ("tools", "tests", "config", "prompts", "docs", "evolution"):
+    for folder in (
+        "tools",
+        "tests",
+        "config",
+        "prompts",
+        "docs",
+        "evolution",
+        "skills",
+        "wiki/specs",
+    ):
         base = ROOT / folder
         if base.is_dir():
             files.extend(path for path in base.rglob("*") if path.is_file())
@@ -2195,8 +2546,12 @@ def release_check(args: argparse.Namespace) -> None:
 
     require_actor(args.actor)
     import release_gate
+    import korean_docs
 
-    structural = validation_findings()
+    # 릴리스 검사는 현재 템플릿에서 파생 뷰를 먼저 다시 만들어 stale 산출물 우회를 막는다.
+    render_all(args.actor, log=False)
+    structural = validation_findings(quarantine_profile=args.quarantine_profile)
+    structural_counts = structural[2]
     core_errors, core_warnings, _ = okf_validation_findings()
     profile_errors, profile_warnings = okf_profile_findings()
     okf = (
@@ -2219,22 +2574,69 @@ def release_check(args: argparse.Namespace) -> None:
     except release_gate.ReleaseGateError as exc:
         raise WikiError(f"Release gate failed closed: {exc}") from exc
     memory_gate = _memory_control_release_gate()
-    report["gates"].append(memory_gate)
+    korean_documentation_gate = _korean_documentation_release_gate()
+    report["gates"].extend([memory_gate, korean_documentation_gate])
+    report["harness_version"] = load_json(ROOT / "config" / "wiki.json").get("harness_version")
+    report["memory_hygiene_status"] = memory_gate["status"]
+    report["bounded_hygiene_status"] = (
+        "결정론적·읽기 전용·예산 제한 통과"
+        if memory_gate.get("passed")
+        else "후보 계획 게이트 실패"
+    )
+    report["harness_manifest_sha256"] = memory_gate.get("summary", {}).get("harness_manifest_sha256")
+    report["harness_file_count"] = memory_gate.get("summary", {}).get("harness_file_count")
+    quarantine_missing = structural_counts.get("quarantine_artifacts_missing", 0)
+    report["quarantine_validation"] = {
+        "profile": args.quarantine_profile,
+        "total": structural_counts.get("quarantine_artifacts_total", 0),
+        "present": structural_counts.get("quarantine_artifacts_present", 0),
+        "missing": quarantine_missing,
+        "quarantine_payload_verified": quarantine_missing == 0,
+    }
+    report["scope"] += ", fixed memory controls and bounded fixed-time hygiene candidate routing"
+    report.setdefault("claims", {})["production_memory_certified"] = False
+    report.setdefault("limitations", []).append(
+        "Memory feedback is selection-biased diagnostic data; the fixed fixture and hygiene report do not certify production memory quality."
+    )
+    if quarantine_missing:
+        report.setdefault("limitations", []).append(
+            "The public-clean-clone profile validated anchored admission metadata, not the bytes of missing local quarantine payloads."
+        )
     report["passed"] = all(gate.get("passed") is True for gate in report["gates"])
     report["readiness"] = (
         "closed_loop_harness_fixed_fixture_passed" if report["passed"] else "not_ready"
     )
     report["component_fingerprint"] = release_gate.digest(report["gates"])
-    report["harness_version"] = load_json(ROOT / "config" / "wiki.json").get("harness_version")
-    report["memory_hygiene_status"] = memory_gate["status"]
-    report["harness_manifest_sha256"] = memory_gate.get("summary", {}).get("harness_manifest_sha256")
-    report["harness_file_count"] = memory_gate.get("summary", {}).get("harness_file_count")
-    report["scope"] += ", pinned memory-feedback lifecycle fixture, and fixed-time hygiene observation"
-    report.setdefault("claims", {})["production_memory_certified"] = False
-    report.setdefault("limitations", []).append(
-        "Memory feedback is selection-biased diagnostic data; the fixed fixture and hygiene report do not certify production memory quality."
+    prospective_markdown = _release_report_markdown(report)
+    markdown_findings = korean_docs.validate_markdown_text(
+        ROOT,
+        Path("evaluations/reports/v4-release-report.md"),
+        prospective_markdown,
     )
+    if markdown_findings:
+        korean_documentation_gate["errors"] = sorted(
+            set(korean_documentation_gate.get("errors", [])) | set(markdown_findings)
+        )
+        korean_documentation_gate["passed"] = False
+        korean_documentation_gate["status"] = "한국어 문서 계약 위반"
+        korean_documentation_gate["summary"]["finding_count"] = len(
+            korean_documentation_gate["errors"]
+        )
+        report["passed"] = False
+        report["readiness"] = "not_ready"
+        report["component_fingerprint"] = release_gate.digest(report["gates"])
     report["report_digest"] = digest_text(canonical_json(report))
+    markdown = _release_report_markdown(report)
+    final_markdown_findings = korean_docs.validate_markdown_text(
+        ROOT,
+        Path("evaluations/reports/v4-release-report.md"),
+        markdown,
+    )
+    if final_markdown_findings:
+        raise WikiError(
+            "릴리스 보고서 Markdown이 한국어 문서 계약을 통과하지 못함: "
+            + "; ".join(final_markdown_findings[:3])
+        )
     json_path = EVALUATION_REPORTS / "v4-release-report.json"
     atomic_write_json(json_path, report)
     archived_json_path = EVALUATION_REPORTS / f"v4-release-{report['component_fingerprint'][:16]}.json"
@@ -2242,45 +2644,20 @@ def release_check(args: argparse.Namespace) -> None:
         raise WikiError("Content-addressed release report collision")
     if not archived_json_path.exists():
         atomic_write_json(archived_json_path, report)
-    gate_rows = [
-        f"| {gate.get('name', '-')} | {'PASS' if gate.get('passed') else 'FAIL'} | "
-        f"{len(gate.get('errors', []))} | {len(gate.get('warnings', []))} |"
-        for gate in report.get("gates", [])
-    ]
-    markdown = f"""# Living Wiki v4 release report
-
-- Result: **{'PASS' if report.get('passed') else 'FAIL'}**
-- Readiness: `{report.get('readiness')}`
-- Production certified: **{str(report.get('production_certified')).lower()}**
-- Calibration: `{report.get('calibration_status')}`
-- Security: `{report.get('security_status')}`
-- Memory hygiene: `{report.get('memory_hygiene_status')}`
-- Harness version: `{report.get('harness_version')}`
-- Harness manifest: `{report.get('harness_manifest_sha256')}` ({report.get('harness_file_count')} files)
-- Component fingerprint: `{report.get('component_fingerprint')}`
-- Report digest: `{report.get('report_digest')}`
-
-| Gate | Result | Errors | Warnings |
-|---|---|---:|---:|
-{chr(10).join(gate_rows)}
-
-## Interpretation
-
-이 판정은 로컬 control plane과 고정 fixture의 회귀 통과를 뜻한다. 장기 empirical calibration, 보지 못한 semantic attack, live external executor, credential/publication 경로를 인증하지 않는다.
-"""
     atomic_write_text(EVALUATION_REPORTS / "v4-release-report.md", markdown)
-    append_event(
-        args.actor,
-        "release.evaluate",
-        "living-wiki-v4",
-        {
-            "passed": report["passed"],
-            "component_fingerprint": report["component_fingerprint"],
-            "production_certified": False,
-            "test_count": regression["test_count"],
-            "report_digest": report["report_digest"],
-        },
-    )
+    if not args.no_log:
+        append_event(
+            args.actor,
+            "release.evaluate",
+            "living-wiki-v4",
+            {
+                "passed": report["passed"],
+                "component_fingerprint": report["component_fingerprint"],
+                "production_certified": False,
+                "test_count": regression["test_count"],
+                "report_digest": report["report_digest"],
+            },
+        )
     print(json_path.relative_to(ROOT))
     if not report["passed"]:
         raise WikiError("Living Wiki v4 release gate did not pass")
@@ -2359,6 +2736,30 @@ def okf_profile_findings() -> tuple[list[str], list[str]]:
                 value = metadata.get(key)
                 if not isinstance(value, str) or not value.strip():
                     errors.append(f"{relative}: Living Wiki profile requires non-empty '{key}'")
+            parsed_times: dict[str, dt.datetime] = {}
+            for key in (
+                "timestamp",
+                "created_at",
+                "content_updated_at",
+                "last_verified_at",
+                "retrieved_at",
+                "assessed_at",
+                "lifecycle_updated_at",
+                "rendered_at",
+            ):
+                if key not in metadata:
+                    continue
+                parsed = parse_timezone_aware_iso8601(metadata.get(key))
+                if parsed is None:
+                    errors.append(f"{relative}: '{key}' must be a timezone-aware ISO-8601 timestamp")
+                else:
+                    parsed_times[key] = parsed
+            if (
+                "created_at" in parsed_times
+                and "timestamp" in parsed_times
+                and parsed_times["created_at"] > parsed_times["timestamp"]
+            ):
+                errors.append(f"{relative}: 'created_at' must not be later than 'timestamp'")
         for target in link_pattern.findall(text):
             target = target.strip().split(maxsplit=1)[0].strip("<>")
             if not target or target.startswith(("http://", "https://", "mailto:", "#")):
@@ -2427,9 +2828,17 @@ def okf_validate(args: argparse.Namespace) -> None:
     )
 
 
-def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
+def validation_findings(
+    *,
+    quarantine_profile: str = STRICT_QUARANTINE_PROFILE,
+) -> tuple[list[str], list[str], dict[str, int]]:
     errors: list[str] = []
     warnings: list[str] = []
+    if quarantine_profile not in {
+        STRICT_QUARANTINE_PROFILE,
+        PUBLIC_QUARANTINE_PROFILE,
+    }:
+        return [f"알 수 없는 격리 검증 프로필: {quarantine_profile}"], [], {}
     try:
         actors = collection("actors")
         sources = collection("sources")
@@ -2447,6 +2856,12 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         grandfathered_source_ids = source_grandfather_ids()
     except WikiError as exc:
         return [str(exc)], [], {}
+    try:
+        quarantine_distribution = load_json(ROOT / "config" / "wiki.json").get(
+            "quarantine_distribution", {}
+        )
+    except (OSError, json.JSONDecodeError, WikiError) as exc:
+        return [f"격리 원문 배포 정책을 읽지 못함: {exc}"], [], {}
 
     def duplicate_ids(items: list[dict[str, Any]], label: str) -> None:
         ids = [item.get("id") for item in items]
@@ -2490,7 +2905,7 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
             elif digest_file(path) != artifact.get("sha256"):
                 errors.append(f"{source.get('id')}: raw artifact hash mismatch")
         else:
-            warnings.append(f"{source.get('id')}: metadata-only source; immutable snapshot absent")
+            warnings.append(f"{source.get('id')}: 메타데이터 전용 출처이며 불변 원문 스냅샷이 없음")
         admission_ids = source.get("admission_ids", [])
         if not admission_ids:
             if source.get("id") in grandfathered_source_ids:
@@ -2520,7 +2935,7 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
 
     if legacy_source_count:
         warnings.append(
-            f"{legacy_source_count} source(s) predate v4 admission enforcement and remain grandfathered"
+            f"출처 {legacy_source_count}개는 v4 입수 심사 적용 이전 자료이며 고정된 기존 예외로 유지됨"
         )
     missing_grandfathered = sorted(grandfathered_source_ids - source_ids)
     if missing_grandfathered:
@@ -2547,7 +2962,7 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         if not claim.get("evidence"):
             warnings.append(f"{claim.get('id')}: no evidence")
         if claim.get("confidence", {}).get("status") == "contested":
-            warnings.append(f"{claim.get('id')}: contested claim")
+            warnings.append(f"{claim.get('id')}: 이의가 제기된 주장")
 
     try:
         import memory_feedback
@@ -2753,6 +3168,9 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         except (runtime.RuntimeErrorBase, OSError) as exc:
             errors.append(f"runtime validation failed closed: {exc}")
 
+    quarantine_artifacts_total = 0
+    quarantine_artifacts_present = 0
+    quarantine_artifacts_missing = 0
     for admission in admissions:
         if admission.get("created_by") not in actor_ids:
             errors.append(f"{admission.get('id')}: unknown admission actor")
@@ -2762,23 +3180,45 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
             errors.append(f"{admission.get('id')}: admission may not mutate trust or promote a source")
         for finding in admission_integrity_findings(admission):
             errors.append(f"{admission.get('id')}: {finding}")
-        if admission.get("record_digest") and not any(
+        digest_anchored = bool(admission.get("record_digest")) and any(
             event.get("subject") == admission.get("id")
             and event.get("details", {}).get("record_digest") == admission.get("record_digest")
             for event in ledger_events
-        ):
+        )
+        if admission.get("record_digest") and not digest_anchored:
             errors.append(f"{admission.get('id')}: admission digest is not anchored in the event chain")
         assessment = admission.get("decision", {}).get("security_assessment")
         if isinstance(assessment, dict):
+            quarantine_artifacts_total += 1
             invariants = assessment.get("invariants", {})
             if invariants.get("payload_executed") is not False:
                 errors.append(f"{admission.get('id')}: security assessment lacks no-execution invariant")
             artifact = admission.get("candidate", {}).get("quarantine_artifact", {})
             artifact_path = ROOT / str(artifact.get("path", ""))
-            if not artifact_path.is_file():
-                errors.append(f"{admission.get('id')}: quarantine artifact missing")
+            if artifact_path.is_symlink():
+                errors.append(f"{admission.get('id')}: quarantine artifact may not be a symbolic link")
+            elif not artifact_path.is_file():
+                quarantine_artifacts_missing += 1
+                anchor_verified = any(
+                    quarantine_anchor_is_valid(admission, event)
+                    for event in ledger_events
+                )
+                if portable_quarantine_metadata(
+                    admission,
+                    quarantine_distribution,
+                    validation_profile=quarantine_profile,
+                    anchor_verified=anchor_verified,
+                ):
+                    warnings.append(
+                        f"{admission.get('id')}: 로컬 전용 격리 원문은 public Git에 배포하지 않으며 content-addressed 입수 메타데이터와 사건 anchor만 검증함"
+                    )
+                else:
+                    errors.append(f"{admission.get('id')}: quarantine artifact missing")
             elif digest_file(artifact_path) != artifact.get("sha256"):
+                quarantine_artifacts_present += 1
                 errors.append(f"{admission.get('id')}: quarantine artifact hash mismatch")
+            else:
+                quarantine_artifacts_present += 1
 
     for run in runs:
         if run.get("actor_id") not in actor_ids:
@@ -2848,12 +3288,20 @@ def validation_findings() -> tuple[list[str], list[str], dict[str, int]]:
         "memory_feedback": len(feedback_records),
         "events": event_count,
         "okf_concepts": okf_count,
+        "quarantine_artifacts_total": quarantine_artifacts_total,
+        "quarantine_artifacts_present": quarantine_artifacts_present,
+        "quarantine_artifacts_missing": quarantine_artifacts_missing,
     }
     return errors, warnings, counts
 
 
 def validate(args: argparse.Namespace) -> None:
-    errors, warnings, counts = validation_findings()
+    errors, warnings, counts = validation_findings(
+        quarantine_profile=args.quarantine_profile
+    )
+    missing = counts.get("quarantine_artifacts_missing", 0)
+    print(f"격리 검증 프로필: {args.quarantine_profile}")
+    print(f"quarantine_payload_verified={str(missing == 0).lower()}")
     print("Counts: " + ", ".join(f"{key}={value}" for key, value in counts.items()))
     for warning in warnings:
         print(f"WARN: {warning}")
@@ -2883,27 +3331,27 @@ def render_epistemic_dashboard(claims: list[dict[str, Any]], sources: list[dict[
     timestamp = latest_meaningful_timestamp(claims, sources)
     body = f"""---
 type: Epistemic Dashboard
-title: Epistemic dashboard
-description: Claim and source evidence-maturity levels derived from the canonical ledger.
+title: 인식론 대시보드
+description: 정규 원장에서 파생한 주장·출처의 증거 성숙도 현황.
 tags: [trust, provenance, claims]
 timestamp: '{timestamp}'
 generated: true
 ---
 
-<!-- AUTOGENERATED by tools/wiki.py. Do not edit manually. -->
-# Epistemic dashboard
+<!-- tools/wiki.py가 자동 생성함. 직접 수정하지 마세요. -->
+# 인식론 대시보드
 
 신뢰 레벨은 진실 확률이 아니라 현재 증거 성숙도의 파생 표시다. 상세 근거는 `state/claims.json`과 `state/sources.json`을 확인한다.
 
-## Claims
+## 주장
 
-| ID | Level | Evidence status | Lifecycle | Statement | Supporting groups | Contradicting groups |
+| ID | 레벨 | 증거 상태 | 생명주기 | 주장 | 지지 그룹 | 반박 그룹 |
 |---|---:|---|---|---|---:|---:|
 """ + ("\n".join(claim_rows) if claim_rows else "| - | - | - | - | 아직 등록된 주장 없음 | - | - |") + """
 
-## Sources
+## 출처
 
-| ID | Level | Lifecycle | Publication status | Title | Independence group |
+| ID | 레벨 | 생명주기 | 출판 상태 | 원제 | 독립성 그룹 |
 |---|---:|---|---|---|---|
 """ + ("\n".join(source_rows) if source_rows else "| - | - | - | - | 아직 등록된 출처 없음 | - |") + "\n"
     atomic_write_text(WIKI / "epistemic-dashboard.md", body)
@@ -2917,44 +3365,44 @@ def render_index(
 ) -> None:
     feedback_records = feedback_records or []
     timestamp = latest_meaningful_timestamp(claims, sources, campaigns, feedback_records)
-    body = f"""<!-- AUTOGENERATED by tools/wiki.py. Do not edit manually. -->
-# Living Wiki index
+    body = f"""<!-- tools/wiki.py가 자동 생성함. 직접 수정하지 마세요. -->
+# Living Wiki 색인
 
-Knowledge state timestamp: {timestamp}
+지식 상태 시각: {timestamp}
 
-## Start here
+## 시작하기
 
-* [Overview](overview.md) - 현재 연구 범위와 구조.
-* [Synthesis](synthesis.md) - 현재의 종합 관점.
-* [Epistemic dashboard](epistemic-dashboard.md) - 주장·출처 신뢰 상태.
-* [Open questions](open-questions.md) - 미해결 질문.
-* [Contradictions](contradictions.md) - 충돌과 반증.
-* [Current position](perspectives/self-evolving-wiki-position.md) - 위키가 현재 채택한 관점과 반증 조건.
-* [OKF profile](okf-profile.md) - 이 bundle의 OKF v0.1 확장 규약.
-* [Claims](claims/index.md) - atomic claim과 exact evidence projection.
-* [Actors](actors/index.md) - 사람과 Agent contributor registry.
-* [Collaboration](collaborations/index.md) - actor-neutral direction, lead, correction, objection ledger.
-* [Campaigns](campaigns/index.md) - bounded autonomous research queue.
-* [Admissions](admissions/index.md) - source/security admission decisions without automatic promotion.
-* [Runs](runs/index.md) - bounded plans and attributed external-work receipts.
-* [Memory feedback](feedback/index.md) - privacy-minimal retrieval outcomes with no automatic trust effect.
-* [Trust policy](trust/index.md) - S0-S4/C0-C4 producer profile.
-* [Governance](governance/index.md) - 헌장과 결정 기록.
+* [개요](overview.md) - 현재 연구 범위와 구조.
+* [종합](synthesis.md) - 현재의 종합 관점.
+* [인식론 대시보드](epistemic-dashboard.md) - 주장·출처 신뢰 상태.
+* [열린 질문](open-questions.md) - 미해결 질문.
+* [모순](contradictions.md) - 충돌과 반증.
+* [현재 관점](perspectives/self-evolving-wiki-position.md) - 위키가 현재 채택한 관점과 반증 조건.
+* [OKF 프로필](okf-profile.md) - 이 bundle의 OKF v0.1 확장 규약.
+* [주장](claims/index.md) - 원자적 주장과 정확한 근거 투영.
+* [행위자](actors/index.md) - 사람과 Agent 기여자 등록부.
+* [협업](collaborations/index.md) - 행위자 중립의 방향·단서·교정·이의 원장.
+* [캠페인](campaigns/index.md) - 범위가 제한된 자율 연구 대기열.
+* [입수 판정](admissions/index.md) - 자동 승격 없는 출처·보안 입수 판정.
+* [실행 기록](runs/index.md) - 제한된 계획과 귀속된 외부 작업 기록.
+* [메모리 피드백](feedback/index.md) - 자동 신뢰 효과가 없는 최소 개인정보 검색 결과.
+* [신뢰 정책](trust/index.md) - S0-S4/C0-C4 생산자 프로필.
+* [거버넌스](governance/index.md) - 헌장과 결정 기록.
 
-## State
+## 상태
 
-- Sources: {len(sources)}
-- Claims: {len(claims)}
-- Research campaigns: {len(campaigns)}
-- Active/queued campaigns: {sum(c.get('status') in {'active', 'queued'} for c in campaigns)}
-- Memory feedback records: {len(feedback_records)}
+- 출처: {len(sources)}
+- 주장: {len(claims)}
+- 연구 캠페인: {len(campaigns)}
+- 활성·대기 캠페인: {sum(c.get('status') in {'active', 'queued'} for c in campaigns)}
+- 메모리 피드백 기록: {len(feedback_records)}
 
-## Source pages
+## 출처 문서
 
 """
     pages = sorted((WIKI / "sources").glob("*.md"))
     body += "\n".join(f"* [{page.stem}](sources/{page.name})" for page in pages if page.name not in {"index.md", "log.md"}) or "* 아직 없음"
-    body += "\n\n## Concept pages\n\n"
+    body += "\n\n## 개념 문서\n\n"
     pages = sorted((WIKI / "concepts").glob("*.md"))
     body += "\n".join(f"* [{page.stem}](concepts/{page.name})" for page in pages if page.name not in {"index.md", "log.md"}) or "* 아직 없음"
     body += "\n"
@@ -2981,96 +3429,103 @@ def render_okf_state_projection() -> None:
     for actor in actors:
         metadata = {
             "type": "Actor",
-            "title": actor.get("display_name") or actor["id"],
-            "description": f"{actor.get('kind', 'unknown')} contributor {actor['id']} in the Living Wiki.",
+            "title": f"행위자 {actor['id']}",
+            "description": f"Living Wiki 기여자 {actor['id']}의 행위자·역할 기록.",
             "tags": ["actor", actor.get("kind", "unknown"), *actor.get("roles", [])],
             "timestamp": actor.get("created_at") or "2026-07-11T00:00:00+09:00",
             "actor_id": actor["id"],
             "generated": True,
         }
-        body = f"""<!-- AUTOGENERATED from state/actors.json. -->
-# {actor.get('display_name') or actor['id']}
+        body = f"""<!-- state/actors.json에서 자동 생성함. -->
+# 행위자 — {actor.get('display_name') or actor['id']}
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Canonical actor ID | `{actor['id']}` |
-| Kind | `{actor.get('kind', '-')}` |
-| Status | `{actor.get('status', '-')}` |
-| Independence group | `{actor_independence_group(actor)}` |
+| 정규 행위자 ID | `{actor['id']}` |
+| 종류 | `{actor.get('kind', '-')}` |
+| 상태 | `{actor.get('status', '-')}` |
+| 독립성 그룹 | `{actor_independence_group(actor)}` |
 
-## Roles
+## 역할
 
-{chr(10).join(f'- `{role}`' for role in actor.get('roles', [])) or '- None'}
+{chr(10).join(f'- `{role}`' for role in actor.get('roles', [])) or '- 없음'}
 
-## Capabilities
+## 기능
 
-{chr(10).join(f'- `{capability}`' for capability in actor.get('capabilities', [])) or '- None'}
+{chr(10).join(f'- `{capability}`' for capability in actor.get('capabilities', [])) or '- 없음'}
 
-This document records identity and operating role. Actor kind does not itself increase or decrease claim truth.
+이 문서는 신원과 운영 역할을 기록한다. 행위자 종류 자체는 주장의 사실성을 높이거나 낮추지 않는다.
 """
         write_okf_concept(WIKI / "actors" / actor_page_name(actor["id"]), metadata, body)
 
     for source in sources:
         assessment = source.get("assessment", {})
-        rationale = re.sub(r"\s+", " ", str(assessment.get("rationale") or "Unassessed source."))
+        rationale = re.sub(r"\s+", " ", str(assessment.get("rationale") or "아직 평가하지 않은 출처."))
         source_lifecycle = lifecycle_status(source, kind="source")
         metadata: dict[str, Any] = {
             "type": "Reference",
             "title": source.get("title") or source["id"],
-            "description": f"{source.get('source_type', 'unknown')} source {source['id']} assessed {source.get('source_level', 'S0')}.",
+            "description": f"출처 {source['id']}의 범위 한정 평가와 보존 정보. 현재 레벨은 {source.get('source_level', 'S0')}.",
             "tags": ["source", source.get("source_type", "unknown"), source.get("source_level", "S0"), source_lifecycle],
-            "timestamp": record_latest_timestamp(
-                assessment.get("assessed_at"),
-                source.get("retrieved_at"),
-                source.get("lifecycle_updated_at"),
-            ),
+            "timestamp": source_semantic_timestamp(source),
             "source_id": source["id"],
             "source_level": source.get("source_level", "S0"),
             "lifecycle_status": source_lifecycle,
             "generated": True,
         }
+        source_times = {
+            "created_at": source.get("created_at"),
+            "retrieved_at": source.get("retrieved_at"),
+            "assessed_at": assessment.get("assessed_at"),
+            "lifecycle_updated_at": source.get("lifecycle_updated_at"),
+        }
+        project_known_fields(
+            metadata,
+            source_times,
+            ("created_at", "retrieved_at", "assessed_at", "lifecycle_updated_at"),
+        )
         if source.get("url"):
             metadata["resource"] = source["url"]
         artifact = source.get("artifact") or {}
-        body = f"""<!-- AUTOGENERATED from state/sources.json. -->
+        body = f"""<!-- state/sources.json에서 자동 생성함. -->
 # {source.get('title') or source['id']}
 
-## Source identity
+## 출처 식별 정보
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Canonical source ID | `{source['id']}` |
-| Type | `{source.get('source_type', '-')}` |
-| Authors | {md_cell(', '.join(source.get('authors', [])) or '-')} |
-| Publisher | {md_cell(source.get('publisher'))} |
-| Publication status | {md_cell(source.get('publication_status'))} |
-| Published | {md_cell(source.get('published_at'))} |
-| Retrieved | {md_cell(source.get('retrieved_at'))} |
-| Independence group | `{source.get('independence_group', source['id'])}` |
-| License | {md_cell(source.get('license'))} |
-| Lifecycle | **{source_lifecycle}** |
-| Lifecycle reason | {md_cell(source.get('lifecycle_reason'))} |
-| Replaced by | {md_cell(source.get('replaced_by'))} |
+| 정규 출처 ID | `{source['id']}` |
+| 유형 | `{source.get('source_type', '-')}` |
+| 저자 | {md_cell(', '.join(source.get('authors', [])) or '-')} |
+| 발행자 | {md_cell(source.get('publisher'))} |
+| 출판 상태 | {md_cell(source.get('publication_status'))} |
+| 게시 시각 | {md_cell(source.get('published_at'))} |
+| 검색 시각 | {md_cell(source.get('retrieved_at'))} |
+| 독립성 그룹 | `{source.get('independence_group', source['id'])}` |
+| 라이선스 | {md_cell(source.get('license'))} |
+| 생명주기 | **{source_lifecycle}** |
+| 생명주기 사유 | {md_cell(source.get('lifecycle_reason'))} |
+| 대체 출처 | {md_cell(source.get('replaced_by'))} |
 
-## Scoped assessment
+## 범위 한정 평가
 
-- Level: **{source.get('source_level', 'S0')}**
-- Rationale: {rationale}
-- Quality markers: {', '.join(f'`{item}`' for item in assessment.get('quality_markers', [])) or 'None'}
-- Conflicts of interest: {', '.join(f'`{item}`' for item in assessment.get('conflicts_of_interest', [])) or 'None recorded'}
+- 레벨: **{source.get('source_level', 'S0')}**
+- 기록된 평가 근거: {rationale}
+- 품질 표지: {', '.join(f'`{item}`' for item in assessment.get('quality_markers', [])) or '없음'}
+- 이해관계 충돌: {', '.join(f'`{item}`' for item in assessment.get('conflicts_of_interest', [])) or '기록 없음'}
 
-## Preserved artifact
+## 보존 원문
 
-- Path outside bundle: `{artifact.get('path', 'metadata-only')}`
-- SHA-256: `{artifact.get('sha256', 'not available')}`
-- Media type: `{artifact.get('media_type', 'not available')}`
+- bundle 밖 경로: `{artifact.get('path', '메타데이터 전용')}`
+- SHA-256: `{artifact.get('sha256', '없음')}`
+- 미디어 유형: `{artifact.get('media_type', '없음')}`
 
-## Claims using this source
+## 이 출처를 사용하는 주장
 
-{chr(10).join(f'- [{claim_id}](../claims/{claim_id.lower()}.md)' for claim_id in sorted(set(claims_by_source.get(source['id'], [])))) or '- None'}
+{chr(10).join(f'- [{claim_id}](../claims/{claim_id.lower()}.md)' for claim_id in sorted(set(claims_by_source.get(source['id'], [])))) or '- 없음'}
 """
         if source.get("url"):
-            body += f"\n# Citations\n\n[1] [{source.get('title') or source['id']}]({source['url']})\n"
+            body += f"\n# 인용\n\n[1] [{source.get('title') or source['id']}]({source['url']})\n"
         write_okf_concept(WIKI / "sources" / f"{source['id'].lower()}.md", metadata, body)
 
     for claim in claims:
@@ -3080,17 +3535,18 @@ This document records identity and operating role. Actor kind does not itself in
         metadata = {
             "type": "Claim",
             "title": claim["id"],
-            "description": claim.get("statement", "")[:300],
+            "description": f"주장 {claim['id']}의 범위·생명주기·증거 성숙도 기록.",
             "tags": ["claim", claim.get("kind", "unknown"), confidence.get("level", "C0"), confidence.get("status", "open"), claim_lifecycle],
-            "timestamp": record_latest_timestamp(
-                claim.get("last_verified_at"),
-                claim.get("created_at"),
-                claim.get("lifecycle_updated_at"),
-            ),
+            "timestamp": claim_semantic_timestamp(claim),
             "claim_id": claim["id"],
             "lifecycle_status": claim_lifecycle,
             "generated": True,
         }
+        project_known_fields(
+            metadata,
+            claim,
+            ("created_at", "last_verified_at", "freshness", "lifecycle_updated_at"),
+        )
         evidence_rows: list[str] = []
         citations: list[str] = []
         citation_seen: set[str] = set()
@@ -3099,54 +3555,54 @@ This document records identity and operating role. Actor kind does not itself in
             source = source_by_id.get(source_id, {})
             source_title = source.get("title") or source_id
             evidence_rows.append(
-                f"| {evidence.get('relation', '-')} | [{md_cell(source_title)}](../sources/{source_id.lower()}.md) | "
-                f"{md_cell(evidence.get('locator'))} | {evidence.get('strength', '-')} | `{evidence.get('added_by', '-')}` |"
+                f"| `{evidence.get('relation', '-')}` | [출처 {md_cell(source_id)}](../sources/{source_id.lower()}.md) | "
+                f"`{md_cell(evidence.get('locator'))}` | {evidence.get('strength', '-')} | `{evidence.get('added_by', '-')}` |"
             )
             url = source.get("url")
             if url and url not in citation_seen:
                 citation_seen.add(url)
                 citations.append(f"[{len(citations) + 1}] [{source_title}]({url})")
-        body = f"""<!-- AUTOGENERATED from state/claims.json. -->
+        body = f"""<!-- state/claims.json에서 자동 생성함. -->
 # {claim['id']}
 
-> {claim.get('statement', '')}
+> 기록된 주장: {claim.get('statement', '')}
 
-## Scope and lifecycle
+## 범위와 생명주기
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Kind | `{claim.get('kind', '-')}` |
-| Scope | {md_cell(claim.get('scope'))} |
-| Valid at | {md_cell(claim.get('valid_at'))} |
-| Freshness class | `{claim.get('freshness', '-')}` |
-| Lifecycle | **{claim_lifecycle}** |
-| Lifecycle reason | {md_cell(claim.get('lifecycle_reason'))} |
-| Replaced by | {md_cell(claim.get('replaced_by'))} |
-| Created by | [{claim.get('created_by', '-')}]({creator_path}) |
-| Created at | `{claim.get('created_at', '-')}` |
-| Last verified | `{claim.get('last_verified_at') or 'not verified'}` |
+| 종류 | `{claim.get('kind', '-')}` |
+| 범위 | {md_cell(claim.get('scope'))} |
+| 유효 시점 | {md_cell(claim.get('valid_at'))} |
+| 최신성 분류 | `{claim.get('freshness', '-')}` |
+| 생명주기 | **{claim_lifecycle}** |
+| 생명주기 사유 | {md_cell(claim.get('lifecycle_reason'))} |
+| 대체 주장 | {md_cell(claim.get('replaced_by'))} |
+| 생성자 | [{claim.get('created_by', '-')}]({creator_path}) |
+| 생성 시각 | `{claim.get('created_at', '-')}` |
+| 마지막 검증 | `{claim.get('last_verified_at') or '검증되지 않음'}` |
 
-## Evidence maturity
+## 증거 성숙도
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Display level | **{confidence.get('level', 'C0')}** |
-| Status | **{confidence.get('status', 'open')}** |
-| Supporting independence groups | {confidence.get('supporting_groups', 0)} |
-| Contradicting independence groups | {confidence.get('contradicting_groups', 0)} |
-| Independent reviewer groups | {confidence.get('independent_reviews', 0)} |
-| Strong unresolved contradiction | {confidence.get('strong_contradiction', False)} |
+| 표시 레벨 | **{confidence.get('level', 'C0')}** |
+| 상태 | **{confidence.get('status', 'open')}** |
+| 지지 독립성 그룹 | {confidence.get('supporting_groups', 0)} |
+| 반박 독립성 그룹 | {confidence.get('contradicting_groups', 0)} |
+| 독립 검토자 그룹 | {confidence.get('independent_reviews', 0)} |
+| 강한 미해결 반증 | {confidence.get('strong_contradiction', False)} |
 
-Rationale: {confidence.get('rationale', 'Not evaluated.')}
+평가 근거: {confidence.get('rationale', '평가하지 않음.')}
 
-## Evidence edges
+## 증거 연결
 
-| Relation | Source | Exact locator | Strength | Added by |
+| 관계 | 출처 | 정확한 원문 위치 | 강도 | 추가한 행위자 |
 |---|---|---|---:|---|
 {chr(10).join(evidence_rows) or '| - | - | - | - | - |'}
 """
         if citations:
-            body += "\n# Citations\n\n" + "\n".join(citations) + "\n"
+            body += "\n# 인용\n\n" + "\n".join(citations) + "\n"
         write_okf_concept(WIKI / "claims" / f"{claim['id'].lower()}.md", metadata, body)
 
     for review in reviews:
@@ -3155,25 +3611,25 @@ Rationale: {confidence.get('rationale', 'Not evaluated.')}
         metadata = {
             "type": "Review",
             "title": review["id"],
-            "description": f"{review.get('verdict', 'unknown')} review of {claim_id} by {actor_id}.",
+            "description": f"주장 {claim_id}에 대해 {actor_id}가 남긴 검토 기록.",
             "tags": ["review", review.get("verdict", "unknown"), "adversarial" if review.get("adversarial") else "standard"],
             "timestamp": review.get("created_at") or "2026-07-11T00:00:00+09:00",
             "review_id": review["id"],
             "generated": True,
         }
-        body = f"""<!-- AUTOGENERATED from state/reviews.json. -->
+        body = f"""<!-- state/reviews.json에서 자동 생성함. -->
 # {review['id']}
 
-- Claim: [{claim_id}](../claims/{claim_id.lower()}.md)
-- Reviewer: [{actor_id}](../actors/{actor_page_name(actor_id)})
-- Reviewer independence group: `{review.get('reviewer_group', actor_id)}`
-- Verdict: **{review.get('verdict', '-')}**
-- Adversarial: `{review.get('adversarial', False)}`
-- Status: `{review.get('status', '-')}`
+- 주장: [{claim_id}](../claims/{claim_id.lower()}.md)
+- 검토자: [{actor_id}](../actors/{actor_page_name(actor_id)})
+- 검토자 독립성 그룹: `{review.get('reviewer_group', actor_id)}`
+- 판정: **{review.get('verdict', '-')}**
+- 적대적 검토: `{review.get('adversarial', False)}`
+- 상태: `{review.get('status', '-')}`
 
-## Rationale
+## 근거
 
-{review.get('rationale') or 'No rationale recorded.'}
+기록된 검토 근거: {review.get('rationale') or '근거 기록 없음.'}
 """
         write_okf_concept(WIKI / "reviews" / f"{review['id'].lower()}.md", metadata, body)
 
@@ -3181,7 +3637,7 @@ Rationale: {confidence.get('rationale', 'Not evaluated.')}
         metadata = {
             "type": "Research Campaign",
             "title": campaign["id"],
-            "description": campaign.get("question", "")[:300],
+            "description": f"연구 캠페인 {campaign['id']}의 질문·예산·종료 조건 기록.",
             "tags": ["research-campaign", campaign.get("status", "unknown"), campaign.get("interest_id", "unknown")],
             "timestamp": campaign.get("updated_at") or campaign.get("created_at") or "2026-07-11T00:00:00+09:00",
             "campaign_id": campaign["id"],
@@ -3189,45 +3645,45 @@ Rationale: {confidence.get('rationale', 'Not evaluated.')}
         }
         source_links = [f"[{item}](../sources/{item.lower()}.md)" for item in campaign.get("source_ids", [])]
         claim_links = [f"[{item}](../claims/{item.lower()}.md)" for item in campaign.get("claim_ids", [])]
-        body = f"""<!-- AUTOGENERATED from state/campaigns.json. -->
+        body = f"""<!-- state/campaigns.json에서 자동 생성함. -->
 # {campaign['id']}
 
-> {campaign.get('question', '')}
+> 연구 질문: {campaign.get('question', '')}
 
-## Control
+## 제어 정보
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Status | **{campaign.get('status', '-')}** |
-| Interest | `{campaign.get('interest_id', '-')}` |
-| Priority | {campaign.get('priority', '-')} |
-| Created by | [{campaign.get('created_by', '-')}](../actors/{actor_page_name(campaign.get('created_by', 'unknown'))}) |
-| Max sources | {campaign.get('max_sources', '-')} |
-| Max minutes | {campaign.get('max_minutes', '-')} |
-| Required independent groups | {campaign.get('required_independent_groups', '-')} |
-| Counter-search required | {campaign.get('counter_search_required', False)} |
+| 상태 | **{campaign.get('status', '-')}** |
+| 관심사 | `{campaign.get('interest_id', '-')}` |
+| 우선순위 | {campaign.get('priority', '-')} |
+| 생성자 | [{campaign.get('created_by', '-')}](../actors/{actor_page_name(campaign.get('created_by', 'unknown'))}) |
+| 최대 출처 수 | {campaign.get('max_sources', '-')} |
+| 최대 시간(분) | {campaign.get('max_minutes', '-')} |
+| 필요한 독립 그룹 수 | {campaign.get('required_independent_groups', '-')} |
+| 반증 검색 필수 | {campaign.get('counter_search_required', False)} |
 
-Why now: {campaign.get('why_now') or '-'}
+지금 수행하는 이유: {campaign.get('why_now') or '-'}
 
-## Stop conditions
+## 종료 조건
 
-{chr(10).join(f'- {item}' for item in campaign.get('stop_conditions', [])) or '- None'}
+{chr(10).join(f'- 기록된 조건: {item}' for item in campaign.get('stop_conditions', [])) or '- 없음'}
 
-## Sources
+## 출처
 
-{chr(10).join(f'- {item}' for item in source_links) or '- None yet'}
+{chr(10).join(f'- {item}' for item in source_links) or '- 아직 없음'}
 
-## Claims
+## 주장
 
-{chr(10).join(f'- {item}' for item in claim_links) or '- None yet'}
+{chr(10).join(f'- {item}' for item in claim_links) or '- 아직 없음'}
 """
         write_okf_concept(WIKI / "campaigns" / f"{campaign['id'].lower()}.md", metadata, body)
 
     for proposal in proposals:
         metadata = {
             "type": "Harness Proposal",
-            "title": f"{proposal['id']}: {proposal.get('title', '')}",
-            "description": proposal.get("problem", "")[:300],
+            "title": f"{proposal['id']}: 하네스 제안",
+            "description": f"하네스 제안 {proposal['id']}의 문제·변경·검토·구현 근거.",
             "tags": ["governance", "harness-proposal", proposal.get("status", "proposed")],
             "timestamp": proposal.get("updated_at") or proposal.get("created_at") or "2026-07-11T00:00:00+09:00",
             "proposal_id": proposal["id"],
@@ -3235,80 +3691,80 @@ Why now: {campaign.get('why_now') or '-'}
             "generated": True,
         }
         reviews = proposal.get("approvals", [])
-        body = f"""<!-- AUTOGENERATED from state/proposals.json. -->
-# {proposal['id']}: {proposal.get('title', '')}
+        body = f"""<!-- state/proposals.json에서 자동 생성함. -->
+# {proposal['id']}: 하네스 제안 — {proposal.get('title', '')}
 
-- Status: **{proposal.get('status', 'proposed')}**
-- Proposed by: [{proposal.get('created_by', '-')}](../actors/{actor_page_name(proposal.get('created_by', 'unknown'))})
-- Created: `{proposal.get('created_at', '-')}`
+- 상태: **{proposal.get('status', 'proposed')}**
+- 제안자: [{proposal.get('created_by', '-')}](../actors/{actor_page_name(proposal.get('created_by', 'unknown'))})
+- 생성 시각: `{proposal.get('created_at', '-')}`
 
-## Problem
+## 문제
 
-{proposal.get('problem', '-')}
+기록된 문제: {proposal.get('problem', '-')}
 
-## Proposed change
+## 제안 변경
 
-{proposal.get('proposed_change', '-')}
+기록된 변경안: {proposal.get('proposed_change', '-')}
 
-## Evidence claims
+## 근거 주장
 
-{chr(10).join(f'- [{claim_id}](../claims/{claim_id.lower()}.md)' for claim_id in proposal.get('evidence', [])) or '- None'}
+{chr(10).join(f'- [{claim_id}](../claims/{claim_id.lower()}.md)' for claim_id in proposal.get('evidence', [])) or '- 없음'}
 
-## Acceptance gate
+## 수용 게이트
 
-{proposal.get('benchmark', '-')}
+기록된 수용 기준: {proposal.get('benchmark', '-')}
 
-## Risks
+## 위험
 
-{chr(10).join(f'- {risk}' for risk in proposal.get('risks', [])) or '- None'}
+{chr(10).join(f'- 기록된 위험: {risk}' for risk in proposal.get('risks', [])) or '- 없음'}
 
-## Rollback
+## 롤백
 
-{proposal.get('rollback', '-')}
+기록된 롤백: {proposal.get('rollback', '-')}
 
-## Review decisions
+## 검토 결정
 
-{chr(10).join(f"- **{item.get('decision', '-')}** by `{item.get('actor_id', '-')}` at `{item.get('at', '-')}` — {item.get('rationale', '-')}" for item in reviews) or '- None'}
+{chr(10).join(f"- **{item.get('decision', '-')}** / 검토자 `{item.get('actor_id', '-')}` / 시각 `{item.get('at', '-')}` — 기록된 사유: {item.get('rationale', '-')}" for item in reviews) or '- 없음'}
 
-## Implementation evidence
+## 구현 근거
 
-{f"- Release report: `{proposal.get('implementation_evidence', {}).get('release_report')}`" if proposal.get('implementation_evidence') else '- Not implemented yet.'}
-{f"- Component fingerprint: `{proposal.get('implementation_evidence', {}).get('component_fingerprint')}`" if proposal.get('implementation_evidence') else ''}
-{f"- Production certified: `{proposal.get('implementation_evidence', {}).get('production_certified')}`" if proposal.get('implementation_evidence') else ''}
+{f"- 릴리스 보고서: `{proposal.get('implementation_evidence', {}).get('release_report')}`" if proposal.get('implementation_evidence') else '- 아직 구현되지 않음.'}
+{f"- 구성요소 지문: `{proposal.get('implementation_evidence', {}).get('component_fingerprint')}`" if proposal.get('implementation_evidence') else ''}
+{f"- 운영 환경 인증: `{proposal.get('implementation_evidence', {}).get('production_certified')}`" if proposal.get('implementation_evidence') else ''}
 """
         write_okf_concept(WIKI / "governance" / f"{proposal['id'].lower()}.md", metadata, body)
 
     for record in collaborations:
         transitions = record.get("metadata", {}).get("transitions", [])
-        body = f"""<!-- AUTOGENERATED from state/collaborations.json. -->
+        body = f"""<!-- state/collaborations.json에서 자동 생성함. -->
 # {record['id']}
 
-> {record.get('content', '')}
+> 기록된 협업 내용: {record.get('content', '')}
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Actor | [{record.get('actor_id', '-')}](../actors/{actor_page_name(record.get('actor_id', 'unknown'))}) |
-| Record kind | `{record.get('record_kind', '-')}` |
-| Intent | `{record.get('intent', '-')}` |
-| Stance | `{record.get('stance') or '-'}` |
-| Status | **{record.get('status', '-')}** |
-| Created | `{record.get('created_at', '-')}` |
-| Updated | `{record.get('updated_at', '-')}` |
+| 행위자 | [{record.get('actor_id', '-')}](../actors/{actor_page_name(record.get('actor_id', 'unknown'))}) |
+| 기록 종류 | `{record.get('record_kind', '-')}` |
+| 의도 | `{record.get('intent', '-')}` |
+| 입장 | `{record.get('stance') or '-'}` |
+| 상태 | **{record.get('status', '-')}** |
+| 생성 시각 | `{record.get('created_at', '-')}` |
+| 갱신 시각 | `{record.get('updated_at', '-')}` |
 
-## Targets
+## 대상
 
-{chr(10).join(f'- `{target}`' for target in record.get('targets', [])) or '- None'}
+{chr(10).join(f'- `{target}`' for target in record.get('targets', [])) or '- 없음'}
 
-## Transition history
+## 전이 이력
 
-{chr(10).join(f"- `{item.get('at', '-')}` — `{item.get('from', '-')}` → `{item.get('to', '-')}` by `{item.get('actor_id', '-')}`: {item.get('reason', '-')}" for item in transitions) or '- None'}
+{chr(10).join(f"- `{item.get('at', '-')}` — `{item.get('from', '-')}` → `{item.get('to', '-')}` / 처리자 `{item.get('actor_id', '-')}`: 기록된 사유 {item.get('reason', '-')}" for item in transitions) or '- 없음'}
 """
         write_okf_concept(
             WIKI / "collaborations" / f"{record['id'].lower()}.md",
             {
                 "type": "Collaboration Record",
                 "title": record["id"],
-                "description": record.get("content", "")[:300],
+                "description": f"협업 기록 {record['id']}의 방향·기여·검토와 전이 이력.",
                 "tags": ["collaboration", record.get("record_kind", "unknown"), record.get("intent", "unknown"), record.get("status", "unknown")],
                 "timestamp": record.get("updated_at") or record.get("created_at") or "2026-07-11T00:00:00+09:00",
                 "lifecycle_status": record.get("status", "unknown"),
@@ -3336,39 +3792,39 @@ Why now: {campaign.get('why_now') or '-'}
         source_url = candidate.get("url")
         source_ref = candidate.get("source_ref")
         citation_url = source_url or (source_ref if isinstance(source_ref, str) and source_ref.startswith(("https://", "http://")) else None)
-        body = f"""<!-- AUTOGENERATED from state/admissions.json; untrusted payload text is intentionally omitted. -->
+        body = f"""<!-- state/admissions.json에서 자동 생성함. 신뢰하지 않는 payload 본문은 의도적으로 제외함. -->
 # {admission['id']}
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Candidate | `{candidate.get('id', '-')}` |
-| Source reference | {md_cell(source_ref or source_url)} |
-| Decision | **{admission.get('status', '-')}** |
-| Policy effect | `{admission.get('policy_effect', '-')}` |
-| Evaluated by | [{admission.get('created_by', '-')}](../actors/{actor_page_name(admission.get('created_by', 'unknown'))}) |
-| Evaluated at | `{admission.get('created_at', '-')}` |
+| 후보 | `{candidate.get('id', '-')}` |
+| 출처 참조 | {md_cell(source_ref or source_url)} |
+| 판정 | **{admission.get('status', '-')}** |
+| 정책 효과 | `{admission.get('policy_effect', '-')}` |
+| 평가자 | [{admission.get('created_by', '-')}](../actors/{actor_page_name(admission.get('created_by', 'unknown'))}) |
+| 평가 시각 | `{admission.get('created_at', '-')}` |
 
-## Explainable reasons
+## 설명 가능한 사유
 
-{chr(10).join(f'- `{code}`' for code in reason_codes) or '- No blocking reason recorded.'}
+{chr(10).join(f'- `{code}`' for code in reason_codes) or '- 차단 사유 기록 없음.'}
 
-## Quarantine manifest
+## 격리 명세표
 
-- Path outside bundle: `{artifact.get('path', 'not applicable')}`
-- SHA-256: `{artifact.get('sha256', 'not applicable')}`
-- Size: `{artifact.get('size_bytes', 'not applicable')}` bytes
-- Media type: `{artifact.get('media_type', 'not applicable')}`
+- bundle 밖 경로: `{artifact.get('path', '해당 없음')}`
+- SHA-256: `{artifact.get('sha256', '해당 없음')}`
+- 크기: `{artifact.get('size_bytes', '해당 없음')}` 바이트
+- 미디어 유형: `{artifact.get('media_type', '해당 없음')}`
 
-The candidate was not automatically promoted to a canonical source and this decision did not mutate C0–C4.
+이 후보는 정규 출처로 자동 승격되지 않았고, 이 판정은 C0–C4를 변경하지 않았다.
 """
         if citation_url:
-            body += f"\n# Citations\n\n[1] [Candidate source]({citation_url})\n"
+            body += f"\n# 인용\n\n[1] [후보 출처]({citation_url})\n"
         write_okf_concept(
             WIKI / "admissions" / f"{admission['id'].lower()}.md",
             {
                 "type": "Admission Decision",
                 "title": admission["id"],
-                "description": f"Source/security admission decision {admission.get('status', 'unknown')} with no automatic trust mutation.",
+                "description": f"자동 신뢰 변경이 없는 출처·보안 입수 판정 {admission['id']} 기록.",
                 "tags": ["admission", admission.get("status", "unknown"), "audit"],
                 "timestamp": admission.get("created_at") or "2026-07-11T00:00:00+09:00",
                 "lifecycle_status": admission.get("status", "unknown"),
@@ -3393,36 +3849,36 @@ The candidate was not automatically promoted to a canonical source and this deci
                 f"`{report.get('actor_id', '-')}` | {usage.get('minutes', '-')} | {usage.get('sources', '-')} |"
             )
         receipt = run.get("receipt", {})
-        body = f"""<!-- AUTOGENERATED from state/runs.json. -->
+        body = f"""<!-- state/runs.json에서 자동 생성함. -->
 # {run['id']}
 
-- Status: **{run.get('status', '-')}**
-- Planned by: [{run.get('actor_id', '-')}](../actors/{actor_page_name(run.get('actor_id', 'unknown'))})
-- Created: `{run.get('created_at', '-')}`
-- Plan ID: `{run.get('plan', {}).get('plan_id', '-')}`
-- Planning receipt hash: `{receipt.get('receipt_hash', '-')}`
-- Runtime side-effect count: **{receipt.get('side_effect_count', '-')}**
+- 상태: **{run.get('status', '-')}**
+- 계획자: [{run.get('actor_id', '-')}](../actors/{actor_page_name(run.get('actor_id', 'unknown'))})
+- 생성 시각: `{run.get('created_at', '-')}`
+- 계획 ID: `{run.get('plan', {}).get('plan_id', '-')}`
+- 계획 영수증 해시: `{receipt.get('receipt_hash', '-')}`
+- 실행환경 부작용 수: **{receipt.get('side_effect_count', '-')}**
 
-## Planned-only actions
+## 계획 전용 작업
 
-| Action | Campaign | Execution | Minutes | Sources |
+| 작업 | 캠페인 | 실행 방식 | 시간(분) | 출처 수 |
 |---|---|---|---:|---:|
 {chr(10).join(action_rows) or '| - | - | - | - | - |'}
 
-## Attributed external reports
+## 귀속된 외부 작업 보고
 
-| Receipt | Action | Status | Actor | Used minutes | Used sources |
+| 영수증 | 작업 | 상태 | 행위자 | 사용 시간(분) | 사용 출처 수 |
 |---|---|---|---|---:|---:|
 {chr(10).join(report_rows) or '| - | - | - | - | - | - |'}
 
-The runtime only planned external work. Any reported execution is attributed separately and remains unverified unless its evidence is reviewed.
+실행환경은 외부 작업을 계획만 했다. 보고된 실행은 별도 행위자에게 귀속되며, 근거를 검토하기 전에는 검증되지 않은 상태로 남는다.
 """
         write_okf_concept(
             WIKI / "runs" / f"{run['id'].lower()}.md",
             {
                 "type": "Runtime Receipt",
                 "title": run["id"],
-                "description": "Bounded research plan and attributed external-work receipts; runtime executes no external action.",
+                "description": "범위가 제한된 연구 계획과 귀속된 외부 작업 영수증. 실행환경은 외부 작업을 수행하지 않는다.",
                 "tags": ["runtime", "receipt", run.get("status", "unknown")],
                 "timestamp": run.get("updated_at") or run.get("created_at") or "2026-07-11T00:00:00+09:00",
                 "lifecycle_status": run.get("status", "unknown"),
@@ -3444,36 +3900,36 @@ The runtime only planned external work. Any reported execution is attributed sep
         targets = [feedback_reference_link(str(item)) for item in feedback.get("targets", [])]
         evidence_refs = [feedback_reference_link(str(item)) for item in feedback.get("evidence_refs", [])]
         resolution = feedback.get("resolution") if isinstance(feedback.get("resolution"), dict) else {}
-        body = f"""<!-- AUTOGENERATED privacy-minimal projection from state/memory_feedback.json. -->
+        body = f"""<!-- state/memory_feedback.json에서 자동 생성한 개인정보 최소 투영. -->
 # {feedback['id']}
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Actor | [{feedback.get('actor_id', '-')}](../actors/{actor_page_name(feedback.get('actor_id', 'unknown'))}) |
-| Outcome | **{feedback.get('outcome', '-')}** |
-| Status | **{feedback.get('status', '-')}** |
-| Created | `{feedback.get('created_at', '-')}` |
-| Trust effect | `{feedback.get('trust_effect', '-')}` |
-| Automatic action | `{feedback.get('automatic_action', '-')}` |
-| Resolved by | {feedback_reference_link(str(resolution.get('actor_id')) ) if resolution else '-'} |
-| Resolved at | `{resolution.get('at', '-') if resolution else '-'}` |
+| 행위자 | [{feedback.get('actor_id', '-')}](../actors/{actor_page_name(feedback.get('actor_id', 'unknown'))}) |
+| 결과 | **{feedback.get('outcome', '-')}** |
+| 상태 | **{feedback.get('status', '-')}** |
+| 생성 시각 | `{feedback.get('created_at', '-')}` |
+| 신뢰 효과 | `{feedback.get('trust_effect', '-')}` |
+| 자동 작업 | `{feedback.get('automatic_action', '-')}` |
+| 해결자 | {feedback_reference_link(str(resolution.get('actor_id')) ) if resolution else '-'} |
+| 해결 시각 | `{resolution.get('at', '-') if resolution else '-'}` |
 
-## Targets
+## 대상
 
-{chr(10).join(f'- {item}' for item in targets) or '- None'}
+{chr(10).join(f'- {item}' for item in targets) or '- 없음'}
 
-## Evidence references
+## 근거 참조
 
-{chr(10).join(f'- {item}' for item in evidence_refs) or '- None'}
+{chr(10).join(f'- {item}' for item in evidence_refs) or '- 없음'}
 
-Free-text rationale, task reference, and resolution rationale remain in the control plane and are intentionally omitted from this portable projection. Feedback is diagnostic and cannot automatically change ranking, C-level, S-level, lifecycle, or delete content.
+자유 형식 사유, 작업 참조와 해결 사유는 제어 영역에 남기며 이 이동 가능한 투영에서는 의도적으로 제외한다. 피드백은 진단용이며 순위, C-level, S-level, 생명주기를 자동 변경하거나 내용을 삭제할 수 없다.
 """
         write_okf_concept(
             WIKI / "feedback" / f"{feedback['id'].lower()}.md",
             {
                 "type": "Memory Feedback",
                 "title": feedback["id"],
-                "description": "Privacy-minimal retrieval outcome with no automatic trust or deletion effect.",
+                "description": "자동 신뢰 변경이나 삭제 효과가 없는 개인정보 최소 검색 결과.",
                 "tags": ["memory-feedback", feedback.get("outcome", "unknown"), feedback.get("status", "open")],
                 "timestamp": resolution.get("at") or feedback.get("created_at") or "2026-07-11T00:00:00+09:00",
                 "lifecycle_status": feedback.get("status", "open"),
@@ -3485,24 +3941,24 @@ Free-text rationale, task reference, and resolution rationale remain in the cont
     trust = load_json(ROOT / "config" / "trust-policy.json")
     source_rows = "\n".join(f"| {level} | {md_cell(text)} |" for level, text in trust.get("source_levels", {}).items())
     claim_rows = "\n".join(f"| {level} | {md_cell(text)} |" for level, text in trust.get("claim_levels", {}).items())
-    trust_body = f"""<!-- AUTOGENERATED from config/trust-policy.json. -->
-# Living Wiki trust policy
+    trust_body = f"""<!-- config/trust-policy.json에서 자동 생성함. -->
+# Living Wiki 신뢰 정책
 
-This is a Living Wiki producer profile, not an OKF core trust schema.
+이 문서는 Living Wiki 생산자 프로필이며 OKF 핵심 신뢰 스키마가 아니다.
 
-## Source levels
+## 출처 레벨
 
-| Level | Meaning |
+| 레벨 | 의미 |
 |---|---|
 {source_rows}
 
-## Claim levels
+## 주장 레벨
 
-| Level | Meaning |
+| 레벨 | 의미 |
 |---|---|
 {claim_rows}
 
-## Hard principle
+## 핵심 원칙
 
 {trust.get('principle', '')}
 """
@@ -3510,8 +3966,8 @@ This is a Living Wiki producer profile, not an OKF core trust schema.
         WIKI / "trust" / "trust-policy.md",
         {
             "type": "Trust Policy",
-            "title": "Living Wiki trust policy",
-            "description": "Producer-defined S0-S4 source and C0-C4 claim evidence-maturity profile.",
+            "title": "Living Wiki 신뢰 정책",
+            "description": "생산자가 정의한 S0-S4 출처 및 C0-C4 주장 증거 성숙도 프로필.",
             "tags": ["trust", "claims", "sources", "producer-extension"],
             "timestamp": "2026-07-11T00:00:00+09:00",
             "generated": True,
@@ -3520,11 +3976,11 @@ This is a Living Wiki producer profile, not an OKF core trust schema.
     )
 
     for filename, type_name, title, description in [
-        ("constitution.md", "Governance Policy", "Living Wiki constitution", "Actor parity, epistemic rules, authority boundaries, and self-evolution policy."),
-        ("decision-log.md", "Governance Decision Register", "Living Wiki decision log", "Architectural decisions and their explicit rationale."),
+        ("constitution.md", "Governance Policy", "Living Wiki 헌장", "행위자 동등성, 인식론 규칙, 권한 경계와 자기진화 정책."),
+        ("decision-log.md", "Governance Decision Register", "Living Wiki 결정 기록", "아키텍처 결정과 명시적인 근거."),
     ]:
         canonical = ROOT / "governance" / filename
-        body = "<!-- AUTOGENERATED projection of governance/%s. -->\n" % filename + canonical.read_text(encoding="utf-8")
+        body = "<!-- governance/%s에서 자동 생성한 투영. -->\n" % filename + canonical.read_text(encoding="utf-8")
         write_okf_concept(
             WIKI / "governance" / filename,
             {
@@ -3541,19 +3997,19 @@ This is a Living Wiki producer profile, not an OKF core trust schema.
 
 def render_okf_subindexes() -> None:
     for folder_name, heading in [
-        ("sources", "References"),
-        ("concepts", "Concepts"),
-        ("perspectives", "Perspectives"),
-        ("claims", "Claims"),
-        ("actors", "Actors"),
-        ("reviews", "Reviews"),
-        ("campaigns", "Research Campaigns"),
-        ("collaborations", "Collaboration Records"),
-        ("admissions", "Admission Decisions"),
-        ("runs", "Runtime Receipts"),
-        ("feedback", "Memory Feedback"),
-        ("trust", "Trust Policies"),
-        ("governance", "Governance"),
+        ("sources", "출처"),
+        ("concepts", "개념"),
+        ("perspectives", "관점"),
+        ("claims", "주장"),
+        ("actors", "행위자"),
+        ("reviews", "검토"),
+        ("campaigns", "연구 캠페인"),
+        ("collaborations", "협업 기록"),
+        ("admissions", "입수 판정"),
+        ("runs", "실행 기록"),
+        ("feedback", "메모리 피드백"),
+        ("trust", "신뢰 정책"),
+        ("governance", "거버넌스"),
     ]:
         folder = WIKI / folder_name
         folder.mkdir(parents=True, exist_ok=True)
@@ -3566,7 +4022,7 @@ def render_okf_subindexes() -> None:
             description = str(metadata.get("description") or "")
             suffix = f" - {description}" if description else ""
             entries.append(f"* [{title}]({path.name}){suffix}")
-        body = f"# {heading}\n\n" + ("\n".join(entries) if entries else "* No concepts yet.") + "\n"
+        body = f"# {heading}\n\n" + ("\n".join(entries) if entries else "* 아직 문서 없음.") + "\n"
         atomic_write_text(folder / "index.md", body)
 
 
@@ -3576,12 +4032,12 @@ def render_okf_log() -> None:
         date = str(event.get("at", ""))[:10]
         if re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
             grouped.setdefault(date, []).append(event)
-    lines = ["# Living Wiki update log", ""]
+    lines = ["# Living Wiki 갱신 기록", ""]
     for date in sorted(grouped, reverse=True):
         lines.extend([f"## {date}"])
         for event in grouped[date]:
             lines.append(
-                f"* **{event.get('action', 'Update')}**: `{event.get('subject', '-')}` by `{event.get('actor', '-')}`."
+                f"* **{event.get('action', '갱신')}**: `{event.get('subject', '-')}` / 처리자 `{event.get('actor', '-')}`."
             )
         lines.append("")
     atomic_write_text(WIKI / "log.md", "\n".join(lines).rstrip() + "\n")
@@ -3594,6 +4050,8 @@ def render_all(actor: str, log: bool = True) -> None:
     feedback_records = collection("memory_feedback")
     render_epistemic_dashboard(claims, sources)
     render_okf_state_projection()
+    for proposal in collection("proposals"):
+        render_proposal_record(proposal)
     render_index(claims, sources, campaigns, feedback_records)
     render_okf_subindexes()
     if log:
@@ -3609,12 +4067,25 @@ def render_all(actor: str, log: bool = True) -> None:
 def render_cmd(args: argparse.Namespace) -> None:
     require_actor(args.actor)
     render_all(args.actor, log=not args.no_log)
-    print("Rendered the OKF bundle indexes, log, and epistemic dashboard")
+    print("OKF bundle 색인·기록·인식론 대시보드를 렌더링함")
+
+
+def language_validate(args: argparse.Namespace) -> None:
+    import korean_docs
+
+    findings = korean_docs.validate_repository(ROOT)
+    for finding in findings:
+        print(f"오류: {finding}")
+    if findings:
+        raise WikiError(f"한국어 문서 검사에서 {len(findings)}건을 발견함")
+    print("한국어 문서 검사 통과")
 
 
 def lint(args: argparse.Namespace) -> None:
     require_actor(args.actor)
-    errors, warnings, counts = validation_findings()
+    errors, warnings, counts = validation_findings(
+        quarantine_profile=args.quarantine_profile
+    )
     claims = collection("claims")
     sources = collection("sources")
     source_by_id = {source["id"]: source for source in sources}
@@ -3628,36 +4099,51 @@ def lint(args: argparse.Namespace) -> None:
         if len(support_sources) > 1:
             groups = {source.get("independence_group", source["id"]) for source in support_sources}
             if len(groups) == 1:
-                extra.append(f"{claim['id']}: multiple supporting sources collapse to one independence group")
+                extra.append(f"{claim['id']}: 여러 지지 출처가 하나의 독립성 그룹으로 합쳐짐")
         if claim.get("confidence", {}).get("level") in {"C3", "C4"} and not claim.get("last_verified_at"):
             errors.append(f"{claim['id']}: promoted claim lacks last_verified_at")
-    report = f"""# Wiki lint report — {today()}
+    report = f"""# Wiki lint 보고서 — {today()}
 
-## Summary
+## 요약
 
-- Errors: {len(errors)}
-- Warnings: {len(warnings)}
-- Epistemic findings: {len(extra)}
-- Counts: {', '.join(f'{k}={v}' for k, v in counts.items())}
+- 오류: {len(errors)}
+- 경고: {len(warnings)}
+- 인식론 발견: {len(extra)}
+- 격리 검증 프로필: `{args.quarantine_profile}`
+- 격리 payload bytes 검증: **{str(counts.get('quarantine_artifacts_missing', 0) == 0).lower()}**
+- 개수: 행위자={counts.get('actors', 0)}, 출처={counts.get('sources', 0)}, 주장={counts.get('claims', 0)}, 검토={counts.get('reviews', 0)}, 캠페인={counts.get('campaigns', 0)}, 제안={counts.get('proposals', 0)}, 협업={counts.get('collaborations', 0)}, 입수 판정={counts.get('admissions', 0)}, 실행 기록={counts.get('runs', 0)}, 메모리 피드백={counts.get('memory_feedback', 0)}, 사건={counts.get('events', 0)}, OKF 문서={counts.get('okf_concepts', 0)}
 
-## Errors
+## 오류
 
-{chr(10).join(f'- {item}' for item in errors) or '- None'}
+{chr(10).join(f'- 기록된 오류: {item}' for item in errors) or '- 없음'}
 
-## Warnings
+## 경고
 
-{chr(10).join(f'- {item}' for item in warnings) or '- None'}
+{chr(10).join(f'- 기록된 경고: {item}' for item in warnings) or '- 없음'}
 
-## Epistemic findings
+## 인식론 발견
 
-{chr(10).join(f'- {item}' for item in extra) or '- None'}
+{chr(10).join(f'- 기록된 발견: {item}' for item in extra) or '- 없음'}
 
-## Interpretation
+## 해석
 
 경고는 자동 삭제나 자동 강등 명령이 아니다. 담당 actor가 원문과 scope를 확인한 뒤 evidence, status, freshness를 갱신해야 한다.
 """
     atomic_write_text(REPORTS / "latest-lint.md", report)
-    append_event(args.actor, "wiki.lint", "all", {"errors": len(errors), "warnings": len(warnings), "findings": len(extra)})
+    if not args.no_log:
+        append_event(
+            args.actor,
+            "wiki.lint",
+            "all",
+            {
+                "errors": len(errors),
+                "warnings": len(warnings),
+                "findings": len(extra),
+                "quarantine_profile": args.quarantine_profile,
+                "quarantine_payload_verified": counts.get("quarantine_artifacts_missing", 0) == 0,
+                "quarantine_missing": counts.get("quarantine_artifacts_missing", 0),
+            },
+        )
     print(f"Wrote reports/latest-lint.md ({len(errors)} errors, {len(warnings) + len(extra)} warnings/findings)")
     if errors:
         raise WikiError("Lint found structural errors")
@@ -3799,7 +4285,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--actor", default="agent:codex")
     p.add_argument("--statement", required=True)
     p.add_argument("--kind", required=True, choices=sorted(CLAIM_KINDS))
-    p.add_argument("--scope", default="general")
+    p.add_argument("--scope", default="일반")
     p.add_argument("--freshness", default="normal", choices=["fast", "normal", "slow", "timeless"])
     p.add_argument("--valid-at")
     p.add_argument("--tags")
@@ -3865,7 +4351,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--title", required=True)
     p.add_argument("--problem", required=True)
     p.add_argument("--change", required=True)
-    p.add_argument("--evidence")
+    p.add_argument("--evidence", help="쉼표로 구분한 기존 CLM-* 근거 ID")
     p.add_argument("--benchmark", required=True)
     p.add_argument("--risks")
     p.add_argument("--rollback", required=True)
@@ -3967,6 +4453,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--compact", action="store_true")
     p.set_defaults(func=memory_hygiene_cmd)
 
+    p = sub.add_parser("hygiene-plan", help="범위가 제한된 읽기 전용 위생 후보 계획 출력")
+    p.add_argument("--now", required=True, help="시간대가 포함된 고정 평가 시각")
+    p.add_argument("--pretty", action="store_true", help="사람이 읽기 쉬운 들여쓰기 JSON 출력")
+    p.set_defaults(func=hygiene_plan_cmd)
+
     p = sub.add_parser("search", help="run deterministic lexical retrieval across canonical state and wiki")
     p.add_argument("query")
     p.add_argument("--limit", type=int, default=10)
@@ -4006,6 +4497,13 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("release-check", help="run the integrated v4 structural, fixture, receipt, and regression gates")
     p.add_argument("--actor", default="agent:codex")
     p.add_argument("--test-timeout", type=int, default=300)
+    p.add_argument(
+        "--quarantine-profile",
+        choices=[STRICT_QUARANTINE_PROFILE, PUBLIC_QUARANTINE_PROFILE],
+        default=STRICT_QUARANTINE_PROFILE,
+        help="격리 원문 검증 프로필. 로컬 보관은 strict가 기본값이다.",
+    )
+    p.add_argument("--no-log", action="store_true", help="publish 재검증에서 중복 사건을 남기지 않음")
     p.set_defaults(func=release_check)
 
     p = sub.add_parser("render", help="regenerate deterministic human-readable views")
@@ -4013,11 +4511,27 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-log", action="store_true", help="pure/idempotence-check export without a new event")
     p.set_defaults(func=render_cmd)
 
+    p = sub.add_parser("language-validate", help="사람이 읽는 문서의 한국어 기본 계약 검사")
+    p.set_defaults(func=language_validate)
+
     p = sub.add_parser("lint", help="run structural and epistemic health checks")
     p.add_argument("--actor", default="agent:codex")
+    p.add_argument(
+        "--quarantine-profile",
+        choices=[STRICT_QUARANTINE_PROFILE, PUBLIC_QUARANTINE_PROFILE],
+        default=STRICT_QUARANTINE_PROFILE,
+        help="격리 원문 검증 프로필. 공개 clean clone만 portable 값을 사용한다.",
+    )
+    p.add_argument("--no-log", action="store_true", help="publish 재검증에서 중복 사건을 남기지 않음")
     p.set_defaults(func=lint)
 
     p = sub.add_parser("validate", help="validate references, hashes, schemas, and event chain")
+    p.add_argument(
+        "--quarantine-profile",
+        choices=[STRICT_QUARANTINE_PROFILE, PUBLIC_QUARANTINE_PROFILE],
+        default=STRICT_QUARANTINE_PROFILE,
+        help="격리 원문 검증 프로필. 공개 clean clone만 portable 값을 사용한다.",
+    )
     p.set_defaults(func=validate)
 
     p = sub.add_parser("okf-validate", help="validate wiki/ against the pinned OKF v0.1 profile")

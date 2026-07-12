@@ -1,3 +1,3 @@
-# Runtime Receipts
+# 실행 기록
 
-* [RUN-8354665F4697](run-8354665f4697.md) - Bounded research plan and attributed external-work receipts; runtime executes no external action.
+* [RUN-8354665F4697](run-8354665f4697.md) - 범위가 제한된 연구 계획과 귀속된 외부 작업 영수증. 실행환경은 외부 작업을 수행하지 않는다.

@@ -4,5 +4,7 @@ __pycache__/
 .pytest_cache/
 .coverage
 reports/tmp/
+# 공개 Git에는 격리 payload를 배포하지 않는다. adapter가 별도로 강제 차단한다.
 raw/quarantine/
-
+auth/*.yaml
+auth/*.yml

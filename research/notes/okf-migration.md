@@ -1,43 +1,42 @@
-# OKF migration campaign — 2026-07-11
+# OKF 마이그레이션 캠페인 — 2026-07-11
 
-Campaign: `CMP-0619AC235CCA`
+캠페인: `CMP-0619AC235CCA`
 
-## User direction
+## 사용자 방향
 
-Wiki 구축 시 Open Knowledge Format pattern을 따를 것.
+Wiki 구축 시 Open Knowledge Format 패턴을 따를 것.
 
-## Primary sources inspected
+## 검토한 1차 출처
 
-- Google Cloud announcement
-- Official `GoogleCloudPlatform/knowledge-catalog/okf/SPEC.md`
-- Official OKF README, example bundles, reference-agent document/index code and tests
-- Apache-2.0 license under the official `okf/` directory
+- Google Cloud 발표
+- 공식 `GoogleCloudPlatform/knowledge-catalog/okf/SPEC.md`
+- 공식 OKF README, 예시 번들, reference-agent 문서·색인 코드와 테스트
+- 공식 `okf/` 디렉터리의 Apache-2.0 라이선스
 
-## Reproducibility pin
+## 재현성 고정값
 
-- Repository HEAD: `d44368c15e38e7c92481c5992e4f9b5b421a801d`
-- SPEC blob: `55d0a46cc988e99aa35cd027964d6278a4f93f35`
-- Local snapshot SHA-256: `b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e`
-- Spec status: `Version 0.1 — Draft`, no release/tag observed on 2026-07-11
+- 저장소 HEAD: `d44368c15e38e7c92481c5992e4f9b5b421a801d`
+- SPEC blob 식별자: `55d0a46cc988e99aa35cd027964d6278a4f93f35`
+- 로컬 스냅샷 SHA-256: `b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e`
+- 명세 상태: `Version 0.1 — Draft`, 2026-07-11 기준 릴리스나 태그를 발견하지 못함
 
-## Decision
+## 결정
 
-`wiki/` itself is the dedicated OKF bundle root. The repository root is not an OKF bundle. Canonical claim/source/actor state, raw artifacts, governance, tests, and executable tools stay outside as a control plane.
+`wiki/` 자체를 전용 OKF 번들 루트로 사용한다. 저장소 루트는 OKF 번들이 아니다. 정식 주장·출처·행위자 상태, 원문 자료, 거버넌스, 테스트, 실행 도구는 제어면으로서 외부에 둔다.
 
-## Changes
+## 변경 사항
 
-- Typed YAML frontmatter on every non-reserved bundle document
-- Standard Markdown links instead of Obsidian wikilinks
-- Reserved frontmatter-free indexes and update log
-- `okf-profile.md` documenting producer extensions
-- `okf-validate` plus global validation integration
-- Unit tests for frontmatter parsing
-- Harness minor version 3.1.0
+- 모든 비예약 번들 문서에 형식이 지정된 YAML 앞부분 메타데이터 추가
+- Obsidian 위키 링크 대신 표준 Markdown 링크 사용
+- 앞부분 메타데이터가 없는 예약 색인과 갱신 로그
+- 생산자 확장을 설명하는 `okf-profile.md`
+- `okf-validate`와 전역 검증 통합
+- 앞부분 메타데이터 파싱 단위 테스트
+- 하네스 부 버전 3.1.0
 
-## Critical caveats
+## 중요한 주의사항
 
-- OKF has no mandatory manifest, JSON Schema, or type registry.
-- Core v0.1 requires only non-empty `type`; recommended metadata is still emitted for broader tool compatibility.
-- OKF does not solve credibility, provenance semantics, actor governance, or security.
-- Official reference-agent implementation is a proof of concept and is stricter than the minimal spec in parts; it is not the normative format.
-
+- OKF에는 필수 manifest, JSON Schema, 형식 등록부가 없다.
+- 핵심 v0.1은 비어 있지 않은 `type`만 요구하지만, 더 폭넓은 도구 호환성을 위해 권장 메타데이터도 출력한다.
+- OKF는 신뢰성, 출처 이력 의미 체계, 행위자 거버넌스, 보안을 해결하지 않는다.
+- 공식 reference-agent 구현은 개념 증명이며 일부는 최소 명세보다 엄격하다. 규범 형식은 아니다.

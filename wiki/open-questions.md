@@ -1,65 +1,65 @@
 ---
 type: Research Queue
-title: Open questions
+title: 미해결 질문
 description: 정보 이득과 위험을 기준으로 정렬한 Living Wiki의 미해결 연구 질문.
 tags: [research-queue, open-questions]
 timestamp: '2026-07-12T18:30:00+09:00'
 ---
 
-# Open questions
+# 미해결 질문
 
 우선순위는 정보 이득, 사용자 관심도, 위험, 최신성, 비용으로 정한다.
 
-## P0 — Pilot calibration을 empirical calibration으로 확장
+## P0 — 예비 보정을 경험적 보정으로 확장
 
-- 설계된 100개 층화 gold claim을 작성자와 독립된 reviewer group이 어떻게 blind adjudication할 것인가?
-- 과학 논문, 소프트웨어 버전, 법·정책, 실무자 경험에 같은 gate를 써도 되는가?
-- 시간 분할 holdout, benchmark 이의 제기, obsolete label migration을 어떻게 운영할 것인가?
+- 설계된 100개 층화 표준 주장을 작성자와 독립된 검토자 그룹이 어떻게 눈가림 판정할 것인가?
+- 과학 논문, 소프트웨어 버전, 법·정책, 실무자 경험에 같은 게이트를 써도 되는가?
+- 시간 분할 검증 집합, 벤치마크 이의 제기, 오래된 라벨 이관을 어떻게 운영할 것인가?
 
-pilot 결과: `CMP-76BD99582F70` 완료. 15건 smoke fixture는 production calibration이 아니다.
+예비 실행 결과: `CMP-76BD99582F70` 완료. 15건 연기 검사 고정 자료는 운영 환경 보정이 아니다.
 
-## P0 — Live source status와 dependency 품질
+## P0 — 실시간 출처 상태와 의존성 품질
 
-- offline contract를 live Crossref/Retraction Watch/PubMed/GitHub adapter로 옮길 때 outage·rate limit·stale cache를 어떻게 fail-closed 처리할 것인가?
-- DOI가 없는 웹·영상·법령과 공유 dataset/model family의 independence를 어떻게 benchmark할 것인가?
+- 오프라인 계약을 실시간 Crossref·Retraction Watch·PubMed·GitHub 어댑터로 옮길 때 장애·호출량 제한·오래된 캐시를 어떻게 실패 시 차단할 것인가?
+- DOI가 없는 웹·영상·법령과 공유 데이터셋·모델 계열의 독립성을 어떻게 벤치마크할 것인가?
 - 검색 시스템이 반대 증거와 소수 관점을 충분히 찾았는지 어떻게 측정하는가?
 
-baseline 결과: `CMP-7A543D820D83` 완료. 현재 adapter는 fixture/계약이고 live service가 아니다.
+기준선 결과: `CMP-7A543D820D83` 완료. 현재 어댑터는 고정 자료·계약이고 실시간 서비스가 아니다.
 
-## P0 — Unseen·semantic·multimodal poisoning
+## P0 — 미관측·의미론적·다중양식 오염
 
-- lexical rule을 피하는 다국어·동의어·분할·multi-turn·image/audio 공격을 holdout으로 어떻게 수집할 것인가?
-- PDF/Office/archive parser sandbox와 retrieval label propagation을 어떻게 검증할 것인가?
-- false-positive review 비용을 낮추면서 attack allow 0 기준을 어떻게 유지할 것인가?
+- 어휘 규칙을 피하는 다국어·동의어·분할·다회차·이미지·오디오 공격을 유보 평가셋으로 어떻게 수집할 것인가?
+- PDF·Office·압축 파일 파서 샌드박스와 검색 라벨 전파를 어떻게 검증할 것인가?
+- 오탐 검토 비용을 낮추면서 공격 허용 0 기준을 어떻게 유지할 것인가?
 
-baseline 결과: `CMP-088A51571084` 완료. fixed corpus 통과는 production security 인증이 아니다.
+기준선 결과: `CMP-088A51571084` 완료. 고정 말뭉치 통과는 운영 환경 보안 인증이 아니다.
 
-## P1 — Collaboration
+## P1 — 협업
 
-- 사람이 연구 중간에 “그 방향이 아니다”라고 수정할 때 commitment와 영향받는 claim을 어떻게 갱신하는가?
-- 사람과 Agent가 동시에 같은 synthesis를 수정할 때 textual merge가 아닌 semantic conflict를 어떻게 보여주는가?
-- 인간의 correction도 틀릴 수 있는데 검토 비용과 자율성의 균형을 어떻게 잡는가?
-- active commitment의 체류 시간과 correction survival을 실제 장기 운영에서 어떻게 측정하는가?
+- 사람이 연구 중간에 “그 방향이 아니다”라고 수정할 때 약속과 영향받는 주장을 어떻게 갱신하는가?
+- 사람과 Agent가 동시에 같은 종합을 수정할 때 텍스트 병합이 아닌 의미 충돌을 어떻게 보여주는가?
+- 인간의 교정도 틀릴 수 있는데 검토 비용과 자율성의 균형을 어떻게 잡는가?
+- 활성 약속의 체류 시간과 교정 생존율을 실제 장기 운영에서 어떻게 측정하는가?
 
-## P1 — Scale and retrieval
+## P1 — 규모와 검색
 
-- 어떤 규모와 query 패턴에서 JSON/Markdown index가 병목이 되는가?
-- BM25, dense retrieval, citation graph, temporal graph를 어떤 router로 조합하는가?
-- compiled Wiki가 raw retrieval보다 실제로 비용과 정확도에서 우수한 query 유형은 무엇인가?
+- 어떤 규모와 질의 유형에서 JSON·Markdown 색인이 병목이 되는가?
+- BM25, 밀집 검색, 인용 그래프, 시간 그래프를 어떤 라우터로 조합하는가?
+- 컴파일된 Wiki가 원시 검색보다 실제로 비용과 정확도에서 우수한 질의 유형은 무엇인가?
 
-## P1 — Memory hygiene와 사용자 의존도
+## P1 — 기억 위생과 사용자 의존도
 
-- `fast|normal|slow` review warning이 실제 outdated claim을 찾는 precision/recall은 얼마인가?
-- helpful/harmful feedback의 selection bias와 credit assignment를 어떤 no-op control로 측정할 것인가?
-- `wiki-first|fresh-check|strict-evidence`가 anchoring, 사실 오류, 시간, 비용에 미치는 영향을 어떻게 비교할 것인가?
-- inactive lifecycle을 보존하면서 v3.1 rollback reader의 silent reactivation을 막는 migration은 무엇인가?
+- `fast|normal|slow` 검토 경고가 실제로 오래된 주장을 찾는 정밀도와 재현율은 얼마인가?
+- 도움·유해 피드백의 선택 편향과 기여도 할당을 어떤 무동작 대조군으로 측정할 것인가?
+- `wiki-first|fresh-check|strict-evidence`가 앵커링 편향, 사실 오류, 시간, 비용에 미치는 영향을 어떻게 비교할 것인가?
+- 비활성 생명주기를 보존하면서 v3.1 롤백 판독기의 조용한 재활성화를 막는 이관은 무엇인가?
 
-## P1 — Executor와 multi-writer 운영 경계
+## P1 — 실행기와 다중 작성자 운영 경계
 
-- 별도 외부 executor의 sandbox, credential broker, 승인 token, 만료와 결과 attestation을 어떻게 결합할 것인가?
-- event/receipt chain에 actor signature와 process 간 locking을 추가하면서 local-first 복구성을 어떻게 유지할 것인가?
+- 별도 외부 실행기의 샌드박스, 자격증명 중개기, 승인 토큰, 만료와 결과 증명을 어떻게 결합할 것인가?
+- 사건·영수증 사슬에 행위자 서명과 프로세스 간 잠금을 추가하면서 로컬 우선 복구성을 어떻게 유지할 것인가?
 
-## P1 — Perspective health
+## P1 — 관점 건전성
 
-- Wiki가 독자적 관점을 가지면서도 echo chamber가 되지 않았음을 어떻게 측정하는가?
+- Wiki가 독자적 관점을 가지면서도 반향실이 되지 않았음을 어떻게 측정하는가?
 - 관점의 일관성과 새로운 증거에 대한 수정 가능성을 동시에 평가할 수 있는가?

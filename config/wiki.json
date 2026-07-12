@@ -1,6 +1,6 @@
 {
   "name": "Living Wiki",
-  "harness_version": "4.1.0",
+  "harness_version": "4.3.0",
   "knowledge_bundle": {
     "format": "Open Knowledge Format",
     "path": "wiki",
@@ -34,6 +34,22 @@
     "normal": 180,
     "slow": 730,
     "timeless": null
+  },
+  "hygiene_selection": {
+    "recent_documents": 20,
+    "stale_claims": 20,
+    "max_hops": 2,
+    "max_nodes": 120,
+    "max_pairs": 40,
+    "semantic_review_limit": 10
+  },
+  "quarantine_distribution": {
+    "mode": "local-only-metadata-in-git",
+    "path": "raw/quarantine",
+    "public_repository": "winehouse8/auto_wiki",
+    "missing_artifact_policy": "anchored-content-addressed-admission-only",
+    "default_validation_profile": "strict-local-custody",
+    "portable_validation_profile": "public-clean-clone"
   },
   "research_limits": {
     "default_max_sources_per_cycle": 12,

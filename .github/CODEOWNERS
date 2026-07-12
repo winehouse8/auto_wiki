@@ -1,0 +1,11 @@
+# Living Wiki 제어면은 사람 소유자의 명시적 검토가 필요하다.
+/.github/** @winehouse8
+/AGENTS.md @winehouse8
+/governance/** @winehouse8
+/config/** @winehouse8
+/tools/** @winehouse8
+/scripts/** @winehouse8
+/prompts/** @winehouse8
+/skills/** @winehouse8
+/tests/** @winehouse8
+/wiki/specs/** @winehouse8

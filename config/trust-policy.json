@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "principle": "Source reputation is a scoped prior; claim confidence comes from evidence.",
+  "principle": "출처 평판은 범위가 한정된 사전 정보일 뿐이며, 주장 신뢰도는 증거에서 나온다.",
   "source_levels": {
     "S0": "미평가: provenance나 문서 상태를 아직 확인하지 못함",
     "S1": "탐색 단서: 출처/방법이 약하거나 이해관계·검증 한계가 큼",
@@ -52,11 +52,10 @@
     }
   },
   "anti_patterns": [
-    "Do not convert model confidence into truth probability.",
-    "Do not count syndicated or derivative sources as independent.",
-    "Do not use publisher reputation to override direct contradictory evidence.",
-    "Do not hide disagreement inside a single average score.",
-    "Do not promote a claim solely because the user supplied the source."
+    "모델의 자기확신을 진실 확률로 바꾸지 않는다.",
+    "전재되거나 파생된 출처를 독립 출처로 세지 않는다.",
+    "발행자 평판으로 직접적인 반대 증거를 무시하지 않는다.",
+    "하나의 평균 점수 안에 이견을 숨기지 않는다.",
+    "사용자가 출처를 제공했다는 이유만으로 주장을 승격하지 않는다."
   ]
 }
-

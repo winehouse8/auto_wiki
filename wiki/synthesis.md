@@ -9,7 +9,7 @@ claim_ids: [CLM-F6367BFF8F35, CLM-CB6E34C87DA3, CLM-F464CCF0AA1A, CLM-95A38CACF2
 
 # 현재 종합 — 문서 저장소가 아니라 검증 가능한 연구 공동체
 
-## Thesis
+## 핵심 명제
 
 살아 있는 Wiki의 핵심은 Agent가 글을 많이 쓰는 데 있지 않다. 외부 세계의 흔적을 불변 증거로 보존하고, 그 위에서 누가 어떤 주장을 왜 믿게 되었는지 추적하며, 새로운 증거가 들어올 때 관련 관점과 문서를 제한적으로 다시 컴파일하는 데 있다.
 
@@ -19,8 +19,8 @@ Karpathy와 AI Research OS의 가장 강한 통찰은 지식을 매 질의마다
 
 따라서 현재 Wiki의 설계 입장은 다음과 같다.
 
-1. 원문은 진실이 아니라 감사 가능한 evidence다. (`CLM-6DDD53332A40`, contested)
-2. 신뢰의 최소 단위는 page가 아니라 atomic claim과 locator다. (`CLM-CB6E34C87DA3`)
+1. 원문은 진실이 아니라 감사 가능한 evidence다. ([CLM-6DDD53332A40](claims/clm-6ddd53332a40.md), contested)
+2. 신뢰의 최소 단위는 page가 아니라 atomic claim과 locator다. ([CLM-CB6E34C87DA3](claims/clm-cb6e34c87da3.md))
 3. 신뢰는 한 숫자가 아니라 source·evidence·independence·contradiction·review 벡터다.
 4. 사람과 Agent는 같은 actor/contribution protocol을 사용한다. 권한은 책임과 위험에 따라 역할별로 다르다.
 5. Wiki의 관점은 사실 원장과 분리하고 강한 반론과 변화 조건을 보존한다.
@@ -35,7 +35,7 @@ Karpathy와 AI Research OS의 가장 강한 통찰은 지식을 매 질의마다
 
 이 종합은 production 인증이 아니다. 47개 source record 중 4개만 local immutable artifact까지 보존했고, v4 이전 35개는 admission 이전 자료라 finite grandfather manifest로만 예외 처리하며 신규 12개는 admission을 거쳤다. 15건 calibration pilot은 10/13 scorable 정답이라는 관찰값일 뿐 C-level 확률이 아니다. 18개 공격·13개 정상 case의 lexical write/retrieve/activate fixture에서는 자동 공격 허용과 정상 강제 거부가 0이었지만, unseen semantic·multilingual·multimodal·parser 공격을 평가하지 않았다. memory-feedback/lifecycle 고정 fixture와 hygiene report도 production memory 품질을 인증하지 않는다. 독립 claim review, 장기 반복 편집, live registry adapter, 동시 writer signature/locking도 아직 없다. 이 제한을 `production_certified=false`로 고정하는 것이 v4.1의 품질 기능이다.
 
-# Citations
+# 인용
 
 [1] [Karpathy LLM Wiki](sources/karpathy-llm-wiki.md)
 [2] [AI Research OS talk](sources/ai-research-os-talk.md)

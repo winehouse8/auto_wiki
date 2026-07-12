@@ -24,26 +24,26 @@
         {
           "actor": "agent:codex",
           "at": "2026-07-11T17:06:13+00:00",
-          "text": "2026-04-01~2026-07-12 업로드 목록을 yt-dlp channel enumeration과 channel search로 대조 중. 영상은 lead로 취급하고 자막·연결 원자료·반증 검색 후에만 적용한다."
+          "text": "2026-04-01~2026-07-12 업로드 목록을 `yt-dlp` 채널 열거와 채널 검색으로 대조 중이다. 영상은 조사 단서로만 취급하고 자막·연결 원자료·반증 검색을 마친 뒤에만 적용한다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T17:55:17+00:00",
-          "text": "2026-04-01~2026-07-12 공개 tab 264개(regular 253, livestream replay 11, Shorts 0)를 교차 열거해 직접 31/인접 23/제외 210으로 선별했다. 7개 신규 영상은 S2 lead, 기존 AI Research OS 영상은 재사용, DDC preprint는 S2, 독립 ACL 2026 논문 3개는 S3로 검토했다. same-author/vendor 자료는 한 independence group으로 묶고 자동 utility ranking, graph/vector truth layer, learned deletion, vendor 성능 수치는 채택하지 않았다. v4.1 additive feedback/lifecycle/hygiene와 사용자 memory mode만 구현했으며 256 tests, structural/OKF, pinned memory fixture, deterministic hygiene, rollback gate가 PASS이고 production_certified=false다."
+          "text": "2026-04-01~2026-07-12 공개 탭 264개(일반 영상 253개, 라이브스트림 다시보기 11개, Shorts 0개)를 교차 열거해 직접 관련 31개, 인접 관련 23개, 제외 210개로 선별했다. 신규 영상 7개는 S2 조사 단서로, 기존 AI Research OS 영상은 재사용 대상으로, DDC 사전공개 논문은 S2로, 독립 ACL 2026 논문 3개는 S3로 검토했다. 동일 저자·공급자 자료는 하나의 독립성 그룹으로 묶고 자동 효용 순위, 그래프·벡터 진실 계층, 학습 기반 삭제, 공급자 성능 수치는 채택하지 않았다. v4.1에는 부가적 피드백·생명주기·위생 기능과 사용자 메모리 모드만 구현했다. 테스트 256개와 구조·OKF 검사, 고정 메모리 테스트 자료, 결정론적 위생 검사, 롤백 관문은 모두 통과했으며 `production_certified=false`다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T18:02:28+00:00",
-          "text": "독립 최종 감사에서 264개 전체 분류 manifest가 immutable artifact로 보존되지 않았고 직접 후보 31개의 개별 자막 검토 receipt가 불완전하다는 완료 조건 공백을 발견했다. manifest와 전 후보 disposition을 고정할 때까지 캠페인을 재개한다."
+          "text": "독립 최종 감사에서 264개 전체 분류 목록표가 불변 산출물로 보존되지 않았고 직접 후보 31개의 개별 자막 검토 기록이 불완전하다는 완료 조건 공백을 발견했다. 목록표와 모든 후보의 처리 결과를 고정할 때까지 캠페인을 재개한다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T18:24:24+00:00",
-          "text": "이전 append-only 메모의 264=regular 253+replay 11 및 직접 31/인접 23/제외 210 집계는 immutable manifest 재감사로 정정됐다. 264 목록 행에는 예약 premiere 2개가 포함되며 완료·시청 가능 분모는 262=regular 251+replay 11이다. 고정 규칙 재분류는 직접 34/인접 32/제외 196이다. 정정 근거는 별도 감사 캠페인 CMP-94D41EAD577D와 SRC-0800355B8885에 보존했다; 원래 12-source 연구의 설계 결론은 유지하되 채널 coverage 수치는 새 C1 claims를 따른다."
+          "text": "이전 추가 전용 메모의 264=일반 영상 253+다시보기 11 및 직접 관련 31/인접 관련 23/제외 210 집계는 불변 목록표 재감사로 정정됐다. 목록 264행에는 예약 최초 상영 2개가 포함되며 완료·시청 가능 분모는 262=일반 영상 251+다시보기 11이다. 고정 규칙에 따른 재분류 결과는 직접 관련 34/인접 관련 32/제외 196이다. 정정 근거는 별도 감사 캠페인 CMP-94D41EAD577D와 SRC-0800355B8885에 보존했다. 원래 출처 12개의 연구에서 얻은 설계 결론은 유지하되 채널 범위 수치는 새 C1 주장을 따른다."
         }
       ],
       "priority": 1.0,
-      "question": "2026-04-01 이후 ai.engineer의 memory·wiki·second-brain 관련 발표 중 어떤 검증 가능한 설계가 Living Wiki의 지식 품질과 자가진화 하네스를 개선하는가?",
+      "question": "2026-04-01 이후 ai.engineer의 메모리·위키·세컨드 브레인 관련 발표 중 어떤 검증 가능한 설계가 Living Wiki의 지식 품질과 자가진화 하네스를 개선하는가?",
       "required_independent_groups": 3,
       "source_ids": [
         "SRC-03641BCFC467",
@@ -68,7 +68,7 @@
         "핵심 설계마다 독립 원자료 또는 구현 확인"
       ],
       "updated_at": "2026-07-11T18:24:24+00:00",
-      "why_now": "사용자가 특정 신뢰 우선 채널과 시점 범위를 지정했고, 현재 persistent synthesis·memory hygiene·자가진화 설계의 실제 운영 근거를 갱신할 필요가 있다."
+      "why_now": "사용자가 특정 신뢰 우선 채널과 시점 범위를 지정했고, 현재 지속 합성·메모리 위생·자가진화 설계의 실제 운영 근거를 갱신할 필요가 있다."
     },
     {
       "claim_ids": [
@@ -87,16 +87,16 @@
         {
           "actor": "agent:codex",
           "at": "2026-07-11T14:56:26+00:00",
-          "text": "공식 Google Cloud 글, SPEC.md, Apache-2.0 source, sample bundle과 reference implementation을 검사했다."
+          "text": "공식 Google Cloud 글, SPEC.md, Apache-2.0 원본 코드, 예제 번들과 참조 구현을 검사했다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T14:56:26+00:00",
-          "text": "wiki/를 전용 OKF v0.1 bundle root로 지정하고 typed frontmatter, 표준 Markdown links, reserved indexes/log, profile mapping, validator와 tests를 구현했다."
+          "text": "`wiki/`를 전용 OKF v0.1 번들 루트로 지정하고 형식이 지정된 frontmatter, 표준 Markdown 링크, 예약 색인·로그, 프로필 대응표, 검사기와 테스트를 구현했다."
         }
       ],
       "priority": 1.0,
-      "question": "Living Wiki의 교환 가능한 지식층을 Open Knowledge Format v0.1 패턴에 맞추려면 control plane과 bundle 경계를 어떻게 정해야 하는가?",
+      "question": "Living Wiki의 교환 가능한 지식층을 Open Knowledge Format v0.1 패턴에 맞추려면 제어 영역과 번들의 경계를 어떻게 정해야 하는가?",
       "required_independent_groups": 1,
       "source_ids": [
         "SRC-064C46D22353",
@@ -104,9 +104,9 @@
       ],
       "status": "completed",
       "stop_conditions": [
-        "bundle migration",
-        "validator와 tests",
-        "공식 spec 확인",
+        "번들 이전",
+        "검사기와 테스트",
+        "공식 명세 확인",
         "보고서 반영"
       ],
       "updated_at": "2026-07-11T14:56:26+00:00",
@@ -127,21 +127,21 @@
         {
           "actor": "agent:codex",
           "at": "2026-07-11T15:58:03+00:00",
-          "text": "Calibration and admission gates complete; poisoning/security fixture integration phase started."
+          "text": "보정 관문과 입수 관문을 완료했고, 오염 공격·보안 테스트 고정물의 통합 단계를 시작했다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T16:07:58+00:00",
-          "text": "Security gate completed: immutable content-addressed quarantine contract, separated normalized artifact, explainable write/retrieve/activate decisions, 31-case fixed corpus (18 attacks, 13 benign), zero automatic attack allows and zero forced benign rejections. This is a deterministic lexical baseline, not complete production security."
+          "text": "보안 관문을 완료했다. 불변 콘텐츠 주소 기반 격리 계약, 분리된 정규화 산출물, 설명 가능한 쓰기·검색·활성화 판정, 31건의 고정 말뭉치(공격 18건, 정상 13건)를 마련했다. 공격을 자동 허용한 사례와 정상 자료를 강제로 거부한 사례는 모두 0건이다. 이는 결정론적 어휘 기준선이며 완전한 운영 보안을 뜻하지 않는다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T16:20:50+00:00",
-          "text": "Linked the campaign to the C2 memory-poisoning gate claim and three primary security research sources; the fixed lexical corpus remains regression evidence rather than an independent empirical source."
+          "text": "이 캠페인을 C2 메모리 오염 방어 관문 주장과 보안 1차 연구 출처 3개에 연결했다. 고정 어휘 말뭉치는 독립적인 경험적 출처가 아니라 회귀 근거로만 유지한다."
         }
       ],
       "priority": 0.88,
-      "question": "지속 실행 Agent의 memory poisoning과 prompt injection을 실제 fixture로 어떻게 회귀 테스트할 것인가?",
+      "question": "지속 실행 Agent의 메모리 오염 공격과 프롬프트 주입을 실제 테스트 고정물로 어떻게 회귀 테스트할 것인가?",
       "required_independent_groups": 3,
       "source_ids": [
         "SRC-2779A50E2D01",
@@ -150,10 +150,10 @@
       ],
       "status": "completed",
       "stop_conditions": [
-        "write/retrieve/activate 지표",
-        "격리 runbook",
+        "쓰기·검색·활성화 지표",
+        "격리 운영 절차서",
         "위협 모델",
-        "최소 공격 fixture"
+        "최소 공격 테스트 고정물"
       ],
       "updated_at": "2026-07-11T16:20:50+00:00",
       "why_now": "현재 보안은 정책과 구조 수준이며 공격 실행 검증이 없다."
@@ -171,16 +171,16 @@
         {
           "actor": "agent:codex",
           "at": "2026-07-11T15:44:13+00:00",
-          "text": "RFC-69828EB38078 구현을 시작했다. 먼저 ordinal calibration fixture와 source admission baseline을 구축하고 고정 report를 생성한다."
+          "text": "RFC-69828EB38078 구현을 시작했다. 먼저 순서형 보정 테스트 고정물과 출처 입수 기준선을 구축하고 고정 보고서를 생성한다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T15:57:09+00:00",
-          "text": "Calibration harness completed: frozen 15-case pilot, 100-record quota design, Wilson intervals, disputed benchmark handling, no automatic trust-policy mutation. Pilot p_correct=0.769231 (10/13, 95% Wilson 0.497436-0.918205) is baseline evidence, not certification."
+          "text": "보정 하네스를 완료했다. 15건의 동결된 예비 실험, 100개 기록 할당량 설계, Wilson 구간, 논쟁 중인 기준 자료의 처리 방식을 마련했으며 신뢰 정책은 자동 변경하지 않았다. 예비 실험의 `p_correct=0.769231`(10/13, 95% Wilson 구간 0.497436~0.918205)은 기준선 근거일 뿐 인증이 아니다."
         }
       ],
       "priority": 0.95,
-      "question": "C0-C4 파생 레벨은 실제 claim 정확도와 얼마나 보정되어 있으며 도메인별 gate는 어떻게 달라야 하는가?",
+      "question": "C0-C4 파생 레벨은 실제 주장 정확도에 얼마나 맞게 보정되어 있으며 도메인별 관문은 어떻게 달라야 하는가?",
       "required_independent_groups": 3,
       "runtime": {
         "last_run_at": "2026-07-11T15:56:57+00:00",
@@ -190,12 +190,12 @@
       "source_ids": [],
       "status": "completed",
       "stop_conditions": [
-        "gold claim set 100개 설계",
-        "level별 accuracy/Brier/ECE 측정 계획",
-        "도메인별 gate RFC"
+        "정답 주장 집합 100개 설계",
+        "레벨별 정확도·Brier·ECE 측정 계획",
+        "도메인별 관문 RFC"
       ],
       "updated_at": "2026-07-11T16:07:51+00:00",
-      "why_now": "현재 레벨은 근거 기반 설계 규칙일 뿐 empirical calibration이 없다."
+      "why_now": "현재 레벨은 근거 기반 설계 규칙일 뿐 경험적 보정이 없다."
     },
     {
       "claim_ids": [
@@ -214,16 +214,16 @@
         {
           "actor": "agent:codex",
           "at": "2026-07-11T15:57:09+00:00",
-          "text": "Calibration gate completed; source admission/status registry/independence clustering integration phase started."
+          "text": "보정 관문을 완료했고 출처 입수·상태 등록부·독립성 군집화 통합 단계를 시작했다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T15:58:03+00:00",
-          "text": "Source admission baseline completed: canonical URL/DOI/repository identity, conservative derived-source clustering, Crossref/NCBI/GitHub official adapter contracts, status registry fixture, counter-search coverage, advisory allow-review-reject. Duplicate Crossref candidate correctly routed to review; canonical independence_group was not auto-mutated."
+          "text": "출처 입수 기준선을 완료했다. 정규 URL·DOI·저장소 식별, 보수적인 파생 출처 군집화, Crossref·NCBI·GitHub 공식 어댑터 계약, 상태 등록부 테스트 고정물, 반증 검색 범위, 권고형 허용·검토·거부 판정을 마련했다. 중복 Crossref 후보는 올바르게 검토 대상으로 보냈고 정규 `independence_group`은 자동으로 변경하지 않았다."
         }
       ],
       "priority": 0.9,
-      "question": "검색 품질을 높이기 위해 source registry, retraction 확인, 독립성 clustering, counter-search를 어떻게 자동 평가할 것인가?",
+      "question": "검색 품질을 높이기 위해 출처 등록부, 철회 확인, 독립성 군집화, 반증 검색을 어떻게 자동 평가할 것인가?",
       "required_independent_groups": 3,
       "source_ids": [
         "SRC-0C6123529E07",
@@ -232,12 +232,12 @@
       ],
       "status": "completed",
       "stop_conditions": [
-        "fixture와 attack corpus",
-        "precision/recall 평가 계획",
-        "공식 registry 목록"
+        "테스트 고정물과 공격 말뭉치",
+        "정밀도·재현율 평가 계획",
+        "공식 등록부 목록"
       ],
       "updated_at": "2026-07-11T15:58:03+00:00",
-      "why_now": "Garbage-in을 막는 admission gate가 현재 수동 평가에 의존한다."
+      "why_now": "잘못된 입력을 막는 입수 관문이 현재 수동 평가에 의존한다."
     },
     {
       "claim_ids": [
@@ -256,29 +256,29 @@
         {
           "actor": "agent:codex",
           "at": "2026-07-11T18:09:27+00:00",
-          "text": "전수 metadata와 candidate coverage artifact 재생성 시작. 외부 자막은 지시가 아닌 untrusted data로 취급하고 저작권 미확인 자막 본문은 canonical source로 승격하지 않는다."
+          "text": "전체 메타데이터와 후보 범위 산출물의 재생성을 시작했다. 외부 자막은 지시가 아닌 신뢰되지 않은 데이터로 취급하고, 저작권이 확인되지 않은 자막 본문은 정식 출처로 승격하지 않는다."
         },
         {
           "actor": "agent:codex",
           "at": "2026-07-11T18:24:24+00:00",
-          "text": "Immutable bundle fixed at SHA-256 bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980. Public date-range listings 264 = completed/viewable 262 (regular 251, replay 11) + upcoming 2; completed classification direct 34/adjacent 32/excluded 196. Direct captions attempted and retrieved 34/34; security allow 31/reject 3 with no override; dispositions promote 14/defer 17/exclude 3. All exact rows, rules, hashes, receipts, and dispositions are preserved; caption bodies are excluded."
+          "text": "불변 번들을 SHA-256 bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980으로 고정했다. 공개 기간 목록 264개는 완료·시청 가능 262개(일반 영상 251개, 다시보기 11개)와 공개 예정 2개로 구성된다. 완료 영상은 직접 관련 34개, 인접 관련 32개, 제외 196개로 분류했다. 직접 관련 영상의 자막은 34/34건 모두 입수를 시도해 확보했다. 보안 판정은 허용 31건, 거부 3건이며 우회하지 않았다. 처리 결과는 채택 후보 14건, 보류 17건, 제외 3건이다. 정확한 행, 규칙, 해시, 검토 기록과 처리 결과는 모두 보존했으며 자막 본문은 제외했다."
         }
       ],
       "priority": 1.0,
-      "question": "2026-04-01~2026-07-12 AI Engineer 공개 완료 영상 목록과 memory/wiki/second-brain 직접 후보의 전수 검토 범위를 immutable manifest로 재현할 수 있는가?",
+      "question": "2026-04-01~2026-07-12 AI Engineer 공개 완료 영상 목록과 메모리·위키·세컨드 브레인 직접 후보의 전수 검토 범위를 불변 목록표로 재현할 수 있는가?",
       "required_independent_groups": 1,
       "source_ids": [
         "SRC-0800355B8885"
       ],
       "status": "completed",
       "stop_conditions": [
-        "all direct candidates have caption status and disposition",
-        "deduplicated tab manifest hash fixed",
-        "report counts corrected",
-        "scheduled upcoming separated"
+        "모든 직접 후보의 자막 상태와 처리 결과 기록",
+        "중복 제거된 탭 목록표 해시 고정",
+        "보고서 집계 정정",
+        "예약 공개 예정 항목 분리"
       ],
       "updated_at": "2026-07-11T18:24:24+00:00",
-      "why_now": "최종 독립 감사에서 이전 264/31/23 집계에 manifest와 전체 직접 후보 receipt가 없고 scheduled upcoming 두 건이 분모에 섞인 공백을 발견했다."
+      "why_now": "최종 독립 감사에서 이전 264/31/23 집계에 목록표와 전체 직접 후보의 검토 기록이 없고, 예약 공개 예정 2건이 분모에 섞인 공백을 발견했다."
     },
     {
       "claim_ids": [
@@ -314,11 +314,11 @@
         {
           "actor": "agent:codex",
           "at": "2026-07-11T14:33:31+00:00",
-          "text": "29개 출처, 15개 evidence-linked claim, 보고서, 실행 CLI, 테스트, 연구 큐를 만들었다. 독립 reviewer가 없어 C3/C4는 의도적으로 비워 뒀다."
+          "text": "출처 29개, 근거 연결 주장 15개, 보고서, 실행 CLI, 테스트, 연구 대기열을 만들었다. 독립 검토자가 없어 C3/C4는 의도적으로 비워 뒀다."
         }
       ],
       "priority": 1.0,
-      "question": "사람과 Agent가 동등한 기여자로 참여하면서 Agent가 지속적으로 연구·관리하고 신뢰도를 레벨링하는 Wiki 하네스는 어떻게 설계해야 하는가?",
+      "question": "사람과 Agent가 동등한 기여자로 참여하면서 Agent가 지속적으로 연구·관리하고 신뢰도를 단계화하는 Wiki 하네스는 어떻게 설계해야 하는가?",
       "required_independent_groups": 8,
       "source_ids": [
         "SRC-08654E066049",
@@ -355,7 +355,7 @@
       "stop_conditions": [
         "2026 핵심 연구 20개 이상 선별",
         "v1-v3 실패-개선 연결",
-        "실행 가능한 validator와 tests",
+        "실행 가능한 검사기와 테스트",
         "지정 자료 분석 완료"
       ],
       "updated_at": "2026-07-11T14:33:31+00:00",
