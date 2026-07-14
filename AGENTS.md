@@ -119,7 +119,7 @@
 - `index.md`와 `log.md`는 OKF 예약 파일이다. 이 profile에서는 frontmatter를 넣지 않는다.
 - 내부 관계는 `[[wikilink]]`가 아니라 표준 Markdown link를 사용한다.
 - 외부 자료에 근거한 문서는 가능한 한 마지막 `# 인용` 절에 번호가 있는 출처 링크를 둔다.
-- `claim_ids`, `source_id`, `source_level`, `lifecycle_status`, `generated`는 OKF가 허용하는 producer extension이다. OKF 공식 필드인 것처럼 설명하지 않는다.
+- `claim_ids`, `source_id`, `source_level`, `lifecycle_status`, `project_id`, `project_ids`, `generated`는 OKF가 허용하는 producer extension이다. OKF 공식 필드인 것처럼 설명하지 않는다.
 - JSON 원장, 원시 자료, 실행 도구, 비밀정보는 번들 밖 제어 영역에 둔다.
 - 문서를 만들거나 옮긴 뒤 `python3 tools/wiki.py render`, `python3 tools/wiki.py language-validate`, `python3 tools/wiki.py okf-validate`를 실행한다.
 - 공식 OKF v0.1은 Draft다. spec 변경은 자동 migration하지 않고 RFC와 회귀검사를 거친다.

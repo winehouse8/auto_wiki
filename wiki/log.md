@@ -1,5 +1,26 @@
 # Living Wiki 갱신 기록
 
+## 2026-07-14
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **campaign.project.assign**: `CMP-C31903B13965` / 처리자 `agent:codex`.
+* **campaign.project.assign**: `CMP-94D41EAD577D` / 처리자 `agent:codex`.
+* **campaign.project.assign**: `CMP-7A543D820D83` / 처리자 `agent:codex`.
+* **campaign.project.assign**: `CMP-76BD99582F70` / 처리자 `agent:codex`.
+* **campaign.project.assign**: `CMP-088A51571084` / 처리자 `agent:codex`.
+* **campaign.project.assign**: `CMP-0619AC235CCA` / 처리자 `agent:codex`.
+* **campaign.project.assign**: `CMP-01DA85AECBAB` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-5E536A146A81` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-5E536A146A81` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-F3D99E32546E` / 처리자 `human:owner`.
+* **proposal.review**: `RFC-CB109FAC0820` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-CB109FAC0820` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-0159C1EABF81` / 처리자 `human:owner`.
+
 ## 2026-07-12
 * **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
 * **wiki.lint**: `all` / 처리자 `agent:codex`.

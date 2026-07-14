@@ -1045,9 +1045,18 @@ class IntegratedGateTests(unittest.TestCase):
         wiki.atomic_write_json(
             config / "interests.json",
             {
+                "schema_version": "living-wiki-research-portfolio/v1",
+                "projects": [
+                    {
+                        "id": "PRJ-WIKI-HARNESS",
+                        "name": "Wiki 하네스 연구",
+                        "status": "active",
+                    }
+                ],
                 "interests": [
                     {
                         "id": "INT-1",
+                        "project_id": "PRJ-WIKI-HARNESS",
                         "priority": 1.0,
                         "cadence_days": 7,
                         "questions": ["What new counterevidence exists?"],
@@ -1058,6 +1067,7 @@ class IntegratedGateTests(unittest.TestCase):
         wiki.atomic_write_json(
             config / "wiki.json",
             {
+                "timezone": "Asia/Seoul",
                 "research_limits": {
                     "default_max_sources_per_cycle": 4,
                     "default_max_minutes_per_cycle": 20,
@@ -1077,6 +1087,255 @@ class IntegratedGateTests(unittest.TestCase):
         self.assertEqual(len(campaigns), 1)
         self.assertEqual(campaigns[0]["status"], "queued")
         self.assertEqual(campaigns[0]["max_sources"], 4)
+
+    def _write_daily_interest_fixture(self):
+        config = wiki.ROOT / "config"
+        config.mkdir(parents=True, exist_ok=True)
+        wiki.atomic_write_json(
+            config / "interests.json",
+            {
+                "schema_version": "living-wiki-research-portfolio/v1",
+                "schedule": {
+                    "timezone": "Asia/Seoul",
+                    "max_campaigns_per_local_day": 1,
+                },
+                "projects": [
+                    {
+                        "id": "PRJ-WIKI-HARNESS",
+                        "name": "Wiki 하네스 연구",
+                        "status": "active",
+                    },
+                    {
+                        "id": "PRJ-AGENT-TRAINING-PAPER",
+                        "name": "Agent/Training 논문 연구",
+                        "status": "active",
+                    },
+                ],
+                "interests": [
+                    {
+                        "id": "INT-A",
+                        "project_id": "PRJ-WIKI-HARNESS",
+                        "priority": 1.0,
+                        "cadence_days": 1,
+                        "questions": ["A-Q1", "A-Q2"],
+                        "research_brief": {
+                            "objective": "첫 번째 연구 축",
+                            "constraints": ["로컬 자원 한계"],
+                        },
+                    },
+                    {
+                        "id": "INT-B",
+                        "project_id": "PRJ-AGENT-TRAINING-PAPER",
+                        "priority": 1.0,
+                        "cadence_days": 1,
+                        "questions": ["B-Q1"],
+                        "research_brief": {"objective": "두 번째 연구 축"},
+                    },
+                ],
+            },
+        )
+        wiki.atomic_write_json(
+            config / "wiki.json",
+            {
+                "timezone": "Asia/Seoul",
+                "research_limits": {
+                    "default_max_sources_per_cycle": 4,
+                    "default_max_minutes_per_cycle": 20,
+                    "min_independent_source_groups": 2,
+                    "stop_after_no_novel_claim_rounds": 2,
+                },
+            },
+        )
+
+    @staticmethod
+    def _interest_args(now):
+        return type(
+            "Args",
+            (),
+            {"actor": "agent:test", "now": now, "max_campaigns": 1},
+        )()
+
+    def test_interest_seed_enforces_one_global_slot_per_local_day(self):
+        self._write_daily_interest_fixture()
+
+        wiki.interest_seed(self._interest_args("2026-07-15T00:30:00+09:00"))
+        first = wiki.collection("campaigns")[0]
+        first["status"] = "completed"
+        first["updated_at"] = "2026-07-15T00:40:00+09:00"
+        first["created_by"] = "agent:other"
+        wiki.save_collection("campaigns", [first])
+        wiki.interest_seed(self._interest_args("2026-07-15T23:00:00+09:00"))
+
+        campaigns = wiki.collection("campaigns")
+        self.assertEqual(len(campaigns), 1)
+        self.assertEqual(campaigns[0]["cycle_key"], "2026-07-15")
+        self.assertEqual(campaigns[0]["schedule_timezone"], "Asia/Seoul")
+
+    def test_two_daily_interests_rotate_and_failed_question_is_retried(self):
+        self._write_daily_interest_fixture()
+
+        wiki.interest_seed(self._interest_args("2026-07-15T20:00:00+09:00"))
+        campaigns = wiki.collection("campaigns")
+        self.assertEqual(campaigns[0]["interest_id"], "INT-A")
+        self.assertEqual(campaigns[0]["question"], "A-Q1")
+        campaigns[0]["status"] = "blocked"
+        campaigns[0]["updated_at"] = "2026-07-15T20:10:00+09:00"
+        wiki.save_collection("campaigns", campaigns)
+
+        wiki.interest_seed(self._interest_args("2026-07-16T20:00:00+09:00"))
+        campaigns = wiki.collection("campaigns")
+        second = next(item for item in campaigns if item.get("cycle_key") == "2026-07-16")
+        self.assertEqual(second["interest_id"], "INT-B")
+        second["status"] = "completed"
+        second["updated_at"] = "2026-07-16T20:20:00+09:00"
+        wiki.save_collection("campaigns", campaigns)
+
+        wiki.interest_seed(self._interest_args("2026-07-17T20:00:00+09:00"))
+        campaigns = wiki.collection("campaigns")
+        third = next(item for item in campaigns if item.get("cycle_key") == "2026-07-17")
+        self.assertEqual(third["interest_id"], "INT-A")
+        self.assertEqual(third["question"], "A-Q1")
+
+    def test_interest_seed_copies_research_brief_into_campaign(self):
+        self._write_daily_interest_fixture()
+
+        wiki.interest_seed(self._interest_args("2026-07-15T20:00:00+09:00"))
+
+        campaign = wiki.collection("campaigns")[0]
+        self.assertEqual(campaign["research_brief"]["objective"], "첫 번째 연구 축")
+        self.assertEqual(campaign["research_brief"]["constraints"], ["로컬 자원 한계"])
+        self.assertEqual(campaign["project_id"], "PRJ-WIKI-HARNESS")
+
+    def test_manual_campaign_add_copies_research_brief_into_campaign(self):
+        self._write_daily_interest_fixture()
+        args = type(
+            "Args",
+            (),
+            {
+                "actor": "agent:test",
+                "interest": "INT-A",
+                "question": "수동 캠페인도 brief를 보존하는가?",
+                "why": "수동 진입점 회귀",
+                "priority": 1.0,
+                "max_sources": 4,
+                "max_minutes": 20,
+                "independent_groups": 2,
+                "stop": None,
+            },
+        )()
+
+        wiki.campaign_add(args)
+
+        campaign = wiki.collection("campaigns")[0]
+        self.assertEqual(campaign["project_id"], "PRJ-WIKI-HARNESS")
+        self.assertEqual(campaign["research_brief"]["objective"], "첫 번째 연구 축")
+        self.assertEqual(campaign["research_brief"]["constraints"], ["로컬 자원 한계"])
+
+    def test_interest_seed_rejects_missing_or_unknown_project(self):
+        self._write_daily_interest_fixture()
+        config_path = wiki.ROOT / "config" / "interests.json"
+        payload = wiki.load_json(config_path)
+
+        payload["interests"][0].pop("project_id")
+        wiki.atomic_write_json(config_path, payload)
+        with self.assertRaisesRegex(wiki.WikiError, "project_id"):
+            wiki.interest_seed(self._interest_args("2026-07-15T20:00:00+09:00"))
+
+        payload["interests"][0]["project_id"] = "PRJ-UNKNOWN"
+        wiki.atomic_write_json(config_path, payload)
+        with self.assertRaisesRegex(wiki.WikiError, "PRJ-UNKNOWN"):
+            wiki.interest_seed(self._interest_args("2026-07-15T20:00:00+09:00"))
+
+    def test_project_id_path_traversal_is_rejected_before_render(self):
+        self._write_daily_interest_fixture()
+        config_path = wiki.ROOT / "config" / "interests.json"
+        payload = wiki.load_json(config_path)
+        dangerous_id = "PRJ-X/../../../outside"
+        payload["projects"][0]["id"] = dangerous_id
+        payload["interests"][0]["project_id"] = dangerous_id
+        wiki.atomic_write_json(config_path, payload)
+
+        with self.assertRaisesRegex(wiki.WikiError, "project id"):
+            wiki.render_project_views()
+        self.assertFalse((wiki.ROOT / "outside.md").exists())
+
+    def test_campaign_project_snapshot_survives_later_interest_move(self):
+        self._write_daily_interest_fixture()
+        wiki.interest_seed(self._interest_args("2026-07-15T20:00:00+09:00"))
+        campaign = wiki.collection("campaigns")[0]
+        self.assertEqual(campaign["project_id"], "PRJ-WIKI-HARNESS")
+
+        config_path = wiki.ROOT / "config" / "interests.json"
+        payload = wiki.load_json(config_path)
+        payload["interests"][0]["project_id"] = "PRJ-AGENT-TRAINING-PAPER"
+        wiki.atomic_write_json(config_path, payload)
+
+        backfill_args = type("Args", (), {"actor": "agent:test"})()
+        wiki.campaign_project_backfill(backfill_args)
+        self.assertEqual(
+            wiki.collection("campaigns")[0]["project_id"],
+            "PRJ-WIKI-HARNESS",
+        )
+        errors, _, _ = wiki.validation_findings(
+            quarantine_profile=wiki.PUBLIC_QUARANTINE_PROFILE,
+        )
+        self.assertFalse(
+            any("project_id does not match interest" in error for error in errors),
+            errors,
+        )
+
+    def test_project_views_group_campaigns_runs_and_shared_evidence_without_duplication(self):
+        self._write_daily_interest_fixture()
+        wiki.save_collection(
+            "campaigns",
+            [
+                {
+                    "id": "CMP-HARNESS",
+                    "project_id": "PRJ-WIKI-HARNESS",
+                    "interest_id": "INT-A",
+                    "question": "하네스 질문",
+                    "status": "completed",
+                    "created_at": "2026-07-15T20:00:00+09:00",
+                    "claim_ids": ["CLM-SHARED"],
+                    "source_ids": ["SRC-SHARED"],
+                },
+                {
+                    "id": "CMP-PAPER",
+                    "project_id": "PRJ-AGENT-TRAINING-PAPER",
+                    "interest_id": "INT-B",
+                    "question": "논문 질문",
+                    "status": "queued",
+                    "created_at": "2026-07-16T20:00:00+09:00",
+                    "claim_ids": ["CLM-SHARED"],
+                    "source_ids": ["SRC-SHARED"],
+                },
+            ],
+        )
+        wiki.save_collection(
+            "runs",
+            [
+                {
+                    "id": "RUN-PAPER",
+                    "plan": {"actions": [{"campaign_id": "CMP-PAPER"}]},
+                }
+            ],
+        )
+
+        wiki.render_project_views()
+
+        harness = (wiki.WIKI / "projects" / "prj-wiki-harness.md").read_text(encoding="utf-8")
+        paper = (wiki.WIKI / "projects" / "prj-agent-training-paper.md").read_text(encoding="utf-8")
+        index = (wiki.WIKI / "projects" / "index.md").read_text(encoding="utf-8")
+        self.assertIn("Wiki 하네스 연구", index)
+        self.assertIn("Agent/Training 논문 연구", index)
+        self.assertIn("CMP-HARNESS", harness)
+        self.assertIn("CMP-PAPER", paper)
+        self.assertIn("RUN-PAPER", paper)
+        self.assertIn('timestamp: "2026-07-16T20:00:00+09:00"', paper)
+        for text in (harness, paper):
+            self.assertIn("../claims/clm-shared.md", text)
+            self.assertIn("../sources/src-shared.md", text)
+            self.assertIn("공유 근거", text)
 
 
 class TemporalMetadataContractTests(unittest.TestCase):

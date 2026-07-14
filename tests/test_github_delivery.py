@@ -695,6 +695,36 @@ class GitHubDeliveryContractTests(unittest.TestCase):
             {"자동화", "사람-검토-필요"},
         )
 
+    def test_reconciled_human_review_merge_never_claims_auto_merge_request(self):
+        transport = _FakeTransport()
+        request = _request(changes=[{"path": "tools/wiki.py", "status": "modified"}])
+        first = github_delivery.deliver(
+            request,
+            transport=transport,
+            token_loader=lambda: "가짜-토큰",
+        )
+        pr_number = first["pr_number"]
+        transport.pull_requests[pr_number].update(
+            {
+                "state": "closed",
+                "merged": True,
+                "merge_sha": MERGE_SHA,
+                "auto_merge_enabled": False,
+            }
+        )
+
+        reconciled = github_delivery.deliver(
+            request,
+            transport=transport,
+            token_loader=lambda: "가짜-토큰",
+        )
+
+        self.assertEqual(reconciled["status"], "merged")
+        self.assertEqual(reconciled["route"], "review")
+        self.assertEqual(reconciled["merge_sha"], MERGE_SHA)
+        self.assertFalse(reconciled["merge_requested"])
+        self.assertEqual(transport.count("request_auto_merge"), 0)
+
     def test_same_idempotency_key_does_not_duplicate_branch_pr_or_merge(self):
         transport = _FakeTransport()
         request = _request()
@@ -733,6 +763,38 @@ class GitHubDeliveryContractTests(unittest.TestCase):
 
         self.assertEqual(completed["status"], "merged")
         self.assertEqual(completed["merge_sha"], MERGE_SHA)
+        self.assertEqual(transport.count("request_auto_merge"), 1)
+
+    def test_reconciled_safe_merge_preserves_prior_auto_merge_request_evidence(self):
+        transport = _FakeTransport(merge_immediately=False)
+        request = _request()
+        pending = github_delivery.deliver(
+            request,
+            transport=transport,
+            token_loader=lambda: "가짜-토큰",
+        )
+        self.assertEqual(pending["status"], "auto-merge-pending")
+        self.assertTrue(pending["merge_requested"])
+
+        pr_number = pending["pr_number"]
+        transport.pull_requests[pr_number].update(
+            {
+                "state": "closed",
+                "merged": True,
+                "merge_sha": MERGE_SHA,
+                "auto_merge_enabled": False,
+            }
+        )
+        completed = github_delivery.deliver(
+            request,
+            transport=transport,
+            token_loader=lambda: "가짜-토큰",
+            prior_receipt=pending,
+        )
+
+        self.assertEqual(completed["status"], "merged")
+        self.assertTrue(completed["merge_requested"])
+        self.assertEqual(completed["merge_method"], "squash")
         self.assertEqual(transport.count("request_auto_merge"), 1)
 
     def test_merge_is_complete_only_after_pr_requery_returns_merge_receipt(self):

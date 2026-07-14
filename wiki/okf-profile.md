@@ -4,7 +4,7 @@ title: Living Wiki의 OKF 프로필
 description: 이 OKF v0.1 번들이 인식론·거버넌스 확장을 대응시키는 방식.
 resource: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 tags: [okf, interoperability, profile]
-timestamp: '2026-07-12T22:30:00+09:00'
+timestamp: '2026-07-15T01:22:54+09:00'
 okf_version: '0.1'
 spec_status: Draft
 bundle_boundary: wiki/
@@ -46,6 +46,8 @@ OKF v0.1은 분류 체계, 저장소, 질의 인프라, 신뢰, 거버넌스를 
 | `lifecycle_updated_at` | 내용 변경과 구분한 생명주기 전이 시각 |
 | `retrieved_at` | 출처를 검색·입수한 시각 |
 | `assessed_at` | 출처의 범위 한정 평가를 수행한 시각 |
+| `project_id` | 관심사에서 캠페인으로 복사한 단일 연구 프로젝트 분류 |
+| `project_ids` | 캠페인 관계로 계산한 여러 연구 프로젝트의 정렬된 파생 목록 |
 
 이 키들은 OKF를 확장하며, v0.1 명세가 신뢰나 출처 이력 의미론을 정의한다는 주장이 아니다.
 
@@ -58,6 +60,7 @@ OKF v0.1은 분류 체계, 저장소, 질의 인프라, 신뢰, 거버넌스를 
 | 원자적 주장 | 근거 표가 있는 `claims/clm-*.md`, `type: Claim` | `state/claims.json` |
 | 행위자 | `actors/actor-*.md`, `type: Actor` | `state/actors.json` |
 | 검토 | `reviews/rev-*.md`, `type: Review` | `state/reviews.json` |
+| 연구 프로젝트 | `projects/prj-*.md`, `type: Research Project` | `config/interests.json`의 프로젝트 레지스트리 |
 | 연구 캠페인 | `campaigns/cmp-*.md`, `type: Research Campaign` | `state/campaigns.json` |
 | 협업 레코드 | `collaborations/col-*.md`, `type: Collaboration Record` | `state/collaborations.json` |
 | 수용 결정 | `admissions/adm-*.md`, `type: Admission Decision` | `state/admissions.json` |

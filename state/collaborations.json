@@ -2,6 +2,28 @@
   "collaborations": [
     {
       "actor_id": "human:owner",
+      "content": "Living Wiki 관리인을 매일 Asia/Seoul 20:00에 한 번 실행해 위생 작업 뒤 연구 캠페인 최대 하나를 진행한다. 연구 포트폴리오는 연구용 Wiki 하네스 개선과 Agent/Training 최신 논문 기반의 탑티어 논문 개발 두 트랙이며, 둘을 편향 없이 교대하고 모든 근거·실험·초고를 Wiki와 GitHub PR 이력에 누적한다. 논문 트랙은 Apple M4·16GB 통합 메모리에서 재현 가능한 실험, 무료 로컬 계산 또는 별도 승인된 API만 허용하고, novelty·명확한 contribution·강한 baseline·반증 가능한 평가·논문 초고를 종료 조건으로 삼는다.",
+      "created_at": "2026-07-14T15:52:13+00:00",
+      "id": "COL-0159C1EABF81",
+      "intent": "direction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": "매일 한 캠페인이라는 안전 예산을 유지하되 두 트랙을 2일 주기로 엇갈려 포트폴리오 전체는 매일 진전시킨다.",
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "config/interests.json",
+        "skills/living-wiki-steward/SKILL.md",
+        "skills/living-wiki-steward/references/scheduled-task-prompt.md",
+        "wiki/specs/living-wiki-steward-skill.md"
+      ],
+      "updated_at": "2026-07-14T15:52:13+00:00"
+    },
+    {
+      "actor_id": "human:owner",
       "content": "ai.engineer 채널의 2026-04-01 이후 메모리, 위키, 세컨드 브레인 및 직접 인접 주제 영상을 비판적으로 조사하고, 독립 원자료로 신뢰 검증된 개선만 Living Wiki 콘텐츠와 하네스에 반영한다.",
       "created_at": "2026-07-11T17:06:07+00:00",
       "id": "COL-0B8170AE658D",
@@ -220,6 +242,27 @@
         "wiki/specs/harness-ux.md"
       ],
       "updated_at": "2026-07-12T02:20:09+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "content": "Living Wiki 연구 포트폴리오를 두 상위 프로젝트인 Wiki 하네스 연구와 Agent/Training 논문 연구로 분류한다. 관심사와 캠페인은 정확히 한 프로젝트에 속하고, 출처와 주장은 전역 근거 그래프로 공유하며 프로젝트별 Wiki 화면에서는 관계를 통해 탐색한다.",
+      "created_at": "2026-07-14T16:06:54+00:00",
+      "id": "COL-F3D99E32546E",
+      "intent": "direction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": "두 프로젝트를 사용자에게 보이는 기본 연구 단위로 채택",
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "RFC-CB109FAC0820",
+        "config/interests.json",
+        "wiki/projects/index.md"
+      ],
+      "updated_at": "2026-07-14T16:06:54+00:00"
     },
     {
       "actor_id": "human:owner",

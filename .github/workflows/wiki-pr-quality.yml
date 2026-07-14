@@ -34,9 +34,11 @@ jobs:
           git diff --exit-code
           python3 tools/wiki.py memory-hygiene --now "$NOW"
           python3 tools/wiki.py hygiene-plan --now "$NOW"
-          python3 tools/wiki.py lint --quarantine-profile public-clean-clone --no-log
+          python3 tools/wiki.py lint --quarantine-profile public-clean-clone --check-only
           python3 tools/wiki.py language-validate
           python3 tools/wiki.py validate --quarantine-profile public-clean-clone
           python3 tools/wiki.py okf-validate
           python3 -m unittest discover -s tests -v
-          python3 tools/wiki.py release-check --quarantine-profile public-clean-clone --no-log
+          python3 tools/wiki.py release-check --quarantine-profile public-clean-clone --check-only
+          git diff --exit-code
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"

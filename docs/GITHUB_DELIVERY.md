@@ -2,7 +2,7 @@
 
 Living Wiki v4.3의 변경 전달 목표는 “자동 작업도 사람이 추적 가능한 PR 이력으로 남긴다”이다. Agent를 정해진 시각에 깨우는 역할은 Codex 예약 작업이, 위생·연구·검증은 `living-wiki-steward` Skill이 맡는다. GitHub는 실행 시계가 아니라 브랜치·PR·check·검토·병합을 기록하고 통제하는 감사 제어면이다.
 
-권위 계약은 [Living Wiki GitHub PR 전달과 위험 기반 자동 병합](../wiki/specs/github-delivery.md)의 `SPEC-GH-DELIVERY-001` 버전 `1.1.0`이다. 연결 구현 RFC는 `RFC-03F4FE85BB44`다. 이번 계약 보강은 기존 exact-repository 승인 범위를 넓히지 않는다.
+권위 문서 계약은 [Living Wiki GitHub PR 전달과 위험 기반 자동 병합](../wiki/specs/github-delivery.md)의 `SPEC-GH-DELIVERY-001` 버전 `1.2.0`이다. 연결 구현 RFC는 `RFC-03F4FE85BB44`다. 현재 후속 PR의 begin 영수증과 실행 코드·설정은 변경 전 운영 식별자 `SPEC-GH-DELIVERY-001/v1.1.0`에 고정돼 있으므로 이 PR 안에서 조용히 바꾸지 않는다. 사람 검토 병합 뒤 별도 정책 버전 전환을 감사 가능한 변경으로 완료해야 하며, 이번 계약 보강은 기존 exact-repository 승인 범위를 넓히지 않는다.
 
 ## 정확한 대상과 현재 배포 상태
 
@@ -14,7 +14,7 @@ Living Wiki v4.3의 변경 전달 목표는 “자동 작업도 사람이 추적
 
 빈 저장소에 기준 ref를 만드는 일회성 예외는 깨끗한 로컬 기준 커밋 `5f1d7f0`만 `main`에 직접 게시하면서 이미 소진했다. 이 작업과 branch protection 적용은 [GitHub 이슈 #1](https://github.com/winehouse8/auto_wiki/issues/1)에 공개 영수증으로 남겼다. 이후 자동 실행은 이 예외를 재사용하거나 `main`에 직접 push할 수 없다.
 
-현재 구현 범위는 exact-repository 정책, 비밀 안전 loader, 결정론적 위험 분류, PR 본문과 영수증, 멱등성·SHA drift·check 판정 코어, fake transport 회귀검사와 비밀 없는 PR 품질 workflow다. 첫 사람 검토 통합 PR이 병합되기 전이므로 실제 live adapter와 원격 자동 병합 경로는 아직 전진 검증되지 않았다. 첫 통합 PR을 사람이 검토·병합한 뒤 별도의 무해한 canary PR에서 정확한 필수 check `전체 저장소 품질 게이트`와 squash auto-merge를 검증한다. 이 순서가 끝나도 `production_certified=false`다.
+현재 구현 범위는 exact-repository 정책, 비밀 안전 loader, 결정론적 위험 분류, PR 본문과 영수증, 멱등성·SHA drift·check 판정 코어, fake transport 회귀검사와 비밀 없는 PR 품질 workflow다. 첫 사람 검토 통합 [PR #2](https://github.com/winehouse8/auto_wiki/pull/2)는 병합됐다. 현재는 그 뒤 발견한 prospective gate 자기 변경과 병합 영수증 재조정 결함의 후속 사람 검토 PR, 운영 정책 버전 전환, 실제 live adapter와 원격 자동 병합 경로의 전진 검증이 남아 있다. 이 두 제어면 변경을 병합한 뒤 별도의 무해한 canary PR에서 정확한 필수 check `전체 저장소 품질 게이트`와 squash auto-merge를 검증한다. 이 순서가 끝나도 `production_certified=false`다.
 
 ## 한 번의 예약 실행 흐름
 
@@ -118,7 +118,7 @@ python3 tools/wiki.py release-check --quarantine-profile public-clean-clone
 
 ## 실행 소유권·멱등성과 복구
 
-각 실행은 최신 `origin/main`과 일치하는 깨끗한 전용 작업 사본에서 run ID와 base SHA를 고정하고 `wiki-auto/<run-id>` 소유 브랜치를 사용한다. 첫 통합 PR도 예외가 아니므로 `origin/main` 기준의 별도 clean linked worktree에서 `begin` 영수증을 먼저 만든 뒤 승인된 patch만 적용한다. 기존 dirty 기본 작업 사본을 직접 stage하거나 시작 영수증 이전 파일을 manifest로 추측하지 않는다.
+각 실행은 최신 `origin/main`과 일치하는 깨끗한 전용 작업 사본에서 run ID와 base SHA를 고정하고 `wiki-auto/<run-id>` 소유 브랜치를 사용한다. 첫 통합 PR을 포함한 모든 실행은 `origin/main` 기준의 별도 clean 작업 사본에서 `begin` 영수증을 먼저 만든 뒤 승인된 patch만 적용한다. 기존 dirty 기본 작업 사본을 직접 stage하거나 시작 영수증 이전 파일을 manifest로 추측하지 않는다.
 
 전체 게이트가 끝나면 고정 base SHA 대비 실제 Git 상태와 diff로 추가·수정·삭제·이동·새 추적 후보를 포함한 manifest를 다시 만든다. 이 결과가 caller의 `safe`, `generated_only`, `semantic_change` boolean이나 사전 manifest보다 권위 있다. 금지 diff는 stage 전에 차단하고, 허용 파일을 stage한 뒤 같은 manifest 및 base와 다시 비교해 commit 전 불일치도 차단한다. `git add -A`로 사용자 변경이나 다른 실행의 파일을 추측해 포함하지 않는다.
 

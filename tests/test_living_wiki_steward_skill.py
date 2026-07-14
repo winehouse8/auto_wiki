@@ -90,6 +90,19 @@ class LivingWikiStewardSkillContractTests(unittest.TestCase):
         self.assertIn("도래한 캠페인 하나", text.casefold())
         self.assertIn("중요한 변경", text.casefold())
         self.assertIn("권한을 확장하지", text.casefold())
+        for phrase in (
+            "Asia/Seoul",
+            "RRULE:FREQ=DAILY;BYHOUR=20;BYMINUTE=0",
+            "Wiki 하네스 연구",
+            "Agent/Training 논문 연구",
+            "project_id",
+            "research_brief",
+            "Apple M4·16GB",
+            "구독을 API credit으로 간주하지",
+            "fast-forward-only",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase.casefold(), text.casefold())
 
     def test_prd_separates_invocation_work_and_reliance_axes(self):
         text = PRD.read_text(encoding="utf-8")
@@ -169,14 +182,14 @@ class LivingWikiStewardSkillContractTests(unittest.TestCase):
     def test_prd_has_all_acceptance_ids_and_entrypoints_link_it(self):
         text = PRD.read_text(encoding="utf-8")
         acceptance_ids = re.findall(r"`(AC-LWS-\d{3})`:", text)
-        self.assertEqual(acceptance_ids, [f"AC-LWS-{number:03d}" for number in range(1, 29)])
+        self.assertEqual(acceptance_ids, [f"AC-LWS-{number:03d}" for number in range(1, 41)])
         for entrypoint in (ROOT / "README.md", ROOT / "AGENTS.md"):
             self.assertIn("wiki/specs/living-wiki-steward-skill.md", entrypoint.read_text(encoding="utf-8"))
 
-    def test_prd_v1_3_contracts_hygiene_time_and_github_delivery(self):
+    def test_prd_v1_5_contracts_hygiene_time_github_daily_research_and_projects(self):
         text = PRD.read_text(encoding="utf-8")
         required = (
-            "버전: `1.3.0`",
+            "버전: `1.5.0`",
             "전체 상태·비예약 문서",
             "최근 문서 N개",
             "최대 2-hop",
@@ -195,6 +208,16 @@ class LivingWikiStewardSkillContractTests(unittest.TestCase):
             "GitHub PR 전달",
             "draft 사람 검토 PR",
             "token read 전에 검증",
+            "지역 날짜",
+            "미배정 우선",
+            "research_brief",
+            "Apple M4·16GB",
+            "매일 20:00",
+            "Wiki 하네스 연구",
+            "Agent/Training 논문 연구",
+            "project_id",
+            "전역 원장에 한 번만",
+            "wiki/projects/",
         )
         for term in required:
             with self.subTest(term=term):

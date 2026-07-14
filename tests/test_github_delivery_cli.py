@@ -640,7 +640,7 @@ class GitHubDeliveryBeginRedTests(unittest.TestCase):
 
 
 class GitHubDeliveryPublishRedTests(unittest.TestCase):
-    def test_post_gate_manifest_accepts_only_digest_valid_release_archive(self):
+    def test_post_gate_manifest_rejects_even_digest_valid_gate_output(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             archive_dir = root / "evaluations" / "reports"
@@ -673,34 +673,29 @@ class GitHubDeliveryPublishRedTests(unittest.TestCase):
                 path: {"status": "added", "git_status": "?"},
             }
 
+            with self.assertRaises(github_delivery.DeliveryBlocked):
+                _api("_reconcile_post_gate_manifest")(
+                    declared,
+                    actual,
+                    root=root,
+                )
             reconciled = _api("_reconcile_post_gate_manifest")(
                 declared,
-                actual,
+                {"wiki/index.md": {"status": "modified", "git_status": "M"}},
                 root=root,
             )
-            self.assertEqual(set(reconciled), set(actual))
+            self.assertEqual(reconciled, declared)
 
             with self.assertRaises(github_delivery.DeliveryBlocked):
                 _api("_reconcile_post_gate_manifest")(
                     declared,
                     {
-                        **actual,
+                        "wiki/index.md": {"status": "modified", "git_status": "M"},
                         "unexpected/output.json": {
                             "status": "added",
                             "git_status": "?",
                         },
                     },
-                    root=root,
-                )
-            report["report_digest"] = "b" * 64
-            (root / path).write_text(
-                json.dumps(report, ensure_ascii=False) + "\n",
-                encoding="utf-8",
-            )
-            with self.assertRaises(github_delivery.DeliveryBlocked):
-                _api("_reconcile_post_gate_manifest")(
-                    declared,
-                    actual,
                     root=root,
                 )
 
@@ -1213,7 +1208,7 @@ class GitHubDeliveryPublishRedTests(unittest.TestCase):
                 "lint",
                 "--quarantine-profile",
                 "public-clean-clone",
-                "--no-log",
+                "--check-only",
             ),
             ("python3", "tools/wiki.py", "language-validate"),
             (
@@ -1231,7 +1226,7 @@ class GitHubDeliveryPublishRedTests(unittest.TestCase):
                 "release-check",
                 "--quarantine-profile",
                 "public-clean-clone",
-                "--no-log",
+                "--check-only",
             ),
         )
         self.assertEqual(tuple(_api("quality_gate_commands")(NOW)), expected)
@@ -1383,6 +1378,73 @@ class GitHubDeliveryPublishRedTests(unittest.TestCase):
             self.assertEqual(stored["pr_number"], 17)
             self.assertEqual(stored["merge_sha"], MERGE_SHA)
             self.assertNotIn(SECRET, delivery_path.read_text(encoding="utf-8"))
+
+    def test_publish_retry_reuses_matching_prior_auto_merge_receipt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".git").mkdir()
+            _begin_receipt(root)
+            change = {
+                "path": "wiki/index.md",
+                "status": "modified",
+                "generated": True,
+                "semantic_change": False,
+            }
+            runner = _FakeRunner(root, current_branch=BRANCH, status="")
+            runner.after_commit = True
+            runner.committed_status = " M wiki/index.md\n"
+            runner.commit_message = (
+                f"[위키 자동화] 위생 — {RUN_ID}\n\n"
+                f"Wiki-Run-ID: {RUN_ID}\nWiki-Actor: agent:codex\n"
+                f"Wiki-Gate-Digest: {'a' * 64}\n"
+            )
+            transport = _FakeTransport()
+            transport.pr = {
+                "number": 17,
+                "url": f"https://github.com/{REPOSITORY}/pull/17",
+                "draft": False,
+                "state": "closed",
+                "merged": True,
+                "merge_sha": MERGE_SHA,
+                "base_sha": BASE_SHA,
+                "head_sha": HEAD_SHA,
+                "tree_sha": TREE_SHA,
+                "labels": ["자동화", "자동-병합-후보"],
+                "auto_merge_enabled": False,
+            }
+            key = github_delivery.idempotency_key(
+                policy_version=POLICY,
+                run_id=RUN_ID,
+                base_sha=BASE_SHA,
+                tree_sha=TREE_SHA,
+            )
+            delivery_path = (
+                root / ".git" / "wiki-delivery" / f"{RUN_ID}.delivery.json"
+            )
+            delivery_path.write_text(
+                json.dumps(
+                    {
+                        "status": "auto-merge-pending",
+                        "route": "safe",
+                        "idempotency_key": key,
+                        "pr_number": 17,
+                        "merge_requested": True,
+                        "merge_method": "squash",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            receipt = _publish(
+                root,
+                context=_context(changes=[change]),
+                runner=runner,
+                transport=transport,
+            )
+
+            self.assertEqual(receipt["status"], "merged")
+            self.assertTrue(receipt["merge_requested"])
+            self.assertEqual(transport.count("request_auto_merge"), 0)
 
 
 class GitHubCliTransportRemoteStateRedTests(unittest.TestCase):

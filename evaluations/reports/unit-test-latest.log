@@ -1,9 +1,18 @@
-EXT-B002A0B58055
-EXT-B002A0B58055
+CMP-528FD74E0388
+프로젝트를 분류한 캠페인: 0개
+EXT-3B24F8A36589
+EXT-3B24F8A36589
+CMP-528FD74E0388
+CMP-528FD74E0388
+No interest is due for campaign seeding.
 CMP-24D2FEF6D8CB
 No interest is due for campaign seeding.
+CMP-38ABAD8CD989
 ADM-CA463353F1E7
 SRC-B475048DE1BD
+CMP-528FD74E0388
+CMP-AB9FCA1B719A
+CMP-2EA1F39CBA70
 MFB-5A52B5BAB510
 MFB-5A52B5BAB510
 LCT-3AEB9A8FA993
@@ -74,6 +83,8 @@ test_policy_and_governance_refs_are_pinned_before_token_or_transport (test_githu
 test_post_request_requery_failure_never_claims_merge_was_not_requested (test_github_delivery.GitHubDeliveryContractTests) ... ok
 test_protected_and_unknown_paths_fail_closed_instead_of_becoming_safe (test_github_delivery.GitHubDeliveryContractTests) ... ok
 test_raw_overwrite_event_rewrite_and_auth_change_are_immediately_blocked (test_github_delivery.GitHubDeliveryContractTests) ... ok
+test_reconciled_human_review_merge_never_claims_auto_merge_request (test_github_delivery.GitHubDeliveryContractTests) ... ok
+test_reconciled_safe_merge_preserves_prior_auto_merge_request_evidence (test_github_delivery.GitHubDeliveryContractTests) ... ok
 test_redaction_removes_every_literal_secret_occurrence (test_github_delivery.GitHubDeliveryContractTests) ... ok
 test_risk_classifier_has_safe_review_block_and_no_op_routes (test_github_delivery.GitHubDeliveryContractTests) ... ok
 test_same_idempotency_key_does_not_duplicate_branch_pr_or_merge (test_github_delivery.GitHubDeliveryContractTests) ... ok
@@ -99,8 +110,9 @@ test_measured_generated_and_semantic_facts_force_draft_review (test_github_deliv
 test_no_op_uses_no_token_gate_commit_push_or_pr (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_owned_post_commit_retry_requires_recorded_gate_digest (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_owned_post_commit_retry_resumes_without_duplicate_commit (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
-test_post_gate_manifest_accepts_only_digest_valid_release_archive (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
+test_post_gate_manifest_rejects_even_digest_valid_gate_output (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_publish_requires_matching_begin_receipt_branch_and_manifest (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
+test_publish_retry_reuses_matching_prior_auto_merge_receipt (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_publish_stages_only_manifest_paths_and_review_pr_never_merges (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_quality_gates_have_exact_order_and_failure_blocks_before_token_or_stage (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_real_git_event_rewrite_is_not_mislabeled_append_only (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
@@ -144,7 +156,7 @@ test_openai_interface_matches_skill (test_living_wiki_steward_skill.LivingWikiSt
 test_personal_install_resolves_to_canonical_source_when_present (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
 test_prd_has_all_acceptance_ids_and_entrypoints_link_it (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
 test_prd_separates_invocation_work_and_reliance_axes (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
-test_prd_v1_3_contracts_hygiene_time_and_github_delivery (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
+test_prd_v1_5_contracts_hygiene_time_github_daily_research_and_projects (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
 test_readme_exposes_the_simple_user_journey (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
 test_release_manifest_binds_skill_and_prd_bytes (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
 test_required_skill_package_exists_without_auxiliary_docs (test_living_wiki_steward_skill.LivingWikiStewardSkillContractTests) ... ok
@@ -351,10 +363,18 @@ test_strong_contradiction_caps_promotion_and_marks_contested (test_wiki.Confiden
 test_two_independent_sources_reach_c2 (test_wiki.ConfidenceTests) ... ok
 test_tamper_is_detected (test_wiki.EventChainTests) ... ok
 test_valid_chain (test_wiki.EventChainTests) ... ok
+test_campaign_project_snapshot_survives_later_interest_move (test_wiki.IntegratedGateTests) ... ok
 test_completed_external_report_accounts_usage_once (test_wiki.IntegratedGateTests) ... ok
+test_interest_seed_copies_research_brief_into_campaign (test_wiki.IntegratedGateTests) ... ok
+test_interest_seed_enforces_one_global_slot_per_local_day (test_wiki.IntegratedGateTests) ... ok
 test_interest_seed_is_due_bounded_and_idempotent (test_wiki.IntegratedGateTests) ... ok
+test_interest_seed_rejects_missing_or_unknown_project (test_wiki.IntegratedGateTests) ... ok
+test_manual_campaign_add_copies_research_brief_into_campaign (test_wiki.IntegratedGateTests) ... ok
+test_project_id_path_traversal_is_rejected_before_render (test_wiki.IntegratedGateTests) ... ok
+test_project_views_group_campaigns_runs_and_shared_evidence_without_duplication (test_wiki.IntegratedGateTests) ... ok
 test_security_screen_quarantines_without_source_promotion (test_wiki.IntegratedGateTests) ... ok
 test_source_writer_requires_matching_allow_admission (test_wiki.IntegratedGateTests) ... ok
+test_two_daily_interests_rotate_and_failed_question_is_retried (test_wiki.IntegratedGateTests) ... ok
 test_feedback_add_and_resolve_are_attributed_and_audit_only (test_wiki.MemoryControlPlaneTests) ... ok
 test_lifecycle_supersession_is_non_destructive_and_anchored (test_wiki.MemoryControlPlaneTests) ... ok
 test_lifecycle_transition_is_role_gated_not_species_gated (test_wiki.MemoryControlPlaneTests) ... ok
@@ -390,6 +410,6 @@ test_shared_tag_is_a_weak_review_candidate_not_an_automatic_graph_edge (test_wik
 test_strong_typed_edges_use_bounded_bfs_paths_and_report_node_truncation (test_wiki_hygiene.WikiHygienePlanContractTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 371 tests in 1.494s
+Ran 382 tests in 1.845s
 
 OK
