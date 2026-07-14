@@ -75,6 +75,7 @@ class GitHubDeliverySpecificationContractTests(unittest.TestCase):
 
         self.assertIn("SPEC-GH-DELIVERY-001", github_spec)
         self.assertIn("버전: `1.2.0`", github_spec)
+        self.assertIn("RFC-7A0959853525", github_spec)
         self.assertIn("github-delivery.md", harness)
         self.assertIn("github-delivery.md", prd)
         self.assertIn("SPEC-GH-DELIVERY-001", prd)
@@ -82,7 +83,7 @@ class GitHubDeliverySpecificationContractTests(unittest.TestCase):
         acceptance_ids = re.findall(r"`(AC-GH-\d{3})`:", github_spec)
         self.assertEqual(
             acceptance_ids,
-            [f"AC-GH-{number:03d}" for number in range(1, 31)],
+            [f"AC-GH-{number:03d}" for number in range(1, 36)],
         )
 
     def test_lws_prd_connects_delivery_acceptance_criteria_23_through_28(self):
@@ -166,6 +167,28 @@ class GitHubDeliveryConfigurationContractTests(unittest.TestCase):
             quarantine.get("portable_validation_profile"),
             "public-clean-clone",
         )
+
+    def test_exact_one_hop_policy_transition_state_matches_active_policy(self):
+        transition = self.config.get("policy_transition")
+        self.assertIsInstance(transition, dict)
+        self.assertEqual(
+            transition.get("from_policy_version"),
+            "SPEC-GH-DELIVERY-001/v1.1.0",
+        )
+        self.assertEqual(
+            transition.get("to_policy_version"),
+            "SPEC-GH-DELIVERY-001/v1.2.0",
+        )
+        active_policy = self.config.get("policy_version")
+        expected_states = {
+            "SPEC-GH-DELIVERY-001/v1.1.0": "armed",
+            "SPEC-GH-DELIVERY-001/v1.2.0": "consumed",
+        }
+        self.assertIn(active_policy, expected_states)
+        self.assertEqual(transition.get("state"), expected_states[active_policy])
+        self.assertEqual(transition.get("mode"), "human-review-only")
+        self.assertIn("COL-B80046FC1C56", transition.get("approval_refs", []))
+        self.assertIn("RFC-7A0959853525", transition.get("rfc_ids", []))
 
 
 class GitHubPullRequestQualityWorkflowContractTests(unittest.TestCase):

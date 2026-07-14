@@ -1,7 +1,7 @@
 CMP-528FD74E0388
 프로젝트를 분류한 캠페인: 0개
-EXT-3B24F8A36589
-EXT-3B24F8A36589
+EXT-B48071FE54AE
+EXT-B48071FE54AE
 CMP-528FD74E0388
 CMP-528FD74E0388
 No interest is due for campaign seeding.
@@ -121,6 +121,7 @@ test_real_git_korean_rename_scope_uses_nul_diff_not_porcelain_lines (test_github
 test_real_git_quarantine_payload_is_blocked_before_token_commit_or_remote (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_safe_publish_pushes_branch_then_core_deliver_merges_and_records_receipt (test_github_delivery_cli.GitHubDeliveryPublishRedTests) ... ok
 test_control_surfaces_have_explicit_human_ownership (test_github_delivery_contract.GitHubCodeOwnersContractTests) ... ok
+test_exact_one_hop_policy_transition_state_matches_active_policy (test_github_delivery_contract.GitHubDeliveryConfigurationContractTests) ... ok
 test_exact_repository_branch_merge_and_approval_scope (test_github_delivery_contract.GitHubDeliveryConfigurationContractTests) ... ok
 test_path_classification_and_bootstrap_consumption_are_explicit (test_github_delivery_contract.GitHubDeliveryConfigurationContractTests) ... ok
 test_lws_prd_connects_delivery_acceptance_criteria_23_through_28 (test_github_delivery_contract.GitHubDeliverySpecificationContractTests) ... ok
@@ -131,6 +132,26 @@ test_workflow_calls_the_complete_repository_quality_gate (test_github_delivery_c
 test_scheduled_prompt_delivers_after_validation_and_reports_receipt (test_github_delivery_contract.LivingWikiStewardGitHubDeliveryUxContractTests) ... ok
 test_skill_explains_no_op_and_human_review_without_unsafe_calls (test_github_delivery_contract.LivingWikiStewardGitHubDeliveryUxContractTests) ... ok
 test_skill_orders_begin_work_validate_publish (test_github_delivery_contract.LivingWikiStewardGitHubDeliveryUxContractTests) ... ok
+test_begin_cli_accepts_explicit_target_policy_version (test_github_delivery_transition.PolicyTransitionIntegrationBoundaryTests) ... ok
+test_core_deliver_rejects_unverified_transition_before_token_or_transport (test_github_delivery_transition.PolicyTransitionIntegrationBoundaryTests) ... ok
+test_activation_accepts_only_exact_config_consumption_and_unchanged_verifier (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_activation_rejects_digest_head_only_edge_extra_mutation_and_verifier_change (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_activation_rejects_head_only_edge_even_when_base_digest_matches (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_activation_rejects_json_type_change_even_when_python_values_compare_equal (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_begin_rejects_same_unsupported_consumed_or_unapproved_edge (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_build_proof_rejects_duplicate_authority_keys (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_exact_reviewed_edge_builds_base_bound_transition_proof (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_transition_key_binds_from_to_and_base_config_digest_without_changing_legacy_key (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_v12_runtime_policy_requires_the_consumed_reviewed_edge (test_github_delivery_transition.PolicyTransitionPureContractTests) ... ok
+test_base_policy_digest_uses_exact_git_blob_bytes_without_newline_normalization (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_consumed_v12_base_allows_normal_begin_but_rejects_reused_target (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_exact_config_only_activation_creates_draft_review_receipt (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_extra_path_or_tampered_proof_blocks_before_any_side_effect (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_human_merged_transition_is_reconciled_without_claiming_auto_merge (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_local_git_replace_cannot_redefine_the_base_authority (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_main_begin_pins_base_blob_proof_before_branch_creation (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_old_normal_receipt_is_rejected_on_base_drift_before_gate_or_token (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
+test_publish_rejects_changed_origin_or_pushurl_before_gate_token_and_transport (test_github_delivery_transition_cli.PolicyTransitionCliIntegrationTests) ... ok
 test_central_spec_is_reachable_from_agent_and_human_entrypoints (test_harness_spec_contract.HarnessSpecContractTests) ... ok
 test_entrypoints_require_spec_driven_tdd_before_harness_changes (test_harness_spec_contract.HarnessSpecContractTests) ... ok
 test_spec_contracts_bounded_semantic_hygiene_and_okf_time_meaning (test_harness_spec_contract.HarnessSpecContractTests) ... ok
@@ -410,6 +431,6 @@ test_shared_tag_is_a_weak_review_candidate_not_an_automatic_graph_edge (test_wik
 test_strong_typed_edges_use_bounded_bfs_paths_and_report_node_truncation (test_wiki_hygiene.WikiHygienePlanContractTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 382 tests in 1.845s
+Ran 403 tests in 4.804s
 
 OK
