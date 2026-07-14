@@ -3,7 +3,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T18:24:04+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C1",
@@ -15,7 +15,7 @@
           "per-candidate security receipts",
           "public metadata"
         ],
-        "rationale": "at least one traceable supporting source",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -28,7 +28,7 @@
           "added_at": "2026-07-11T18:24:04+00:00",
           "added_by": "agent:codex",
           "locator": "JSON: $.manifest.classification_method; $.manifest.rule_definitions; $.manifest.counts.completed_viewable_classification; $.manifest.rows[*].{video_id,classification,classification_rule,classification_reason,title,description_sha256}",
-          "note": "Single-agent semantic adjudication with frozen metadata hashes and explicit rules; no independent classification review.",
+          "note": "고정된 메타데이터 해시와 명시적 규칙을 이용한 단일 Agent 의미 판정이며, 독립적인 분류 검토는 없다.",
           "relation": "supports",
           "source_id": "SRC-0800355B8885",
           "strength": 3
@@ -37,10 +37,10 @@
       "freshness": "fast",
       "id": "CLM-0733D26931D2",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T18:24:04+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "lifecycle_status": "active",
-      "notes": "This is an auditable single-agent classification, not a claim that any video is true or high quality.",
-      "scope": "Agent-performed semantic screening of the AI Engineer public-channel snapshot, 2026-04-01 through 2026-07-12",
+      "notes": "감사 가능한 단일 Agent 분류이며, 어떤 영상의 참 여부나 품질이 높음을 주장하는 것은 아니다.",
+      "scope": "AI Engineer 공개 채널 스냅샷을 대상으로 Agent가 수행한 의미 선별, 2026-04-01~2026-07-12",
       "statement": "고정한 제목·설명과 명시적 상호배타 규칙으로 완료·시청 가능 영상 262개를 의미 선별하면 memory·wiki·second-brain 직접 관련 34개, 인접 32개, 제외 196개로 분류된다.",
       "supersedes": [],
       "tags": [
@@ -55,7 +55,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -65,7 +65,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -96,9 +96,9 @@
       "freshness": "normal",
       "id": "CLM-1EB8BD726482",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "agentic wiki document maintenance",
+      "scope": "Agent 기반 Wiki 문서 유지관리",
       "statement": "지속적으로 편집되는 Wiki는 영향받은 의존성만 좁게 수정한 뒤 전체 불변조건과 사실 회귀를 다시 검사해야 한다.",
       "supersedes": [],
       "tags": [
@@ -111,7 +111,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T17:44:43+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C1",
@@ -121,7 +121,7 @@
           "known event-sourcing analogy",
           "public auto-caption"
         ],
-        "rationale": "at least one traceable supporting source",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -134,7 +134,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "PROV-O derivation, generation, invalidation, and entity/activity provenance vocabulary",
-          "note": "Standards-level context for keeping event lineage distinct from mutable external entities.",
+          "note": "가변 외부 개체와 사건 계보를 분리하기 위한 표준 수준의 맥락.",
           "relation": "contextualizes",
           "source_id": "SRC-08654E066049",
           "strength": 2
@@ -143,7 +143,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "01:39-04:25 append-only event history and projections; 04:43-05:32 compaction is lossy; 05:36-06:32 external side effects and world state are outside the log",
-          "note": "The speaker explicitly states the limitation that motivates separate snapshots and receipts.",
+          "note": "발표자가 별도 snapshot과 receipt가 필요한 이유가 되는 한계를 명시적으로 밝힌다.",
           "relation": "supports",
           "source_id": "SRC-2E2EA9C214C1",
           "strength": 3
@@ -152,9 +152,9 @@
       "freshness": "normal",
       "id": "CLM-207429D54323",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T17:44:43+00:00",
-      "notes": "The talk itself acknowledges external state and irreversible effects; log-only identity is not adopted literally.",
-      "scope": "Living Wiki agent runtime durability",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
+      "notes": "발표 자체가 외부 상태와 되돌릴 수 없는 효과를 인정하므로, 로그만으로 정체성을 규정하는 방식을 문자 그대로 채택하지 않는다.",
+      "scope": "Living Wiki Agent 런타임 내구성",
       "statement": "append-only Agent log는 감사와 재투영의 권위 있는 기록이어야 하지만 외부 파일·서비스·side effect의 전체 상태는 아니므로 재개와 rollback에는 별도 snapshot, version, digest와 side-effect receipt가 필요하다.",
       "supersedes": [],
       "tags": [
@@ -168,7 +168,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -178,7 +178,7 @@
           "primary-source",
           "version-sensitive"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -200,7 +200,7 @@
       "freshness": "fast",
       "id": "CLM-25D2398ACBF4",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "제품 업데이트 시 재검증 필요",
       "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
       "statement": "Codex의 프로젝트 지침 결합 용량 기본값은 32 KiB이며, 한도에 도달하면 추가 지침 파일을 더하지 않는다.",
@@ -216,7 +216,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -226,7 +226,7 @@
           "primary-source",
           "version-sensitive"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -248,7 +248,7 @@
       "freshness": "fast",
       "id": "CLM-3B0EC9C26226",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "제품 업데이트 시 재검증 필요",
       "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
       "statement": "AGENTS.md 변경 내용을 확실히 반영하려면 새 Codex 명령 또는 새 TUI 세션을 시작해야 하며, project_doc_fallback_filenames에 등록되지 않은 대체 파일명은 자동 지침 탐색 대상이 아니다.",
@@ -264,7 +264,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-12T01:59:50+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -274,7 +274,7 @@
           "primary-source",
           "version-sensitive"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -287,7 +287,7 @@
           "added_at": "2026-07-12T01:59:50+00:00",
           "added_by": "agent:codex",
           "locator": "How Codex discovers guidance: Global scope",
-          "note": "OpenAI official documentation explicitly separates CODEX_HOME global guidance from project-scope discovery.",
+          "note": "OpenAI 공식 문서는 CODEX_HOME 전역 지침과 프로젝트 범위 탐색을 명시적으로 구분한다.",
           "relation": "supports",
           "source_id": "SRC-228828E53C40",
           "strength": 4
@@ -296,10 +296,10 @@
       "freshness": "fast",
       "id": "CLM-409FCD3D2B82",
       "kind": "fact",
-      "last_verified_at": "2026-07-12T01:59:50+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "lifecycle_status": "active",
       "notes": "전역 지침 로딩은 별도 파일시스템 읽기·쓰기 권한을 부여하지 않으며, 기존 TUI 세션의 instruction chain을 중간에 재구성한다는 뜻도 아니다.",
-      "scope": "OpenAI Codex official AGENTS.md discovery behavior as of 2026-07-12",
+      "scope": "2026-07-12 현재 OpenAI Codex 공식 AGENTS.md 탐색 동작",
       "statement": "Codex는 매 실행 시작 시 프로젝트 경로 탐색과 별도로 CODEX_HOME(기본 ~/.codex)의 전역 지침을 읽으며, non-empty AGENTS.override.md가 있으면 그것을 사용하고 그렇지 않으면 AGENTS.md를 사용한다.",
       "supersedes": [],
       "tags": [
@@ -313,7 +313,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -324,7 +324,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -364,9 +364,9 @@
       "freshness": "slow",
       "id": "CLM-4A3051A018DC",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "source credibility policy",
+      "scope": "출처 신뢰도 정책",
       "statement": "출처의 권위와 평판은 검색 우선순위와 검토 깊이를 정하는 prior로 쓸 수 있지만 개별 주장의 증거를 대체할 수 없다.",
       "supersedes": [],
       "tags": [
@@ -379,7 +379,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -390,7 +390,7 @@
           "primary-study",
           "security-evaluation"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -430,9 +430,9 @@
       "freshness": "fast",
       "id": "CLM-61B3C391010C",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "persistent agent memory security",
+      "scope": "지속형 Agent 메모리 보안",
       "statement": "지속 메모리를 쓰는 Agent는 수집 시점과 검색 시점 모두에 오염 방지 gate가 필요하다.",
       "supersedes": [],
       "tags": [
@@ -445,7 +445,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 1,
         "independent_reviews": 0,
         "level": "C2",
@@ -457,7 +457,7 @@
           "primary-study",
           "standard"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "contested",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -497,9 +497,9 @@
       "freshness": "timeless",
       "id": "CLM-6DDD53332A40",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "Living Wiki source model",
+      "scope": "Living Wiki 출처 모델",
       "statement": "원문 snapshot은 감사 가능한 증거이지 자동으로 참인 source of truth가 아니다.",
       "supersedes": [],
       "tags": [
@@ -512,7 +512,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -522,7 +522,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -553,9 +553,9 @@
       "freshness": "slow",
       "id": "CLM-6ED77E226EF7",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "RAG and deep-research evaluation",
+      "scope": "RAG 및 심층 연구 평가",
       "statement": "검색된 문맥에 대한 충실성, 현실 세계의 사실성, 출처 자체의 신뢰도는 서로 다른 평가 대상이다.",
       "supersedes": [],
       "tags": [
@@ -568,7 +568,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -578,7 +578,7 @@
           "primary-artifact",
           "version-pinned"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -609,9 +609,9 @@
       "freshness": "fast",
       "id": "CLM-7FDAF2F91E73",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "Open Knowledge Format Version 0.1 Draft as of 2026-07-11",
+      "scope": "2026-07-11 현재 Open Knowledge Format v0.1 초안",
       "statement": "OKF v0.1 conformance는 비예약 Markdown의 parseable YAML frontmatter와 non-empty type, 그리고 예약 index.md/log.md 구조를 핵심 필수 조건으로 둔다.",
       "supersedes": [],
       "tags": [
@@ -624,7 +624,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -636,7 +636,7 @@
           "primary-study",
           "public-implementation"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -676,9 +676,9 @@
       "freshness": "slow",
       "id": "CLM-860EB3D6AAEB",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "open-web research source selection",
+      "scope": "공개 웹 연구 출처 선택",
       "statement": "자료의 주제 관련도는 해당 자료의 신뢰도나 그 자료를 인용한 답변의 사실성을 보장하지 않는다.",
       "supersedes": [],
       "tags": [
@@ -690,7 +690,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -700,7 +700,7 @@
           "primary-artifact",
           "version-pinned"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -722,9 +722,9 @@
       "freshness": "fast",
       "id": "CLM-952258184EF2",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "Living Wiki mapping to OKF v0.1 Draft",
+      "scope": "Living Wiki의 OKF v0.1 초안 대응 관계",
       "statement": "OKF v0.1은 claim confidence, source credibility, actor governance, 저장 및 검색 인프라를 정의하지 않으므로 Living Wiki는 이를 producer extension과 외부 control plane으로 보완해야 한다.",
       "supersedes": [],
       "tags": [
@@ -738,7 +738,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T17:44:43+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -753,7 +753,7 @@
           "public implementation",
           "worked example"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -766,7 +766,7 @@
           "added_at": "2026-07-11T17:19:32+00:00",
           "added_by": "agent:codex",
           "locator": "pp. 1-2: failure as primary curation signal; §3 pp. 5-7: human validation and graduation; §3.5 pp. 7-8: convergence explicitly remains an unvalidated hypothesis",
-          "note": "Supports failure-driven prioritization while explicitly limiting convergence evidence.",
+          "note": "실패 주도 우선순위 설정을 뒷받침하되 수렴 증거의 한계를 명시한다.",
           "relation": "supports",
           "source_id": "SRC-54D07435EB56",
           "strength": 3
@@ -775,7 +775,7 @@
           "added_at": "2026-07-11T17:19:32+00:00",
           "added_by": "agent:codex",
           "locator": "pp. 623-625: experience-following, error propagation, and evaluator feedback; pp. 627-630: misaligned replay and downstream outcome labels",
-          "note": "Independent empirical evidence that unverified memory reuse can amplify errors.",
+          "note": "검증되지 않은 메모리 재사용이 오류를 증폭할 수 있다는 독립적인 실증 근거.",
           "relation": "supports",
           "source_id": "SRC-AF06BCDC1ED2",
           "strength": 4
@@ -784,7 +784,7 @@
           "added_at": "2026-07-11T17:19:32+00:00",
           "added_by": "agent:codex",
           "locator": "video description and linked preprint; published 2026-05-05",
-          "note": "Same author group as the preprint; not independent corroboration.",
+          "note": "프리프린트와 같은 저자 집단이므로 독립적인 교차 근거가 아니다.",
           "relation": "contextualizes",
           "source_id": "SRC-F55FED177366",
           "strength": 2
@@ -793,9 +793,9 @@
       "freshness": "normal",
       "id": "CLM-95A38CACF2CD",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T17:44:43+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "DDC의 problem-first 장점과 memory error-propagation 연구를 함께 반영한 제한적 설계 결론.",
-      "scope": "Living Wiki failure-driven knowledge acquisition",
+      "scope": "Living Wiki의 실패 주도 지식 획득",
       "statement": "Agent 실패는 어떤 지식 공백을 조사할지 우선순위화하는 신호가 될 수 있지만, 실패 원인이나 새 지식의 사실성을 스스로 증명하지 않으므로 독립 근거 검증과 재현 가능한 재시도 뒤에만 Wiki 지식으로 승격해야 한다.",
       "supersedes": [],
       "tags": [
@@ -809,7 +809,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:58:03+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -820,7 +820,7 @@
           "primary-source",
           "production-api"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -842,7 +842,7 @@
       "freshness": "fast",
       "id": "CLM-99AE239A5BA3",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:58:03+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "서비스 schema 변경 시 fixture와 adapter contract 재검증 필요",
       "scope": "source admission registry adapters, 2026-07-12 현재",
       "statement": "Crossref는 Retraction Watch의 retraction 및 일부 correction·expression-of-concern 데이터를 production REST API와 공개 dataset으로 제공하며, REST 결과의 update-to와 source 필드로 update 유형과 provenance를 구분한다.",
@@ -858,7 +858,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:58:03+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -869,7 +869,7 @@
           "primary-source",
           "versioned-api"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -891,7 +891,7 @@
       "freshness": "fast",
       "id": "CLM-A49ACF085321",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:58:03+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "서비스 schema 변경 시 fixture와 adapter contract 재검증 필요",
       "scope": "source admission registry adapters, 2026-07-12 현재",
       "statement": "GitHub REST commit 조회는 commit SHA와 signature verification 객체를 제공하므로 코드 출처를 가변 branch 이름보다 특정 commit에 고정하고 검증 메타데이터를 기록할 수 있다.",
@@ -907,7 +907,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -917,7 +917,7 @@
           "primary-source",
           "version-sensitive"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -939,7 +939,7 @@
       "freshness": "fast",
       "id": "CLM-B97B5BE5E324",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "제품 업데이트 시 재검증 필요",
       "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
       "statement": "Codex는 선택된 프로젝트 지침을 루트에서 현재 디렉터리 순으로 결합하므로 더 가까운 디렉터리의 지침이 뒤에 놓여 앞선 지침을 재정의할 수 있다.",
@@ -955,7 +955,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -967,7 +967,7 @@
           "public-implementation",
           "system-demo"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 3
@@ -1016,9 +1016,9 @@
       "freshness": "slow",
       "id": "CLM-CB6E34C87DA3",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "Living Wiki epistemic design",
+      "scope": "Living Wiki 인식론 설계",
       "statement": "감사 가능한 연구 Wiki의 신뢰 최소 단위는 페이지 전체보다 원자적 주장과 정확한 evidence locator의 연결이어야 한다.",
       "supersedes": [],
       "tags": [
@@ -1031,7 +1031,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1041,7 +1041,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1063,9 +1063,9 @@
       "freshness": "normal",
       "id": "CLM-CEBC308C15C4",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "GraphRAG systems evaluated in Dissecting GraphRAG",
+      "scope": "Dissecting GraphRAG에서 평가한 GraphRAG 시스템",
       "statement": "GraphRAG의 그래프 구조는 잘못 추출된 triple과 부적절한 community 구성에서 생기는 오류를 자동으로 상쇄하지 못한다.",
       "supersedes": [],
       "tags": [
@@ -1078,7 +1078,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1090,7 +1090,7 @@
           "public-implementation",
           "system-demo"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 2
@@ -1103,7 +1103,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "10:27-11:02 context becomes stale after model and feature changes and deprecated entries create context rot",
-          "note": "Production self-report that supports operational staleness scanning, not a universal decay interval.",
+          "note": "운영 중 노후도 탐색을 뒷받침하는 운영 환경 자기 보고이며, 보편적인 감쇠 주기를 뜻하지 않는다.",
           "relation": "contextualizes",
           "source_id": "SRC-03641BCFC467",
           "strength": 2
@@ -1121,7 +1121,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "03:04-03:41 generate-test-distribute-observe loop; 06:16-06:59 context changes require impact tests and evals",
-          "note": "Practitioner lifecycle framing; no independent outcome benchmark.",
+          "note": "실무자의 생명주기 구성 방식이며, 독립적인 결과 벤치마크는 없다.",
           "relation": "contextualizes",
           "source_id": "SRC-7409811C56EB",
           "strength": 2
@@ -1148,9 +1148,9 @@
       "freshness": "slow",
       "id": "CLM-D2A1B46809DA",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "temporally evolving knowledge",
+      "scope": "시간에 따라 변화하는 지식",
       "statement": "시간에 따라 변하는 주장은 valid_from, valid_to, as_of, supersedes 같은 시간 범위와 계보를 가져야 한다.",
       "supersedes": [],
       "tags": [
@@ -1163,7 +1163,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1173,7 +1173,7 @@
           "primary-source",
           "version-sensitive"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1195,7 +1195,7 @@
       "freshness": "fast",
       "id": "CLM-DA4E9F9BA977",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "제품 업데이트 시 재검증 필요",
       "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
       "statement": "Codex는 작업을 시작하기 전에 지침 체인을 구성하며, 대화형 TUI에서는 보통 실행된 세션마다 한 번만 AGENTS.md 계열 파일을 탐색한다.",
@@ -1211,7 +1211,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1223,7 +1223,7 @@
           "public-code",
           "user-study"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 3
@@ -1263,9 +1263,9 @@
       "freshness": "normal",
       "id": "CLM-DA7C92E9A901",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "human-agent collaborative information seeking",
+      "scope": "인간-Agent 협업 정보 탐색",
       "statement": "효과적인 인간-Agent 공동 연구에는 결과만이 아니라 과정의 관찰 가능성, 실시간 조향, 공유 맥락과 복구 가능한 commitment가 필요하다.",
       "supersedes": [],
       "tags": [
@@ -1278,7 +1278,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1290,7 +1290,7 @@
           "public-implementation",
           "system-demo"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 3
@@ -1330,9 +1330,9 @@
       "freshness": "slow",
       "id": "CLM-DCFACC957266",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "Living Wiki perspective management",
+      "scope": "Living Wiki 관점 관리",
       "statement": "Wiki가 형성한 관점은 사실 원장과 분리하고 가장 강한 반론, 가정, 입장 변경 조건과 개정 이력을 보존해야 한다.",
       "supersedes": [],
       "tags": [
@@ -1345,7 +1345,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T17:44:43+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1356,7 +1356,7 @@
           "peer-reviewed",
           "user-controllable intervention"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1369,7 +1369,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "pp. 14699-14701: user-controllable memory dependence from fresh-start to high-fidelity; pp. 14705-14707: comparison and limitations",
-          "note": "Direct peer-reviewed evidence in long-term personalized interactions; generalized only to a Wiki UX principle.",
+          "note": "장기 개인화 상호작용에 관한 직접적인 동료심사 근거이며, Wiki UX 원칙으로만 일반화했다.",
           "relation": "supports",
           "source_id": "SRC-F9BA839FA59D",
           "strength": 4
@@ -1378,9 +1378,9 @@
       "freshness": "normal",
       "id": "CLM-EC52C0576A28",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T17:44:43+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "ACL 2026 SteeM의 personalized-agent 결과를 factual Wiki에 직접 일반화하지 않고 user-control principle만 채택한다.",
-      "scope": "Living Wiki answer and research UX",
+      "scope": "Living Wiki 답변 및 연구 UX",
       "statement": "사용자는 장기 Wiki 기억에 의존하는 정도를 명시적으로 조절할 수 있어야 하며, fresh-start 모드는 과거 기록 삭제가 아니라 독립 재조사 후 기존 Wiki와 비교하는 retrieval policy로 구현해야 한다.",
       "supersedes": [],
       "tags": [
@@ -1394,7 +1394,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:58:03+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1405,7 +1405,7 @@
           "primary-source",
           "public-api"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1427,7 +1427,7 @@
       "freshness": "fast",
       "id": "CLM-F2BB537122FE",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:58:03+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "서비스 schema 변경 시 fixture와 adapter contract 재검증 필요",
       "scope": "source admission registry adapters, 2026-07-12 현재",
       "statement": "NCBI E-utilities는 PubMed와 PMC를 포함한 Entrez 데이터베이스를 검색·연결·조회할 수 있는 공식 공개 API다.",
@@ -1443,7 +1443,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T17:44:43+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1457,7 +1457,7 @@
           "primary-study",
           "public auto-caption"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 3
@@ -1506,7 +1506,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "04:27-04:37 replayable learning environment; 07:24-07:36 smallest durable layer; 09:26-11:44 hidden regression and before/after tests; 13:26-14:17 lifelong regression control",
-          "note": "Direct architecture argument; RELAI product efficacy remains self-reported.",
+          "note": "직접적인 아키텍처 논거이며, RELAI 제품 효과는 자기 보고에 머문다.",
           "relation": "supports",
           "source_id": "SRC-AD0B1D50C531",
           "strength": 3
@@ -1515,9 +1515,9 @@
       "freshness": "slow",
       "id": "CLM-F464CCF0AA1A",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T17:44:43+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "Living Wiki harness governance",
+      "scope": "Living Wiki 하네스 거버넌스",
       "statement": "하네스의 자기진화는 고정된 평가, 최소 변경, 회귀 검사와 rollback을 통과한 제안으로만 승격해야 한다.",
       "supersedes": [],
       "tags": [
@@ -1531,7 +1531,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1541,7 +1541,7 @@
           "primary-artifact",
           "version-pinned"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1572,9 +1572,9 @@
       "freshness": "fast",
       "id": "CLM-F526A53CB69F",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "Open Knowledge Format Version 0.1 Draft as of 2026-07-11",
+      "scope": "2026-07-11 현재 Open Knowledge Format v0.1 초안",
       "statement": "OKF v0.1에는 필수 bundle manifest, JSON Schema, 중앙 type registry가 없으며 type taxonomy와 추가 frontmatter는 producer에게 열려 있다.",
       "supersedes": [],
       "tags": [
@@ -1588,7 +1588,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T18:24:04+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C1",
@@ -1600,7 +1600,7 @@
           "per-candidate security receipts",
           "public metadata"
         ],
-        "rationale": "at least one traceable supporting source",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1613,7 +1613,7 @@
           "added_at": "2026-07-11T18:24:04+00:00",
           "added_by": "agent:codex",
           "locator": "JSON: $.manifest.date_filter; $.manifest.scope_rule; $.manifest.counts.date_range_listed_rows; $.manifest.counts.completed_viewable_rows; $.manifest.counts.completed_viewable_types; $.manifest.counts.date_range_types; $.manifest.rows[*].{video_id,upload_date,video_type,completed_and_viewable}",
-          "note": "Content-addressed snapshot coverage; public channel state can later change.",
+          "note": "콘텐츠 주소 기반 스냅샷 범위이며, 공개 채널 상태는 이후 변경될 수 있다.",
           "relation": "supports",
           "source_id": "SRC-0800355B8885",
           "strength": 3
@@ -1622,10 +1622,10 @@
       "freshness": "fast",
       "id": "CLM-F5982AA50A01",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T18:24:04+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "lifecycle_status": "active",
-      "notes": "Deleted/private/unlisted videos are outside the observable public-tab scope; YouTube metadata is mutable.",
-      "scope": "AI Engineer public channel tabs, inclusive 2026-04-01 through 2026-07-12, snapshot at 2026-07-12",
+      "notes": "삭제·비공개·일부 공개 영상은 관찰 가능한 공개 탭 범위 밖이며, YouTube 메타데이터는 변경될 수 있다.",
+      "scope": "2026-07-12 스냅샷 기준, 2026-04-01부터 2026-07-12까지를 포함하는 AI Engineer 공개 채널 탭",
       "statement": "2026-07-12 공개 스냅샷에서 AI Engineer 채널의 2026-04-01~2026-07-12 범위 목록은 264개였으며, 이 중 완료·시청 가능 영상은 262개(일반 영상 251, livestream replay 11, Shorts 0)이고 예약 premiere 2개는 연구 분모에서 제외됐다.",
       "supersedes": [],
       "tags": [
@@ -1639,7 +1639,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1650,7 +1650,7 @@
           "primary-study",
           "public-implementation"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 3
@@ -1681,7 +1681,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "03:27-05:32 full append-only record versus lossy projections and regenerated views",
-          "note": "Session-log analogy reinforces raw-versus-synthesis separation but does not prove Wiki retrieval quality.",
+          "note": "세션 로그 비유는 원문과 합성의 분리를 강화하지만 Wiki 검색 품질을 증명하지는 않는다.",
           "relation": "contextualizes",
           "source_id": "SRC-2E2EA9C214C1",
           "strength": 2
@@ -1690,7 +1690,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "05:16-08:02 chapter map: truncation and summarization failures, head/tail preservation with retrievable memory store",
-          "note": "Specific context-management report; Alyx code and benchmark are not public.",
+          "note": "특정 맥락 관리 보고이며, Alyx 코드와 벤치마크는 공개되지 않았다.",
           "relation": "contextualizes",
           "source_id": "SRC-3F8E6D0FDE7E",
           "strength": 2
@@ -1717,9 +1717,9 @@
       "freshness": "normal",
       "id": "CLM-F6367BFF8F35",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "LLM research memory architecture as of 2026-07",
+      "scope": "2026-07 현재 LLM 연구 메모리 아키텍처",
       "statement": "불변 원문 위의 지속적 합성 Wiki는 원문 검색을 대체하는 것이 아니라 반복 재합성을 줄이는 보완 계층이다.",
       "supersedes": [],
       "tags": [
@@ -1732,7 +1732,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T18:24:04+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C1",
@@ -1744,7 +1744,7 @@
           "per-candidate security receipts",
           "public metadata"
         ],
-        "rationale": "at least one traceable supporting source",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1757,7 +1757,7 @@
           "added_at": "2026-07-11T18:24:04+00:00",
           "added_by": "agent:codex",
           "locator": "JSON: $.direct_caption_review.{direct_candidates,caption_retrieval_attempted,caption_retrieved,security_decisions,dispositions,review_basis,body_policy}; $.direct_caption_review.reviews[*].{video_id,caption_retrieval_result,caption_security,disposition,review_basis,key_locator}",
-          "note": "All 34 direct candidates have a disposition and security receipt; rejected caption bodies were not used.",
+          "note": "직접 후보 34개 모두에 처리 결과와 보안 receipt가 있으며, 거부된 자막 본문은 사용하지 않았다.",
           "relation": "supports",
           "source_id": "SRC-0800355B8885",
           "strength": 3
@@ -1766,10 +1766,10 @@
       "freshness": "fast",
       "id": "CLM-F63FA5329493",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T18:24:04+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "lifecycle_status": "active",
-      "notes": "Caption bodies were not preserved in the canonical source because redistribution rights were not verified; promote means a research lead, not epistemic promotion.",
-      "scope": "AI Engineer direct-candidate caption audit performed for the 2026-04-01 through 2026-07-12 snapshot",
+      "notes": "재배포 권리가 확인되지 않아 canonical 출처에 자막 본문을 보존하지 않았다. promote는 인식론적 승격이 아니라 연구 단서를 뜻한다.",
+      "scope": "2026-04-01~2026-07-12 스냅샷을 대상으로 수행한 AI Engineer 직접 후보 자막 감사",
       "statement": "직접 관련 후보 34개 모두에서 자막 입수와 보안 검사를 시도해 34개를 입수했고, 31개는 allow, 3개는 reject였으며, 검토 처분은 promote 14·defer 17·exclude 3이었다; reject 자막은 transcript 결론에 사용하지 않았다.",
       "supersedes": [],
       "tags": [
@@ -1783,7 +1783,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T17:44:43+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1794,7 +1794,7 @@
           "peer-reviewed",
           "primary experiments"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1807,7 +1807,7 @@
           "added_at": "2026-07-11T17:19:32+00:00",
           "added_by": "agent:codex",
           "locator": "08:47-09:24 failure clustering and review; 10:27-11:02 model/feature changes make context stale and create context rot",
-          "note": "First-party production report; pruning efficacy is not independently reproduced.",
+          "note": "당사자 운영 환경 보고이며, 가지치기 효과는 독립적으로 재현되지 않았다.",
           "relation": "contextualizes",
           "source_id": "SRC-03641BCFC467",
           "strength": 2
@@ -1816,7 +1816,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "Abstract: explicit store, retrieve, update, summarize, and discard memory actions",
-          "note": "Shows lifecycle operations are first-class in an evaluated memory system; learned deletion is not adopted.",
+          "note": "평가된 메모리 시스템에서 생명주기 작업이 일급 개념임을 보여 주지만, 학습된 삭제 방식은 채택하지 않는다.",
           "relation": "contextualizes",
           "source_id": "SRC-9639A8245BE8",
           "strength": 3
@@ -1825,7 +1825,7 @@
           "added_at": "2026-07-11T17:20:21+00:00",
           "added_by": "agent:codex",
           "locator": "02:21-03:14 eval outcomes do not reach retrieval; 04:29-05:38 proposed outcome-weighted utility; 08:56-09:32 cold-start, drift, noisy-label, and credit limitations",
-          "note": "Vendor proposal motivates an audit-only feedback ledger; automatic utility ranking is not adopted.",
+          "note": "공급업체 제안은 감사 전용 피드백 원장을 도입할 동기를 주지만, 자동 효용 순위화는 채택하지 않는다.",
           "relation": "contextualizes",
           "source_id": "SRC-9BADA4274C74",
           "strength": 2
@@ -1834,7 +1834,7 @@
           "added_at": "2026-07-11T17:19:32+00:00",
           "added_by": "agent:codex",
           "locator": "pp. 623-625 and 627-630: erroneous experiences propagate; history-based downstream evaluation identifies harmful memories",
-          "note": "Supports recording downstream outcomes, not directly auto-deleting Wiki evidence.",
+          "note": "후속 결과 기록을 뒷받침하지만, Wiki 증거의 자동 삭제를 직접 뒷받침하지는 않는다.",
           "relation": "supports",
           "source_id": "SRC-AF06BCDC1ED2",
           "strength": 4
@@ -1843,7 +1843,7 @@
           "added_at": "2026-07-11T17:19:33+00:00",
           "added_by": "agent:codex",
           "locator": "pp. 14699-14701: all-or-nothing memory use and memory anchoring; pp. 14705-14707: controllable reliance and limitations",
-          "note": "Shows excessive reliance on retained history can be harmful.",
+          "note": "보존된 이력에 지나치게 의존하면 해로울 수 있음을 보여 준다.",
           "relation": "contextualizes",
           "source_id": "SRC-F9BA839FA59D",
           "strength": 3
@@ -1852,9 +1852,9 @@
       "freshness": "fast",
       "id": "CLM-F79558D817DF",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T17:44:43+00:00",
-      "notes": "Outcome feedback is diagnostic evidence, not epistemic ground truth or deletion authority.",
-      "scope": "Living Wiki memory hygiene and retrieval feedback",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
+      "notes": "결과 피드백은 진단 근거이지 인식론적 참값이나 삭제 권한이 아니다.",
+      "scope": "Living Wiki 메모리 위생 및 검색 피드백",
       "statement": "지속 메모리의 유사성이나 최초 성공만으로 재사용 품질을 판단하면 오류·노후 지식이 반복될 수 있으므로, retrieval 이후 결과와 시간 상태를 감사 가능하게 기록하되 그 신호가 claim 신뢰 승격이나 원문 삭제를 자동 수행해서는 안 된다.",
       "supersedes": [],
       "tags": [
@@ -1868,7 +1868,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1878,7 +1878,7 @@
           "primary-author-account",
           "public-implementation"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1909,9 +1909,9 @@
       "freshness": "slow",
       "id": "CLM-FBF709C70CCF",
       "kind": "interpretation",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "source independence clustering",
+      "scope": "출처 독립성 군집화",
       "statement": "같은 제작자 집단의 발표와 구현 저장소는 서로 다른 형식이어도 독립적인 교차검증 두 건으로 세면 안 된다.",
       "supersedes": [],
       "tags": [
@@ -1924,7 +1924,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T14:32:40+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1934,7 +1934,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -1956,9 +1956,9 @@
       "freshness": "slow",
       "id": "CLM-FC9028899EE0",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T14:32:40+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": null,
-      "scope": "systems and benchmark evaluated in ACL 2026 multi-turn report revision study",
+      "scope": "ACL 2026 다중 턴 보고서 개정 연구에서 평가한 시스템과 벤치마크",
       "statement": "2026년 한 평가에서 deep-research Agent의 반복 보고서 수정은 기존 내용과 인용 품질의 16~27%를 훼손했다.",
       "supersedes": [],
       "tags": [
@@ -1971,7 +1971,7 @@
     {
       "confidence": {
         "adversarial_reviewed": false,
-        "computed_at": "2026-07-11T15:29:25+00:00",
+        "computed_at": "2026-07-12T03:10:01+00:00",
         "contradicting_groups": 0,
         "independent_reviews": 0,
         "level": "C2",
@@ -1981,7 +1981,7 @@
           "primary-source",
           "version-sensitive"
         ],
-        "rationale": "at least one traceable supporting source; a strong direct source or two independent source groups",
+        "rationale": "추적 가능한 지지 출처가 하나 이상 있음; 강한 직접 출처가 있거나 독립 출처 그룹이 둘 이상임",
         "status": "supported",
         "strong_contradiction": false,
         "supporting_groups": 1
@@ -2003,7 +2003,7 @@
       "freshness": "fast",
       "id": "CLM-FF4A31447E3E",
       "kind": "fact",
-      "last_verified_at": "2026-07-11T15:29:25+00:00",
+      "last_verified_at": "2026-07-12T03:10:01+00:00",
       "notes": "제품 업데이트 시 재검증 필요",
       "scope": "OpenAI Codex 공식 문서 및 Codex CLI 0.144.1, 2026-07-12 현재",
       "statement": "프로젝트 지침 탐색에서 Codex는 프로젝트 루트부터 현재 작업 디렉터리까지 내려가며, 각 디렉터리에서 AGENTS.override.md, AGENTS.md, 설정된 fallback 이름 순으로 최대 한 파일을 선택한다.",

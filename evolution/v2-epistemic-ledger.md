@@ -1,38 +1,37 @@
-# v2 — Epistemic ledger
+# v2 — 인식론적 원장
 
 ## 추가한 구조
 
 ```text
-Actor → Contribution/Event
-Source(snapshot, assessment, independence group)
-Claim(kind, scope, time)
-Claim ↔ Evidence span (support/contradict/context)
-Review(independent/adversarial)
-Derived Wiki
+행위자 → 기여/사건
+출처(스냅샷, 평가, 독립성 그룹)
+주장(종류, 범위, 시점)
+주장 ↔ 증거 구간(지지/반박/맥락)
+검토(독립/적대적)
+파생 Wiki
 ```
 
 ## 핵심 변경
 
-- 신뢰 최소 단위를 page에서 claim으로 이동
-- source S0–S4와 claim C0–C4 분리
-- 사람/Agent를 같은 actor schema에 등록
-- hash로 raw 변경 탐지, hash-chain event log로 감사 단서 제공
-- self-generated synthesis가 corroboration으로 재순환하지 못하도록 규정
+- 신뢰 최소 단위를 페이지에서 주장으로 이동
+- 출처 S0–S4와 주장 C0–C4 분리
+- 사람과 Agent를 같은 행위자 스키마에 등록
+- 해시로 원문 변경을 탐지하고 해시 체인 사건 로그로 감사 단서 제공
+- 자체 생성 종합문이 확증 근거로 재순환하지 못하도록 규정
 
 ## 자체 연구와 평가에서 발견한 한계
 
-1. 신뢰도 schema가 있어도 좋은 자료를 지속적으로 찾아오지 못하면 쓰레기를 정교하게 정리할 뿐이다.
-2. deep-research agent는 반복 수정에서 기존 내용·인용을 훼손할 수 있다.
-3. 같은 모델이 writer와 reviewer를 맡으면 correlated error가 독립 검토처럼 보인다.
-4. persistent memory는 prompt injection보다 오래가는 poisoning 표면이 된다.
-5. source level을 수동 설정하면 calibration이 검증되지 않는다.
-6. 하네스가 자기 benchmark를 바꾸며 “개선”을 선언할 수 있다.
+1. 신뢰도 스키마가 있어도 좋은 자료를 지속적으로 찾아오지 못하면 쓰레기를 정교하게 정리할 뿐이다.
+2. 심층 연구 Agent는 반복 수정에서 기존 내용·인용을 훼손할 수 있다.
+3. 같은 모델이 작성자와 검토자를 맡으면 상관된 오류가 독립 검토처럼 보인다.
+4. 영속 메모리는 프롬프트 주입보다 오래가는 오염 표면이 된다.
+5. 출처 레벨을 수동 설정하면 보정 수준이 검증되지 않는다.
+6. 하네스가 자기 벤치마크를 바꾸며 “개선”을 선언할 수 있다.
 
 ## v3로 넘긴 요구사항
 
-- 관심 분야별 bounded research campaign과 stop condition
-- counter-search, retraction/status 확인, source diversity
-- dependency-aware scoped patch와 회귀평가
-- admission quarantine, 원문/명령 분리, 최소 권한
-- harness RFC, fixed benchmark, rollback, 승인 gate
-
+- 관심 분야별 범위 제한 연구 캠페인과 종료 조건
+- 반증 검색, 철회·상태 확인, 출처 다양성
+- 의존성을 고려한 범위 제한 패치와 회귀평가
+- 입수 격리, 원문·명령 분리, 최소 권한
+- 하네스 RFC, 고정 벤치마크, 롤백, 승인 게이트

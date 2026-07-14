@@ -1,316 +1,410 @@
-# Living Wiki update log
+# Living Wiki 갱신 기록
 
 ## 2026-07-12
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **claims.evaluate**: `all` by `agent:codex`.
-* **claim.evidence.add**: `CLM-409FCD3D2B82` by `agent:codex`.
-* **claim.add**: `CLM-409FCD3D2B82` by `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-6BD49C04ED49` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-66C09135A9E0` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-03F4FE85BB44` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-03F4FE85BB44` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-27B9ADD786ED` / 처리자 `human:owner`.
+* **proposal.review**: `RFC-6BD49C04ED49` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-6BD49C04ED49` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-F697B6B6F7BF` / 처리자 `human:owner`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-32B34B7A1DAA` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-32B34B7A1DAA` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-32B34B7A1DAA` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-BCA354BA1655` / 처리자 `human:owner`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-4550532AD310` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-7D5F70EF4EEA` / 처리자 `agent:codex`.
+* **proposal.implementation.reseal**: `RFC-9DF9F569807F` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-4550532AD310` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-4550532AD310` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-7D5F70EF4EEA` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-7D5F70EF4EEA` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-9DF9F569807F` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-9DF9F569807F` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-9DF9F569807F` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-388AF1C1528A` / 처리자 `human:owner`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-1B8A142F2DD6` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-1B8A142F2DD6` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-1B8A142F2DD6` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-0D2790565E92` / 처리자 `human:owner`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-925A95472E90` / 처리자 `human:owner`.
+* **proposal.review**: `RFC-925A95472E90` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-925A95472E90` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-D604CF2B8FDC` / 처리자 `human:owner`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-486C24C969AE` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-486C24C969AE` / 처리자 `human:owner`.
+* **collaboration.add**: `COL-F2D41B74B3BC` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-486C24C969AE` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-409FCD3D2B82` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-409FCD3D2B82` / 처리자 `agent:codex`.
 
 ## 2026-07-11
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **proposal.implementation.reseal**: `RFC-5D91E03B5BC5` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **wiki.lint**: `all` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **wiki.lint**: `all` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **campaign.update**: `CMP-01DA85AECBAB` by `agent:codex`.
-* **campaign.update**: `CMP-94D41EAD577D` by `agent:codex`.
-* **claims.evaluate**: `all` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F63FA5329493` by `agent:codex`.
-* **claim.evidence.add**: `CLM-0733D26931D2` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F5982AA50A01` by `agent:codex`.
-* **claim.add**: `CLM-F63FA5329493` by `agent:codex`.
-* **claim.add**: `CLM-0733D26931D2` by `agent:codex`.
-* **claim.add**: `CLM-F5982AA50A01` by `agent:codex`.
-* **source.add**: `SRC-0800355B8885` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-B2D78C43D6CC` by `agent:codex`.
-* **security.candidate.screen**: `ADM-2647D2FF2111` by `agent:codex`.
-* **security.candidate.screen**: `ADM-406441F17CC7` by `agent:codex`.
-* **security.candidate.screen**: `ADM-EA135A102802` by `agent:codex`.
-* **security.candidate.screen**: `ADM-2F43A5943C09` by `agent:codex`.
-* **security.candidate.screen**: `ADM-36EFCA0F7453` by `agent:codex`.
-* **security.candidate.screen**: `ADM-822099EBE7B5` by `agent:codex`.
-* **security.candidate.screen**: `ADM-A08A794959D5` by `agent:codex`.
-* **security.candidate.screen**: `ADM-7C5B47E01BC5` by `agent:codex`.
-* **security.candidate.screen**: `ADM-38279B46494C` by `agent:codex`.
-* **security.candidate.screen**: `ADM-66CFC9AEBA45` by `agent:codex`.
-* **security.candidate.screen**: `ADM-D8754BF4E2EB` by `agent:codex`.
-* **security.candidate.screen**: `ADM-E9B6861EF116` by `agent:codex`.
-* **security.candidate.screen**: `ADM-844E8A203EC9` by `agent:codex`.
-* **security.candidate.screen**: `ADM-39C0AB129AD1` by `agent:codex`.
-* **security.candidate.screen**: `ADM-636C5C91C52C` by `agent:codex`.
-* **security.candidate.screen**: `ADM-0247698C16F8` by `agent:codex`.
-* **security.candidate.screen**: `ADM-A9C0E203A5C3` by `agent:codex`.
-* **security.candidate.screen**: `ADM-128EFD21AA6C` by `agent:codex`.
-* **security.candidate.screen**: `ADM-A501A17F7383` by `agent:codex`.
-* **security.candidate.screen**: `ADM-50C544F56457` by `agent:codex`.
-* **security.candidate.screen**: `ADM-26ED4B6C1FB6` by `agent:codex`.
-* **security.candidate.screen**: `ADM-26C5AF515293` by `agent:codex`.
-* **security.candidate.screen**: `ADM-9AD3913E71DD` by `agent:codex`.
-* **security.candidate.screen**: `ADM-B8D27F426710` by `agent:codex`.
-* **security.candidate.screen**: `ADM-D75EF9A9C881` by `agent:codex`.
-* **security.candidate.screen**: `ADM-106F0474E838` by `agent:codex`.
-* **security.candidate.screen**: `ADM-4A136815DF3E` by `agent:codex`.
-* **security.candidate.screen**: `ADM-34CA627510FB` by `agent:codex`.
-* **security.candidate.screen**: `ADM-D876BB4A014D` by `agent:codex`.
-* **security.candidate.screen**: `ADM-4E2204EE1B5B` by `agent:codex`.
-* **security.candidate.screen**: `ADM-97ED3E1E1042` by `agent:codex`.
-* **security.candidate.screen**: `ADM-6926D3A55A13` by `agent:codex`.
-* **security.candidate.screen**: `ADM-1A2153BDCA9A` by `agent:codex`.
-* **security.candidate.screen**: `ADM-B26ADBF1D827` by `agent:codex`.
-* **security.candidate.screen**: `ADM-67D31B298783` by `agent:codex`.
-* **campaign.update**: `CMP-94D41EAD577D` by `agent:codex`.
-* **campaign.add**: `CMP-94D41EAD577D` by `agent:codex`.
-* **collaboration.add**: `COL-50BA42D348AA` by `agent:codex`.
-* **campaign.update**: `CMP-01DA85AECBAB` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **memory.feedback.resolve**: `MFB-2BB8B3CBC3CC` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **wiki.lint**: `all` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **campaign.update**: `CMP-01DA85AECBAB` by `agent:codex`.
-* **proposal.implement**: `RFC-5D91E03B5BC5` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **wiki.lint**: `all` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **claims.evaluate**: `all` by `agent:codex`.
-* **memory.feedback.add**: `MFB-2BB8B3CBC3CC` by `agent:codex`.
-* **proposal.review**: `RFC-5D91E03B5BC5` by `human:owner`.
-* **proposal.add**: `RFC-5D91E03B5BC5` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F79558D817DF` by `agent:codex`.
-* **source.add**: `SRC-9BADA4274C74` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-CCA31F4879DB` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F6367BFF8F35` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F6367BFF8F35` by `agent:codex`.
-* **claim.evidence.add**: `CLM-D2A1B46809DA` by `agent:codex`.
-* **claim.evidence.add**: `CLM-D2A1B46809DA` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F464CCF0AA1A` by `agent:codex`.
-* **claim.evidence.add**: `CLM-207429D54323` by `agent:codex`.
-* **claim.evidence.add**: `CLM-207429D54323` by `agent:codex`.
-* **claim.evidence.add**: `CLM-EC52C0576A28` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F79558D817DF` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F79558D817DF` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F79558D817DF` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F79558D817DF` by `agent:codex`.
-* **claim.evidence.add**: `CLM-95A38CACF2CD` by `agent:codex`.
-* **claim.evidence.add**: `CLM-95A38CACF2CD` by `agent:codex`.
-* **claim.evidence.add**: `CLM-95A38CACF2CD` by `agent:codex`.
-* **claim.add**: `CLM-207429D54323` by `agent:codex`.
-* **claim.add**: `CLM-EC52C0576A28` by `agent:codex`.
-* **claim.add**: `CLM-F79558D817DF` by `agent:codex`.
-* **claim.add**: `CLM-95A38CACF2CD` by `agent:codex`.
-* **source.add**: `SRC-F9BA839FA59D` by `agent:codex`.
-* **source.add**: `SRC-9639A8245BE8` by `agent:codex`.
-* **source.add**: `SRC-AF06BCDC1ED2` by `agent:codex`.
-* **source.add**: `SRC-54D07435EB56` by `agent:codex`.
-* **source.add**: `SRC-7409811C56EB` by `agent:codex`.
-* **source.add**: `SRC-3F8E6D0FDE7E` by `agent:codex`.
-* **source.add**: `SRC-2E2EA9C214C1` by `agent:codex`.
-* **source.add**: `SRC-03641BCFC467` by `agent:codex`.
-* **source.add**: `SRC-AD0B1D50C531` by `agent:codex`.
-* **source.add**: `SRC-F55FED177366` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-5307A69225D3` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-8F7ADCECFA0E` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-AD34DBB10F1D` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-B0B19D4B8C5D` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-B6AAFD3ECAC0` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-8C55C903E730` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-FB033F63E1C2` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-45F7560DEB33` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-2A522BA30404` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-DF2E75056B85` by `agent:codex`.
-* **security.candidate.screen**: `ADM-AF2E6A76010A` by `agent:codex`.
-* **security.candidate.screen**: `ADM-9AC73CEF6FCB` by `agent:codex`.
-* **security.candidate.screen**: `ADM-60528FD1163A` by `agent:codex`.
-* **security.candidate.screen**: `ADM-630AF6D54A6B` by `agent:codex`.
-* **security.candidate.screen**: `ADM-CDEAF3837B3E` by `agent:codex`.
-* **security.candidate.screen**: `ADM-64F8C03D0241` by `agent:codex`.
-* **security.candidate.screen**: `ADM-9036402A59C2` by `agent:codex`.
-* **security.candidate.screen**: `ADM-7560823BFD5E` by `agent:codex`.
-* **security.candidate.screen**: `ADM-8137C33990B2` by `agent:codex`.
-* **security.candidate.screen**: `ADM-2B1E7F53644C` by `agent:codex`.
-* **security.candidate.screen**: `ADM-F26BF9FA059C` by `agent:codex`.
-* **security.candidate.screen**: `ADM-B8F9B08D1195` by `agent:codex`.
-* **security.candidate.screen**: `ADM-145DA714676A` by `agent:codex`.
-* **security.candidate.screen**: `ADM-CF13B34C8A85` by `agent:codex`.
-* **security.candidate.screen**: `ADM-C207BBB31906` by `agent:codex`.
-* **security.candidate.screen**: `ADM-449094B37139` by `agent:codex`.
-* **security.candidate.screen**: `ADM-C9258A24D50D` by `agent:codex`.
-* **security.candidate.screen**: `ADM-C95B1F24DC12` by `agent:codex`.
-* **security.candidate.screen**: `ADM-CCD996E9A34D` by `agent:codex`.
-* **campaign.update**: `CMP-01DA85AECBAB` by `agent:codex`.
-* **campaign.add**: `CMP-01DA85AECBAB` by `human:owner`.
-* **collaboration.add**: `COL-0B8170AE658D` by `human:owner`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **snapshot.create**: `SNP-C53D26F53C61` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **snapshot.create**: `SNP-BD974C7AD639` by `agent:codex`.
-* **wiki.lint**: `all` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **collaboration.transition**: `COL-BE633C25320D` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **proposal.implement**: `RFC-69828EB38078` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **release.evaluate**: `living-wiki-v4` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **campaign.update**: `CMP-088A51571084` by `agent:codex`.
-* **runtime.action.seal**: `EXT-E4BA13397C66` by `agent:codex`.
-* **admission.seal**: `ADM-9B8D53F1FAB9` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **campaign.update**: `CMP-088A51571084` by `agent:codex`.
-* **runtime.usage.backfill**: `EXT-E4BA13397C66` by `agent:codex`.
-* **security.corpus.evaluate**: `evaluations/reports/security-latest.json` by `agent:codex`.
-* **campaign.update**: `CMP-088A51571084` by `agent:codex`.
-* **campaign.update**: `CMP-7A543D820D83` by `agent:codex`.
-* **claims.evaluate**: `all` by `agent:codex`.
-* **source.admission.evaluate**: `ADM-9B8D53F1FAB9` by `agent:codex`.
-* **claim.evidence.add**: `CLM-A49ACF085321` by `agent:codex`.
-* **claim.add**: `CLM-A49ACF085321` by `agent:codex`.
-* **source.add**: `SRC-4F5AF5EE0ADB` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F2BB537122FE` by `agent:codex`.
-* **claim.add**: `CLM-F2BB537122FE` by `agent:codex`.
-* **source.add**: `SRC-0C6123529E07` by `agent:codex`.
-* **claim.evidence.add**: `CLM-99AE239A5BA3` by `agent:codex`.
-* **claim.add**: `CLM-99AE239A5BA3` by `agent:codex`.
-* **source.add**: `SRC-920AB22F540A` by `agent:codex`.
-* **campaign.update**: `CMP-7A543D820D83` by `agent:codex`.
-* **campaign.update**: `CMP-76BD99582F70` by `agent:codex`.
-* **runtime.action.report**: `EXT-E4BA13397C66` by `agent:codex`.
-* **runtime.plan**: `RUN-8354665F4697` by `agent:codex`.
-* **collaboration.add**: `COL-BE633C25320D` by `human:owner`.
-* **calibration.evaluate**: `evaluations/reports/calibration-latest.json` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **proposal.review**: `RFC-69828EB38078` by `human:owner`.
-* **campaign.update**: `CMP-76BD99582F70` by `agent:codex`.
-* **proposal.add**: `RFC-69828EB38078` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **claims.evaluate**: `all` by `agent:codex`.
-* **claim.evidence.add**: `CLM-3B0EC9C26226` by `agent:codex`.
-* **claim.add**: `CLM-3B0EC9C26226` by `agent:codex`.
-* **claim.evidence.add**: `CLM-25D2398ACBF4` by `agent:codex`.
-* **claim.add**: `CLM-25D2398ACBF4` by `agent:codex`.
-* **claim.evidence.add**: `CLM-B97B5BE5E324` by `agent:codex`.
-* **claim.add**: `CLM-B97B5BE5E324` by `agent:codex`.
-* **claim.evidence.add**: `CLM-FF4A31447E3E` by `agent:codex`.
-* **claim.add**: `CLM-FF4A31447E3E` by `agent:codex`.
-* **claim.evidence.add**: `CLM-DA4E9F9BA977` by `agent:codex`.
-* **claim.add**: `CLM-DA4E9F9BA977` by `agent:codex`.
-* **source.add**: `SRC-228828E53C40` by `agent:codex`.
-* **snapshot.create**: `SNP-5A0B5199294B` by `agent:codex`.
-* **wiki.lint**: `all` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **source.assess**: `SRC-477696BD1807` by `agent:codex`.
-* **campaign.update**: `CMP-0619AC235CCA` by `agent:codex`.
-* **campaign.update**: `CMP-0619AC235CCA` by `agent:codex`.
-* **wiki.render**: `derived-views` by `agent:codex`.
-* **claims.evaluate**: `all` by `agent:codex`.
-* **campaign.add**: `CMP-0619AC235CCA` by `human:owner`.
-* **claim.evidence.add**: `CLM-F526A53CB69F` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F526A53CB69F` by `agent:codex`.
-* **claim.evidence.add**: `CLM-952258184EF2` by `agent:codex`.
-* **claim.evidence.add**: `CLM-7FDAF2F91E73` by `agent:codex`.
-* **claim.evidence.add**: `CLM-7FDAF2F91E73` by `agent:codex`.
-* **claim.add**: `CLM-F526A53CB69F` by `agent:codex`.
-* **claim.add**: `CLM-952258184EF2` by `agent:codex`.
-* **claim.add**: `CLM-7FDAF2F91E73` by `agent:codex`.
-* **source.add**: `SRC-064C46D22353` by `agent:codex`.
-* **source.add**: `SRC-477696BD1807` by `agent:codex`.
-* **campaign.update**: `CMP-C31903B13965` by `agent:codex`.
-* **campaign.update**: `CMP-C31903B13965` by `agent:codex`.
-* **campaign.add**: `CMP-088A51571084` by `agent:codex`.
-* **campaign.add**: `CMP-7A543D820D83` by `agent:codex`.
-* **campaign.add**: `CMP-76BD99582F70` by `agent:codex`.
-* **campaign.add**: `CMP-C31903B13965` by `human:owner`.
-* **wiki.lint**: `all` by `agent:codex`.
-* **claims.evaluate**: `all` by `agent:codex`.
-* **claim.evidence.add**: `CLM-FBF709C70CCF` by `agent:codex`.
-* **claim.evidence.add**: `CLM-FBF709C70CCF` by `agent:codex`.
-* **claim.evidence.add**: `CLM-DCFACC957266` by `agent:codex`.
-* **claim.evidence.add**: `CLM-DCFACC957266` by `agent:codex`.
-* **claim.evidence.add**: `CLM-DCFACC957266` by `agent:codex`.
-* **claim.evidence.add**: `CLM-6DDD53332A40` by `agent:codex`.
-* **claim.evidence.add**: `CLM-6DDD53332A40` by `agent:codex`.
-* **claim.evidence.add**: `CLM-6DDD53332A40` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F464CCF0AA1A` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F464CCF0AA1A` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F464CCF0AA1A` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F464CCF0AA1A` by `agent:codex`.
-* **claim.evidence.add**: `CLM-D2A1B46809DA` by `agent:codex`.
-* **claim.evidence.add**: `CLM-D2A1B46809DA` by `agent:codex`.
-* **claim.evidence.add**: `CLM-D2A1B46809DA` by `agent:codex`.
-* **claim.evidence.add**: `CLM-1EB8BD726482` by `agent:codex`.
-* **claim.evidence.add**: `CLM-1EB8BD726482` by `agent:codex`.
-* **claim.evidence.add**: `CLM-CEBC308C15C4` by `agent:codex`.
-* **claim.evidence.add**: `CLM-61B3C391010C` by `agent:codex`.
-* **claim.evidence.add**: `CLM-61B3C391010C` by `agent:codex`.
-* **claim.evidence.add**: `CLM-61B3C391010C` by `agent:codex`.
-* **claim.evidence.add**: `CLM-4A3051A018DC` by `agent:codex`.
-* **claim.evidence.add**: `CLM-4A3051A018DC` by `agent:codex`.
-* **claim.evidence.add**: `CLM-4A3051A018DC` by `agent:codex`.
-* **claim.evidence.add**: `CLM-DA7C92E9A901` by `agent:codex`.
-* **claim.evidence.add**: `CLM-DA7C92E9A901` by `agent:codex`.
-* **claim.evidence.add**: `CLM-DA7C92E9A901` by `agent:codex`.
-* **claim.evidence.add**: `CLM-FC9028899EE0` by `agent:codex`.
-* **claim.evidence.add**: `CLM-CB6E34C87DA3` by `agent:codex`.
-* **claim.evidence.add**: `CLM-CB6E34C87DA3` by `agent:codex`.
-* **claim.evidence.add**: `CLM-CB6E34C87DA3` by `agent:codex`.
-* **claim.evidence.add**: `CLM-CB6E34C87DA3` by `agent:codex`.
-* **claim.evidence.add**: `CLM-6ED77E226EF7` by `agent:codex`.
-* **claim.evidence.add**: `CLM-6ED77E226EF7` by `agent:codex`.
-* **claim.evidence.add**: `CLM-860EB3D6AAEB` by `agent:codex`.
-* **claim.evidence.add**: `CLM-860EB3D6AAEB` by `agent:codex`.
-* **claim.evidence.add**: `CLM-860EB3D6AAEB` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F6367BFF8F35` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F6367BFF8F35` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F6367BFF8F35` by `agent:codex`.
-* **claim.evidence.add**: `CLM-F6367BFF8F35` by `agent:codex`.
-* **source.add**: `SRC-8DAAC6D75C2C` by `agent:codex`.
-* **claim.add**: `CLM-FBF709C70CCF` by `agent:codex`.
-* **claim.add**: `CLM-DCFACC957266` by `agent:codex`.
-* **claim.add**: `CLM-6DDD53332A40` by `agent:codex`.
-* **claim.add**: `CLM-F464CCF0AA1A` by `agent:codex`.
-* **claim.add**: `CLM-D2A1B46809DA` by `agent:codex`.
-* **claim.add**: `CLM-1EB8BD726482` by `agent:codex`.
-* **claim.add**: `CLM-CEBC308C15C4` by `agent:codex`.
-* **claim.add**: `CLM-61B3C391010C` by `agent:codex`.
-* **claim.add**: `CLM-4A3051A018DC` by `agent:codex`.
-* **claim.add**: `CLM-DA7C92E9A901` by `agent:codex`.
-* **claim.add**: `CLM-FC9028899EE0` by `agent:codex`.
-* **claim.add**: `CLM-CB6E34C87DA3` by `agent:codex`.
-* **claim.add**: `CLM-6ED77E226EF7` by `agent:codex`.
-* **claim.add**: `CLM-860EB3D6AAEB` by `agent:codex`.
-* **claim.add**: `CLM-F6367BFF8F35` by `agent:codex`.
-* **source.add**: `SRC-62BFE70FD005` by `agent:codex`.
-* **source.add**: `SRC-E42CA8C4BD30` by `agent:codex`.
-* **source.add**: `SRC-2779A50E2D01` by `agent:codex`.
-* **source.add**: `SRC-F73B1F038B37` by `agent:codex`.
-* **source.add**: `SRC-43A6E8A3C217` by `agent:codex`.
-* **source.add**: `SRC-C204B45C665B` by `agent:codex`.
-* **source.add**: `SRC-CB315D66167D` by `agent:codex`.
-* **source.add**: `SRC-C071A29F63E6` by `agent:codex`.
-* **source.add**: `SRC-55630C70A5F7` by `agent:codex`.
-* **source.add**: `SRC-8908754F8F5E` by `agent:codex`.
-* **source.add**: `SRC-CC24B88C8C02` by `agent:codex`.
-* **source.add**: `SRC-08654E066049` by `agent:codex`.
-* **source.add**: `SRC-B6EDC3F41C3A` by `agent:codex`.
-* **source.add**: `SRC-4E9BB033389D` by `agent:codex`.
-* **source.add**: `SRC-6D473BE1761E` by `agent:codex`.
-* **source.add**: `SRC-A754BF8665D0` by `agent:codex`.
-* **source.add**: `SRC-C7AAE78B0CC4` by `agent:codex`.
-* **source.add**: `SRC-696A976CE094` by `agent:codex`.
-* **source.add**: `SRC-BC899B3F975F` by `agent:codex`.
-* **source.add**: `SRC-56255EE4508A` by `agent:codex`.
-* **source.add**: `SRC-1F603E3131E8` by `agent:codex`.
-* **source.add**: `SRC-2A53F0CF2080` by `agent:codex`.
-* **source.add**: `SRC-660F983C8346` by `agent:codex`.
-* **source.add**: `SRC-25318FE73DEB` by `agent:codex`.
-* **source.add**: `SRC-83F06C506C77` by `agent:codex`.
-* **source.add**: `SRC-1BE9C681A9BA` by `agent:codex`.
-* **source.add**: `SRC-1C96ABEBBA41` by `agent:codex`.
-* **source.add**: `SRC-CFB88DDE3FF1` by `agent:codex`.
-* **bootstrap**: `wiki` by `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implementation.reseal**: `RFC-5D91E03B5BC5` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-01DA85AECBAB` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-94D41EAD577D` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F63FA5329493` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-0733D26931D2` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F5982AA50A01` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-F63FA5329493` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-0733D26931D2` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-F5982AA50A01` / 처리자 `agent:codex`.
+* **source.add**: `SRC-0800355B8885` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-B2D78C43D6CC` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-2647D2FF2111` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-406441F17CC7` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-EA135A102802` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-2F43A5943C09` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-36EFCA0F7453` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-822099EBE7B5` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-A08A794959D5` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-7C5B47E01BC5` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-38279B46494C` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-66CFC9AEBA45` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-D8754BF4E2EB` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-E9B6861EF116` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-844E8A203EC9` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-39C0AB129AD1` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-636C5C91C52C` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-0247698C16F8` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-A9C0E203A5C3` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-128EFD21AA6C` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-A501A17F7383` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-50C544F56457` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-26ED4B6C1FB6` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-26C5AF515293` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-9AD3913E71DD` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-B8D27F426710` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-D75EF9A9C881` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-106F0474E838` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-4A136815DF3E` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-34CA627510FB` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-D876BB4A014D` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-4E2204EE1B5B` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-97ED3E1E1042` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-6926D3A55A13` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-1A2153BDCA9A` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-B26ADBF1D827` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-67D31B298783` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-94D41EAD577D` / 처리자 `agent:codex`.
+* **campaign.add**: `CMP-94D41EAD577D` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-50BA42D348AA` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-01DA85AECBAB` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **memory.feedback.resolve**: `MFB-2BB8B3CBC3CC` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-01DA85AECBAB` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-5D91E03B5BC5` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **memory.feedback.add**: `MFB-2BB8B3CBC3CC` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-5D91E03B5BC5` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-5D91E03B5BC5` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F79558D817DF` / 처리자 `agent:codex`.
+* **source.add**: `SRC-9BADA4274C74` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-CCA31F4879DB` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F6367BFF8F35` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F6367BFF8F35` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-D2A1B46809DA` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-D2A1B46809DA` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F464CCF0AA1A` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-207429D54323` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-207429D54323` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-EC52C0576A28` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F79558D817DF` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F79558D817DF` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F79558D817DF` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F79558D817DF` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-95A38CACF2CD` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-95A38CACF2CD` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-95A38CACF2CD` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-207429D54323` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-EC52C0576A28` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-F79558D817DF` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-95A38CACF2CD` / 처리자 `agent:codex`.
+* **source.add**: `SRC-F9BA839FA59D` / 처리자 `agent:codex`.
+* **source.add**: `SRC-9639A8245BE8` / 처리자 `agent:codex`.
+* **source.add**: `SRC-AF06BCDC1ED2` / 처리자 `agent:codex`.
+* **source.add**: `SRC-54D07435EB56` / 처리자 `agent:codex`.
+* **source.add**: `SRC-7409811C56EB` / 처리자 `agent:codex`.
+* **source.add**: `SRC-3F8E6D0FDE7E` / 처리자 `agent:codex`.
+* **source.add**: `SRC-2E2EA9C214C1` / 처리자 `agent:codex`.
+* **source.add**: `SRC-03641BCFC467` / 처리자 `agent:codex`.
+* **source.add**: `SRC-AD0B1D50C531` / 처리자 `agent:codex`.
+* **source.add**: `SRC-F55FED177366` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-5307A69225D3` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-8F7ADCECFA0E` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-AD34DBB10F1D` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-B0B19D4B8C5D` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-B6AAFD3ECAC0` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-8C55C903E730` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-FB033F63E1C2` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-45F7560DEB33` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-2A522BA30404` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-DF2E75056B85` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-AF2E6A76010A` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-9AC73CEF6FCB` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-60528FD1163A` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-630AF6D54A6B` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-CDEAF3837B3E` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-64F8C03D0241` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-9036402A59C2` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-7560823BFD5E` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-8137C33990B2` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-2B1E7F53644C` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-F26BF9FA059C` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-B8F9B08D1195` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-145DA714676A` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-CF13B34C8A85` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-C207BBB31906` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-449094B37139` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-C9258A24D50D` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-C95B1F24DC12` / 처리자 `agent:codex`.
+* **security.candidate.screen**: `ADM-CCD996E9A34D` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-01DA85AECBAB` / 처리자 `agent:codex`.
+* **campaign.add**: `CMP-01DA85AECBAB` / 처리자 `human:owner`.
+* **collaboration.add**: `COL-0B8170AE658D` / 처리자 `human:owner`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **snapshot.create**: `SNP-C53D26F53C61` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **snapshot.create**: `SNP-BD974C7AD639` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **collaboration.transition**: `COL-BE633C25320D` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.implement**: `RFC-69828EB38078` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-088A51571084` / 처리자 `agent:codex`.
+* **runtime.action.seal**: `EXT-E4BA13397C66` / 처리자 `agent:codex`.
+* **admission.seal**: `ADM-9B8D53F1FAB9` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-088A51571084` / 처리자 `agent:codex`.
+* **runtime.usage.backfill**: `EXT-E4BA13397C66` / 처리자 `agent:codex`.
+* **security.corpus.evaluate**: `evaluations/reports/security-latest.json` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-088A51571084` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-7A543D820D83` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **source.admission.evaluate**: `ADM-9B8D53F1FAB9` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-A49ACF085321` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-A49ACF085321` / 처리자 `agent:codex`.
+* **source.add**: `SRC-4F5AF5EE0ADB` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F2BB537122FE` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-F2BB537122FE` / 처리자 `agent:codex`.
+* **source.add**: `SRC-0C6123529E07` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-99AE239A5BA3` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-99AE239A5BA3` / 처리자 `agent:codex`.
+* **source.add**: `SRC-920AB22F540A` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-7A543D820D83` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-76BD99582F70` / 처리자 `agent:codex`.
+* **runtime.action.report**: `EXT-E4BA13397C66` / 처리자 `agent:codex`.
+* **runtime.plan**: `RUN-8354665F4697` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-BE633C25320D` / 처리자 `human:owner`.
+* **calibration.evaluate**: `evaluations/reports/calibration-latest.json` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-69828EB38078` / 처리자 `human:owner`.
+* **campaign.update**: `CMP-76BD99582F70` / 처리자 `agent:codex`.
+* **proposal.add**: `RFC-69828EB38078` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-3B0EC9C26226` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-3B0EC9C26226` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-25D2398ACBF4` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-25D2398ACBF4` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-B97B5BE5E324` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-B97B5BE5E324` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-FF4A31447E3E` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-FF4A31447E3E` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-DA4E9F9BA977` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-DA4E9F9BA977` / 처리자 `agent:codex`.
+* **source.add**: `SRC-228828E53C40` / 처리자 `agent:codex`.
+* **snapshot.create**: `SNP-5A0B5199294B` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **source.assess**: `SRC-477696BD1807` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-0619AC235CCA` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-0619AC235CCA` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **campaign.add**: `CMP-0619AC235CCA` / 처리자 `human:owner`.
+* **claim.evidence.add**: `CLM-F526A53CB69F` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F526A53CB69F` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-952258184EF2` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-7FDAF2F91E73` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-7FDAF2F91E73` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-F526A53CB69F` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-952258184EF2` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-7FDAF2F91E73` / 처리자 `agent:codex`.
+* **source.add**: `SRC-064C46D22353` / 처리자 `agent:codex`.
+* **source.add**: `SRC-477696BD1807` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-C31903B13965` / 처리자 `agent:codex`.
+* **campaign.update**: `CMP-C31903B13965` / 처리자 `agent:codex`.
+* **campaign.add**: `CMP-088A51571084` / 처리자 `agent:codex`.
+* **campaign.add**: `CMP-7A543D820D83` / 처리자 `agent:codex`.
+* **campaign.add**: `CMP-76BD99582F70` / 처리자 `agent:codex`.
+* **campaign.add**: `CMP-C31903B13965` / 처리자 `human:owner`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **claims.evaluate**: `all` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-FBF709C70CCF` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-FBF709C70CCF` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-DCFACC957266` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-DCFACC957266` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-DCFACC957266` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-6DDD53332A40` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-6DDD53332A40` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-6DDD53332A40` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F464CCF0AA1A` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F464CCF0AA1A` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F464CCF0AA1A` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F464CCF0AA1A` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-D2A1B46809DA` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-D2A1B46809DA` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-D2A1B46809DA` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-1EB8BD726482` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-1EB8BD726482` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-CEBC308C15C4` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-61B3C391010C` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-61B3C391010C` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-61B3C391010C` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-4A3051A018DC` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-4A3051A018DC` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-4A3051A018DC` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-DA7C92E9A901` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-DA7C92E9A901` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-DA7C92E9A901` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-FC9028899EE0` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-CB6E34C87DA3` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-CB6E34C87DA3` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-CB6E34C87DA3` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-CB6E34C87DA3` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-6ED77E226EF7` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-6ED77E226EF7` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-860EB3D6AAEB` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-860EB3D6AAEB` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-860EB3D6AAEB` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F6367BFF8F35` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F6367BFF8F35` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F6367BFF8F35` / 처리자 `agent:codex`.
+* **claim.evidence.add**: `CLM-F6367BFF8F35` / 처리자 `agent:codex`.
+* **source.add**: `SRC-8DAAC6D75C2C` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-FBF709C70CCF` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-DCFACC957266` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-6DDD53332A40` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-F464CCF0AA1A` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-D2A1B46809DA` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-1EB8BD726482` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-CEBC308C15C4` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-61B3C391010C` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-4A3051A018DC` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-DA7C92E9A901` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-FC9028899EE0` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-CB6E34C87DA3` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-6ED77E226EF7` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-860EB3D6AAEB` / 처리자 `agent:codex`.
+* **claim.add**: `CLM-F6367BFF8F35` / 처리자 `agent:codex`.
+* **source.add**: `SRC-62BFE70FD005` / 처리자 `agent:codex`.
+* **source.add**: `SRC-E42CA8C4BD30` / 처리자 `agent:codex`.
+* **source.add**: `SRC-2779A50E2D01` / 처리자 `agent:codex`.
+* **source.add**: `SRC-F73B1F038B37` / 처리자 `agent:codex`.
+* **source.add**: `SRC-43A6E8A3C217` / 처리자 `agent:codex`.
+* **source.add**: `SRC-C204B45C665B` / 처리자 `agent:codex`.
+* **source.add**: `SRC-CB315D66167D` / 처리자 `agent:codex`.
+* **source.add**: `SRC-C071A29F63E6` / 처리자 `agent:codex`.
+* **source.add**: `SRC-55630C70A5F7` / 처리자 `agent:codex`.
+* **source.add**: `SRC-8908754F8F5E` / 처리자 `agent:codex`.
+* **source.add**: `SRC-CC24B88C8C02` / 처리자 `agent:codex`.
+* **source.add**: `SRC-08654E066049` / 처리자 `agent:codex`.
+* **source.add**: `SRC-B6EDC3F41C3A` / 처리자 `agent:codex`.
+* **source.add**: `SRC-4E9BB033389D` / 처리자 `agent:codex`.
+* **source.add**: `SRC-6D473BE1761E` / 처리자 `agent:codex`.
+* **source.add**: `SRC-A754BF8665D0` / 처리자 `agent:codex`.
+* **source.add**: `SRC-C7AAE78B0CC4` / 처리자 `agent:codex`.
+* **source.add**: `SRC-696A976CE094` / 처리자 `agent:codex`.
+* **source.add**: `SRC-BC899B3F975F` / 처리자 `agent:codex`.
+* **source.add**: `SRC-56255EE4508A` / 처리자 `agent:codex`.
+* **source.add**: `SRC-1F603E3131E8` / 처리자 `agent:codex`.
+* **source.add**: `SRC-2A53F0CF2080` / 처리자 `agent:codex`.
+* **source.add**: `SRC-660F983C8346` / 처리자 `agent:codex`.
+* **source.add**: `SRC-25318FE73DEB` / 처리자 `agent:codex`.
+* **source.add**: `SRC-83F06C506C77` / 처리자 `agent:codex`.
+* **source.add**: `SRC-1BE9C681A9BA` / 처리자 `agent:codex`.
+* **source.add**: `SRC-1C96ABEBBA41` / 처리자 `agent:codex`.
+* **source.add**: `SRC-CFB88DDE3FF1` / 처리자 `agent:codex`.
+* **bootstrap**: `wiki` / 처리자 `agent:codex`.

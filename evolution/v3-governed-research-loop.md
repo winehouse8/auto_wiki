@@ -1,43 +1,42 @@
-# v3 — Governed autonomous research loop
+# v3 — 통제된 자율 연구 순환
 
 ## 현재 구조
 
 ```text
-human/agent interests and leads
-  → bounded campaign
-  → discovery ladder + counter-search
-  → immutable snapshot / quarantine
-  → source assessment + independence clustering
-  → atomic claim/evidence admission
-  → independent/adversarial review
-  → scoped synthesis patch
-  → deterministic validation + factual regression eval
-  → low-risk merge OR governance RFC
-  → next gap
+사람/Agent 관심사와 단서
+  → 범위 제한 캠페인
+  → 발견 사다리 + 반증 검색
+  → 불변 스냅샷 / 격리
+  → 출처 평가 + 독립성 묶음
+  → 원자적 주장·증거 입수
+  → 독립·적대적 검토
+  → 범위 제한 종합 패치
+  → 결정론적 검증 + 사실 회귀평가
+  → 저위험 병합 또는 거버넌스 RFC
+  → 다음 공백
 ```
 
 ## v3에 구현한 것
 
 - `config/interests.json`: 관심 분야와 관찰 주기
-- campaign queue: 예산·독립 출처·종료 조건
-- `AGENTS.md`와 `prompts/research-cycle.md`: provider-neutral 운영 프로토콜
-- deterministic CLI: actor/source/claim/evidence/review/campaign/proposal
-- source와 claim 신뢰 레벨의 gate-based 계산
+- 캠페인 대기열: 예산·독립 출처·종료 조건
+- `AGENTS.md`와 `prompts/research-cycle.md`: 제공자 중립 운영 프로토콜
+- 결정론적 CLI: 행위자·출처·주장·증거·검토·캠페인·제안
+- 출처와 주장 신뢰 레벨의 게이트 기반 계산
 - raw SHA-256 검사와 event hash chain 검사
-- 사람이 읽는 index·epistemic dashboard 자동 생성
-- lint, unit tests, release checklist, content-addressed snapshot
-- 하네스 변경 자동 적용 금지와 RFC 템플릿
+- 사람이 읽는 색인·인식론적 대시보드 자동 생성
+- 린트, 단위 테스트, 릴리스 점검표, 콘텐츠 주소 기반 스냅샷
+- 하네스 변경 자동 적용 금지와 RFC 서식
 
 ## 아직 증명하지 못한 것
 
 - 장기 운영에서 C0–C4가 실제 정확도와 잘 보정되는지
 - 주기적 연구가 인간의 정보 이득을 늘리고 중복을 줄이는지
-- writer/reviewer 모델 다양성이 오류 상관을 실제로 낮추는지
-- 1만 개 이상의 claim에서 파일형 상태가 충분한지
-- prompt injection 및 multimodal poisoning 방어가 실제 공격에서 견디는지
-- 동시 인간/Agent 편집의 semantic conflict 해결
+- 작성자·검토자 모델 다양성이 오류 상관을 실제로 낮추는지
+- 1만 개 이상의 주장에서 파일형 상태가 충분한지
+- 프롬프트 주입 및 다중양식 오염 방어가 실제 공격에서 견디는지
+- 동시 인간·Agent 편집의 의미 충돌 해결
 
 ## v4 승격 금지 조건
 
-운영 사례와 benchmark 없이 vector DB, multi-agent jury, 자동 source scoring, 완전 무인 self-modification을 추가하지 않는다. v4는 `governance/proposals/` RFC와 회귀평가가 모두 있어야 한다.
-
+운영 사례와 벤치마크 없이 벡터 데이터베이스, 다중 Agent 배심, 자동 출처 점수화, 완전 무인 자기 수정을 추가하지 않는다. v4는 `governance/proposals/` RFC와 회귀평가가 모두 있어야 한다.

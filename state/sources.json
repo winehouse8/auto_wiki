@@ -9,14 +9,14 @@
         "assessed_at": "2026-07-11T17:17:11+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "speaker represents the product being evaluated"
+          "발표자가 평가 대상 제품을 대표함"
         ],
         "quality_markers": [
           "holdout described",
           "production failure disclosures",
           "public auto-caption"
         ],
-        "rationale": "Concrete first-party production account with holdout, stale-context pruning, failure clustering, and human review details; efficacy and scale claims are not independently reproduced."
+        "rationale": "별도 검증군, 오래된 맥락 제거, 실패 군집화와 사람 검토의 세부를 담은 구체적인 제작사 1차 운영 사례다. 효과와 규모에 관한 주장은 독립적으로 재현되지 않았다."
       },
       "authors": [
         "Benjamin Verbeek"
@@ -24,7 +24,7 @@
       "id": "SRC-03641BCFC467",
       "independence_group": "lovable-self-improvement",
       "license": "YouTube Standard License",
-      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-C95B1F24DC12.",
+      "notes": "자막 재배포 권리가 확인되지 않아 메타데이터만 보존했다. 보안 심사를 거친 자동 자막: ADM-C95B1F24DC12.",
       "publication_status": "published video",
       "published_at": "2026-06-02",
       "publisher": "AI Engineer",
@@ -45,7 +45,7 @@
           "official-record",
           "primary-author-account"
         ],
-        "rationale": "OKF의 목적과 발표 맥락을 설명하는 공식 1차 글이다. 공식 spec과 같은 제작자 group이므로 독립 corroboration이 아니다."
+        "rationale": "OKF의 목적과 발표 맥락을 설명하는 공식 1차 글이다. 공식 명세와 같은 제작자 집단이므로 독립적인 교차 검증이 아니다."
       },
       "authors": [
         "Amir Hormati",
@@ -80,8 +80,8 @@
         "assessed_at": "2026-07-11T18:23:21+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "channel metadata can change",
-          "same agent performed enumeration and semantic classification"
+          "채널 메타데이터는 변경될 수 있음",
+          "동일한 Agent가 목록 작성과 의미 분류를 수행함"
         ],
         "quality_markers": [
           "content hash",
@@ -90,7 +90,7 @@
           "per-candidate security receipts",
           "public metadata"
         ],
-        "rationale": "A content-addressed, full-period audit over public channel metadata with explicit mutually exclusive rules, per-video hashes, tab receipts, caption admission receipts, and all direct-candidate dispositions. It is suitable for coverage and screening claims, but semantic classification was performed once by the same agent, public YouTube state is mutable, and deleted/private/unlisted videos are unobservable."
+        "rationale": "공개 채널 메타데이터 전체 기간을 대상으로 한 콘텐츠 주소형 감사이며, 상호 배타적인 명시 규칙, 영상별 해시, 탭 영수증, 자막 입수 심사 영수증과 모든 직접 후보의 처분을 포함한다. 범위와 선별 주장을 뒷받침하는 데 적합하지만, 의미 분류는 같은 Agent가 한 번만 수행했고 공개 YouTube 상태는 변경될 수 있으며 삭제·비공개·일부 공개 영상은 관찰할 수 없다."
       },
       "authors": [
         "AI Engineer channel",
@@ -100,7 +100,7 @@
       "independence_group": "youtube-ai-engineer-channel-audit-2026-07-12",
       "license": "public metadata compilation; caption bodies excluded because redistribution rights were not verified",
       "lifecycle_status": "active",
-      "notes": "Bundle SHA-256 bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980. Manifest SHA-256 15c1ba8fe98eecb2224bc68c9576929f3e0ac83d33606b0eda3e3a7176509807; review SHA-256 9a9df8415e9a2aeb8eede2348e72bdcdf5beaab6f98a65dedfe8dc1d5ff6e16d. 264 listed rows include 2 upcoming premieres; completed/viewable denominator 262. Caption bodies were screened but not preserved or promoted.",
+      "notes": "번들 SHA-256 bea5e7289f0022af81ca1ec81de44e624c32a93ada4ae7e94354cb3450623980. 매니페스트 SHA-256 15c1ba8fe98eecb2224bc68c9576929f3e0ac83d33606b0eda3e3a7176509807; 검토 SHA-256 9a9df8415e9a2aeb8eede2348e72bdcdf5beaab6f98a65dedfe8dc1d5ff6e16d. 목록 264행 중 2개는 공개 예정 최초 상영이며, 완료되어 볼 수 있는 영상의 분모는 262개다. 자막 본문은 선별했지만 보존하거나 승격하지 않았다.",
       "publication_status": "derived audit snapshot",
       "published_at": "2026-07-12",
       "publisher": "AI Engineer / YouTube",
@@ -121,7 +121,7 @@
           "official-record",
           "standard"
         ],
-        "rationale": "provenance 상호운용을 위한 안정된 공식 표준이다. 진실 판정 표준은 아니다."
+        "rationale": "출처 추적성 상호운용을 위한 안정된 공식 표준이다. 진실 판정 표준은 아니다."
       },
       "authors": [
         "W3C Provenance Working Group"
@@ -146,7 +146,7 @@
         "assessed_at": "2026-07-11T15:57:39+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "service-operator"
+          "서비스 운영자"
         ],
         "quality_markers": [
           "biomedical-registry",
@@ -154,7 +154,7 @@
           "primary-source",
           "public-api"
         ],
-        "rationale": "PubMed와 PMC를 운영하는 NCBI가 E-utilities의 범위와 접근 방식을 직접 명시한 공식 문서다. 평가 범위는 biomedical metadata retrieval adapter에 한정한다."
+        "rationale": "PubMed와 PMC를 운영하는 NCBI가 E-utilities의 범위와 접근 방식을 직접 명시한 공식 문서다. 평가 범위는 생의학 메타데이터 검색 어댑터에 한정한다."
       },
       "authors": [
         "National Center for Biotechnology Information"
@@ -162,7 +162,7 @@
       "id": "SRC-0C6123529E07",
       "independence_group": "ncbi-eutilities-official",
       "license": null,
-      "notes": "2026-07-12 조회; online adapter 결과는 cache timestamp와 함께 advisory로만 사용한다.",
+      "notes": "2026-07-12 조회. 온라인 어댑터 결과는 캐시 시각과 함께 참고 정보로만 사용한다.",
       "publication_status": "living official documentation",
       "published_at": null,
       "publisher": "National Center for Biotechnology Information",
@@ -245,7 +245,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "ICML 심사를 통과한 memory utility 연구다. 유용성이 사실성·provenance를 보장하지는 않는다."
+        "rationale": "ICML 심사를 통과한 메모리 효용성 연구다. 유용성이 사실성·출처 추적성을 보장하지는 않는다."
       },
       "authors": [],
       "id": "SRC-1F603E3131E8",
@@ -268,7 +268,7 @@
         "assessed_at": "2026-07-11T15:24:07+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "product-owner"
+          "제품 소유자"
         ],
         "quality_markers": [
           "official",
@@ -304,7 +304,7 @@
           "benchmark",
           "peer-reviewed"
         ],
-        "rationale": "ICLR 심사를 통과한 동적 deep-research benchmark 원 논문이다. live web 변동성은 남는다."
+        "rationale": "ICLR 심사를 통과한 동적 심층 연구 벤치마크 원 논문이다. 실시간 웹의 변동성은 남는다."
       },
       "authors": [],
       "id": "SRC-25318FE73DEB",
@@ -333,7 +333,7 @@
           "primary-study",
           "security-evaluation"
         ],
-        "rationale": "검색 Agent의 misinformation·prompt injection을 체계적으로 평가한 ICML 원 논문이다."
+        "rationale": "검색 Agent의 허위 정보·프롬프트 주입 취약성을 체계적으로 평가한 ICML 원 논문이다."
       },
       "authors": [],
       "id": "SRC-2779A50E2D01",
@@ -387,14 +387,14 @@
         "assessed_at": "2026-07-11T17:17:11+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "speaker is CEO of the agent infrastructure vendor"
+          "발표자가 Agent 인프라 공급사의 최고경영자임"
         ],
         "quality_markers": [
           "explicit architecture",
           "known event-sourcing analogy",
           "public auto-caption"
         ],
-        "rationale": "First-party architecture argument connecting append-only logs to agent continuity and portability; the strong claim that the log alone reconstructs an agent is not independently established and omits external state."
+        "rationale": "추가 전용 로그를 Agent의 연속성과 이식성에 연결하는 제작사 1차 아키텍처 주장이다. 로그만으로 Agent를 재구성할 수 있다는 강한 주장은 독립적으로 확립되지 않았고 외부 상태를 빠뜨린다."
       },
       "authors": [
         "Ishaan Sehgal"
@@ -402,7 +402,7 @@
       "id": "SRC-2E2EA9C214C1",
       "independence_group": "omnara-log-agent",
       "license": "YouTube Standard License",
-      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-C9258A24D50D.",
+      "notes": "자막 재배포 권리가 확인되지 않아 메타데이터만 보존했다. 보안 심사를 거친 자동 자막: ADM-C9258A24D50D.",
       "publication_status": "published video",
       "published_at": "2026-06-25",
       "publisher": "AI Engineer",
@@ -422,14 +422,14 @@
         "assessed_at": "2026-07-11T17:17:12+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "speaker represents Arize and its agent product"
+          "발표자가 Arize와 해당 Agent 제품을 대표함"
         ],
         "quality_markers": [
           "production lessons",
           "public video",
           "timestamped chapters"
         ],
-        "rationale": "Specific first-party failure report on truncation, summarization, retrievable memory, and long-session evaluation; code and comparative benchmark are not public."
+        "rationale": "잘림, 요약, 검색 가능한 메모리와 장시간 세션 평가를 다룬 구체적인 제작사 1차 실패 보고다. 코드와 비교 벤치마크는 공개되지 않았다."
       },
       "authors": [
         "Sally-Ann DeLucia"
@@ -437,7 +437,7 @@
       "id": "SRC-3F8E6D0FDE7E",
       "independence_group": "arize-alyx-context",
       "license": "YouTube Standard License",
-      "notes": "Metadata-only. Automated caption retrieval was blocked without browser authentication; no credentials were used.",
+      "notes": "메타데이터만 보존했다. 브라우저 인증 없이는 자동 자막을 가져올 수 없었으며 자격증명을 사용하지 않았다.",
       "publication_status": "published video",
       "published_at": "2026-05-10",
       "publisher": "AI Engineer",
@@ -458,7 +458,7 @@
           "primary-study",
           "public-code"
         ],
-        "rationale": "사용자의 구상과 직접 닮은 living skill knowledge lifecycle이나 factual wiki 검증이 아니며 preprint다."
+        "rationale": "사용자의 구상과 직접 닮은 살아 있는 Skill 지식 생명주기나 사실 기반 Wiki 검증은 아니며 사전 공개 논문이다."
       },
       "authors": [],
       "id": "SRC-43A6E8A3C217",
@@ -491,7 +491,7 @@
           "primary-artifact",
           "version-pinned"
         ],
-        "rationale": "공식 v0.1 Draft SPEC.md를 repository commit d44368c15e38e7c92481c5992e4f9b5b421a801d, blob 55d0a46cc988e99aa35cd027964d6278a4f93f35, local SHA-256 b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e로 고정했다. release/tag가 없어 S4로 승격하지 않는다."
+        "rationale": "공식 v0.1 초안 SPEC.md를 저장소 커밋 d44368c15e38e7c92481c5992e4f9b5b421a801d, 블롭 55d0a46cc988e99aa35cd027964d6278a4f93f35, 로컬 SHA-256 b9655e607346dbbdc6de21190e9a953313eda6a7eba68d4d272a65975940ad6e로 고정했다. 릴리스나 태그가 없어 S4로 승격하지 않는다."
       },
       "authors": [
         "Amir Hormati",
@@ -551,7 +551,7 @@
         "assessed_at": "2026-07-11T15:57:39+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "service-operator"
+          "서비스 운영자"
         ],
         "quality_markers": [
           "commit-provenance",
@@ -559,7 +559,7 @@
           "primary-source",
           "versioned-api"
         ],
-        "rationale": "GitHub가 commit 조회 응답의 immutable SHA와 signature verification 필드를 직접 기술한 공식 API 문서다. 평가 범위는 code source version pinning과 verification metadata에 한정한다."
+        "rationale": "GitHub가 커밋 조회 응답의 불변 SHA와 서명 검증 필드를 직접 기술한 공식 API 문서다. 평가 범위는 코드 출처 버전 고정과 검증 메타데이터에 한정한다."
       },
       "authors": [
         "GitHub"
@@ -567,7 +567,7 @@
       "id": "SRC-4F5AF5EE0ADB",
       "independence_group": "github-rest-commit-official",
       "license": null,
-      "notes": "2026-07-12 조회; online adapter 결과는 cache timestamp와 함께 advisory로만 사용한다.",
+      "notes": "2026-07-12 조회. 온라인 어댑터 결과는 캐시 시각과 함께 참고 정보로만 사용한다.",
       "publication_status": "living official documentation",
       "published_at": null,
       "publisher": "GitHub",
@@ -587,7 +587,7 @@
         "assessed_at": "2026-07-11T17:17:12+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "authors created and promote the method"
+          "저자들이 해당 방법을 만들고 홍보함"
         ],
         "quality_markers": [
           "limitations stated",
@@ -595,7 +595,7 @@
           "public implementation",
           "worked example"
         ],
-        "rationale": "Primary methodological preprint with an explicit worked example, hypotheses, limitations, and public code; it is not peer-reviewed and the convergence claim lacks independent replication."
+        "rationale": "명시적인 풀이 예시, 가설, 한계와 공개 코드를 갖춘 방법론 1차 사전 공개 논문이다. 동료심사를 거치지 않았고 수렴에 관한 주장은 독립적으로 재현되지 않았다."
       },
       "authors": [
         "Raj Navakoti",
@@ -604,7 +604,7 @@
       "id": "SRC-54D07435EB56",
       "independence_group": "ddc-authors",
       "license": "reuse license not verified",
-      "notes": "Metadata-only because redistribution license was not established. PDF security-screened as ADM-9036402A59C2.",
+      "notes": "재배포 허가가 확인되지 않아 메타데이터만 보존했다. PDF 보안 심사 기록: ADM-9036402A59C2.",
       "publication_status": "preprint",
       "published_at": "2026-03-14",
       "publisher": "arXiv",
@@ -653,7 +653,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "세밀한 provenance 관계를 직접 평가한 ACL 동료심사 원 논문이다."
+        "rationale": "세밀한 출처 추적 관계를 직접 평가한 ACL 동료심사 원 논문이다."
       },
       "authors": [],
       "id": "SRC-56255EE4508A",
@@ -681,7 +681,7 @@
           "public-implementation",
           "system-demo"
         ],
-        "rationale": "atomic claim 분해와 재현 가능한 로컬 검색 검증 파이프라인을 공개한 시스템 데모다."
+        "rationale": "원자적 주장 분해와 재현 가능한 로컬 검색 검증 파이프라인을 공개한 시스템 시연이다."
       },
       "authors": [],
       "id": "SRC-62BFE70FD005",
@@ -709,7 +709,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "ACL 동료심사 원 논문이며 감사 전후 benchmark 정답 오류를 정량화한다."
+        "rationale": "ACL 동료심사 원 논문이며 감사 전후 벤치마크 정답 오류를 정량화한다."
       },
       "authors": [],
       "id": "SRC-660F983C8346",
@@ -737,7 +737,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "source credibility와 cited-source groundedness를 분리 측정한 동료심사 원 논문이다."
+        "rationale": "출처 신뢰성과 인용 출처 근거성을 분리 측정한 동료심사 원 논문이다."
       },
       "authors": [],
       "id": "SRC-696A976CE094",
@@ -764,7 +764,7 @@
           "benchmark",
           "primary-study"
         ],
-        "rationale": "memory poisoning taxonomy와 MPBench를 제시한 최신 원 연구지만 아직 preprint다."
+        "rationale": "메모리 오염 분류 체계와 MPBench를 제시한 최신 원 연구지만 아직 사전 공개 논문이다."
       },
       "authors": [],
       "id": "SRC-6D473BE1761E",
@@ -790,14 +790,14 @@
         "assessed_at": "2026-07-11T17:17:12+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "speaker and company sell context tooling"
+          "발표자와 소속 회사가 맥락 도구를 판매함"
         ],
         "quality_markers": [
           "explicit lifecycle",
           "public auto-caption",
           "timestamped chapters"
         ],
-        "rationale": "First-party practitioner framing of context as a versioned generate-evaluate-distribute-observe lifecycle; no independent evidence that the branded lifecycle improves outcomes."
+        "rationale": "맥락을 버전이 있는 생성·평가·배포·관찰 생명주기로 설명하는 실무자의 제작사 1차 관점이다. 해당 명칭의 생명주기가 결과를 개선한다는 독립 근거는 없다."
       },
       "authors": [
         "Patrick Debois"
@@ -805,7 +805,7 @@
       "id": "SRC-7409811C56EB",
       "independence_group": "tessl-context-lifecycle",
       "license": "YouTube Standard License",
-      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-449094B37139.",
+      "notes": "자막 재배포 권리가 확인되지 않아 메타데이터만 보존했다. 보안 심사를 거친 자동 자막: ADM-449094B37139.",
       "publication_status": "published video",
       "published_at": "2026-05-03",
       "publisher": "AI Engineer",
@@ -885,7 +885,7 @@
           "mechanistic-analysis",
           "primary-study"
         ],
-        "rationale": "권위 persona가 증거 판단을 왜곡하는 현상을 직접 연구하지만 아직 preprint이고 통제된 모델·QA 범위다."
+        "rationale": "권위 페르소나가 증거 판단을 왜곡하는 현상을 직접 연구하지만 아직 사전 공개 논문이고 통제된 모델·질의응답 범위다."
       },
       "authors": [],
       "id": "SRC-8DAAC6D75C2C",
@@ -908,7 +908,7 @@
         "assessed_at": "2026-07-11T15:57:39+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "service-operator"
+          "서비스 운영자"
         ],
         "quality_markers": [
           "integrity-registry",
@@ -916,7 +916,7 @@
           "primary-source",
           "production-api"
         ],
-        "rationale": "Crossref production services에서 Retraction Watch 상태 데이터의 접근 경로와 update-to/source 필드를 직접 명시하는 공식 문서다. 평가 범위는 scholarly publication status lookup에 한정한다."
+        "rationale": "Crossref 운영 서비스에서 Retraction Watch 상태 데이터의 접근 경로와 update-to/source 필드를 직접 명시하는 공식 문서다. 평가 범위는 학술 출판물 상태 조회에 한정한다."
       },
       "authors": [
         "Crossref"
@@ -924,7 +924,7 @@
       "id": "SRC-920AB22F540A",
       "independence_group": "crossref-retraction-watch-official",
       "license": null,
-      "notes": "2026-07-12 조회; online adapter 결과는 cache timestamp와 함께 advisory로만 사용한다.",
+      "notes": "2026-07-12 조회. 온라인 어댑터 결과는 캐시 시각과 함께 참고 정보로만 사용한다.",
       "publication_status": "living official documentation",
       "published_at": null,
       "publisher": "Crossref",
@@ -944,7 +944,7 @@
         "assessed_at": "2026-07-11T17:17:12+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "no material product conflict identified"
+          "중대한 제품 관련 이해상충을 확인하지 못함"
         ],
         "quality_markers": [
           "explicit operations",
@@ -952,7 +952,7 @@
           "peer-reviewed",
           "primary benchmark"
         ],
-        "rationale": "Peer-reviewed primary paper operationalizing store, retrieve, update, summarize, and discard as explicit memory actions; its learned policy and dialogue benchmarks do not directly validate Wiki lifecycle automation."
+        "rationale": "저장·검색·갱신·요약·폐기를 명시적인 메모리 동작으로 구현한 동료심사 1차 논문이다. 학습된 정책과 대화 벤치마크는 Wiki 생명주기 자동화를 직접 검증하지 않는다."
       },
       "authors": [
         "Jiaqi Feng",
@@ -966,7 +966,7 @@
       "id": "SRC-9639A8245BE8",
       "independence_group": "agemem-authors",
       "license": "CC BY 4.0",
-      "notes": "Metadata-only. PDF and extracted text were quarantined but rejected by the security gate; no override was used (ADM-CDEAF3837B3E, ADM-9AC73CEF6FCB).",
+      "notes": "메타데이터만 보존했다. PDF와 추출 텍스트는 격리했지만 보안 게이트에서 거부되었고 우회 승인은 사용하지 않았다(ADM-CDEAF3837B3E, ADM-9AC73CEF6FCB).",
       "publication_status": "peer-reviewed ACL 2026 main conference",
       "published_at": "2026-07",
       "publisher": "Association for Computational Linguistics",
@@ -986,14 +986,14 @@
         "assessed_at": "2026-07-11T17:20:15+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "speaker is CEO and co-founder of the proposed retrieval product"
+          "발표자가 제안한 검색 제품의 최고경영자이자 공동 창업자임"
         ],
         "quality_markers": [
           "explicit failure modes",
           "live demo",
           "public auto-caption"
         ],
-        "rationale": "First-party proposal to feed outcome signals back into memory retrieval; it clearly discloses cold-start, noisy-label, drift, and hyperparameter limitations, but utility-ranking efficacy is a vendor claim without independent benchmark."
+        "rationale": "결과 신호를 메모리 검색에 되먹임하자는 제작사 1차 제안이다. 초기 데이터 부족, 잡음이 있는 표지, 변화와 하이퍼파라미터의 한계를 명확히 밝히지만, 효용 순위화의 효과는 독립 벤치마크가 없는 공급사 주장이다."
       },
       "authors": [
         "Sonam Pankaj"
@@ -1001,7 +1001,7 @@
       "id": "SRC-9BADA4274C74",
       "independence_group": "starlight-utility-memory",
       "license": "YouTube Standard License",
-      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-8137C33990B2. Outcome feedback is recorded as diagnostic data only and must not auto-change trust.",
+      "notes": "자막 재배포 권리가 확인되지 않아 메타데이터만 보존했다. 보안 심사를 거친 자동 자막: ADM-8137C33990B2. 결과 피드백은 진단 데이터로만 기록하며 신뢰도를 자동으로 바꾸면 안 된다.",
       "publication_status": "published video",
       "published_at": "2026-06-28",
       "publisher": "AI Engineer",
@@ -1023,7 +1023,7 @@
           "primary-study",
           "security-evaluation"
         ],
-        "rationale": "memory poisoning 방어를 평가한 ICML 원 논문이다. 공격 가정 밖 일반화는 추가 검증이 필요하다."
+        "rationale": "메모리 오염 방어를 평가한 ICML 원 논문이다. 공격 가정 밖 일반화는 추가 검증이 필요하다."
       },
       "authors": [],
       "id": "SRC-A754BF8665D0",
@@ -1049,7 +1049,7 @@
         "assessed_at": "2026-07-11T17:17:11+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "speaker founded RELAI and presents its approach"
+          "발표자가 RELAI를 창업했고 그 접근법을 발표함"
         ],
         "quality_markers": [
           "expert speaker",
@@ -1057,7 +1057,7 @@
           "linked first-party article",
           "public auto-caption"
         ],
-        "rationale": "Direct technical presentation by a relevant academic and product founder; architectural principles and timestamps are usable, while product gains lack an independent public benchmark."
+        "rationale": "관련 분야 연구자이자 제품 창업자가 직접 진행한 기술 발표다. 아키텍처 원칙과 타임스탬프는 사용할 수 있지만 제품 성능 향상에는 독립된 공개 벤치마크가 없다."
       },
       "authors": [
         "Soheil Feizi"
@@ -1065,7 +1065,7 @@
       "id": "SRC-AD0B1D50C531",
       "independence_group": "relai-vcl",
       "license": "YouTube Standard License",
-      "notes": "Metadata-only because caption redistribution rights were not established. Security-screened auto-caption: ADM-CCD996E9A34D. YouTube/Pacific publishDate can appear as 2026-07-04.",
+      "notes": "자막 재배포 권리가 확인되지 않아 메타데이터만 보존했다. 보안 심사를 거친 자동 자막: ADM-CCD996E9A34D. YouTube/Pacific의 publishDate는 2026-07-04로 표시될 수 있다.",
       "publication_status": "published video",
       "published_at": "2026-07-05",
       "publisher": "AI Engineer",
@@ -1091,7 +1091,7 @@
         "assessed_at": "2026-07-11T17:17:12+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "no material product conflict identified"
+          "중대한 제품 관련 이해상충을 확인하지 못함"
         ],
         "quality_markers": [
           "controlled memory operations",
@@ -1099,7 +1099,7 @@
           "peer-reviewed",
           "primary experiments"
         ],
-        "rationale": "Peer-reviewed primary empirical study directly testing memory addition and deletion, error propagation, misaligned replay, and future outcome labels; applicability beyond its agent tasks remains bounded."
+        "rationale": "메모리 추가·삭제, 오류 전파, 목적과 어긋난 재생과 향후 결과 표지를 직접 시험한 동료심사 1차 실증 연구다. 해당 Agent 과제 밖으로의 적용 가능성은 제한적이다."
       },
       "authors": [
         "Himabindu Lakkaraju",
@@ -1114,7 +1114,7 @@
       "id": "SRC-AF06BCDC1ED2",
       "independence_group": "xiong-memory-management",
       "license": "CC BY 4.0",
-      "notes": "Artifact is pypdf 5.9.0 extracted text with page markers; original PDF was quarantined but rejected by size gate. Original official PDF hash is preserved in the rejected security receipt ADM-64F8C03D0241.",
+      "notes": "원문 산출물은 pypdf 5.9.0으로 추출하고 페이지 표식을 넣은 텍스트다. 원본 PDF는 격리했지만 크기 게이트에서 거부되었다. 원본 공식 PDF 해시는 거부된 보안 영수증 ADM-64F8C03D0241에 보존했다.",
       "publication_status": "peer-reviewed ACL 2026 main conference",
       "published_at": "2026-07",
       "publisher": "Association for Computational Linguistics",
@@ -1136,7 +1136,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "dependency-aware 편집을 1,900 사례에서 평가한 동료심사 원 논문이다."
+        "rationale": "의존성 인식 편집을 1,900개 사례에서 평가한 동료심사 원 논문이다."
       },
       "authors": [],
       "id": "SRC-B6EDC3F41C3A",
@@ -1164,7 +1164,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "faithfulness와 factuality를 분리해 평가한 동료심사 원 논문이다."
+        "rationale": "충실도와 사실성을 분리해 평가한 동료심사 원 논문이다."
       },
       "authors": [],
       "id": "SRC-BC899B3F975F",
@@ -1192,7 +1192,7 @@
           "public-code",
           "user-study"
         ],
-        "rationale": "관찰 가능성·실시간 조향·맥락 탐색을 다룬 직접 관련 최신 연구지만 아직 preprint다."
+        "rationale": "관찰 가능성·실시간 조향·맥락 탐색을 다룬 직접 관련 최신 연구지만 아직 사전 공개 논문이다."
       },
       "authors": [],
       "id": "SRC-C071A29F63E6",
@@ -1220,7 +1220,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "지속적 knowledge drift와 temporal inconsistency를 평가한 동료심사 원 논문이다."
+        "rationale": "지속적인 지식 변화와 시간적 불일치를 평가한 동료심사 원 논문이다."
       },
       "authors": [],
       "id": "SRC-C204B45C665B",
@@ -1276,7 +1276,7 @@
           "public-implementation",
           "system-demo"
         ],
-        "rationale": "memory를 world/experience/observation/opinion으로 분리한 동료심사 시스템 데모다."
+        "rationale": "메모리를 세계·경험·관찰·의견으로 분리한 동료심사 시스템 시연이다."
       },
       "authors": [],
       "id": "SRC-CB315D66167D",
@@ -1360,7 +1360,7 @@
           "peer-reviewed",
           "primary-study"
         ],
-        "rationale": "조작된 과학 글에 대한 LLM reviewer의 concern-acceptance conflict를 평가한 동료심사 원 논문이다."
+        "rationale": "조작된 과학 글에 대한 LLM 심사자의 우려·수용 충돌을 평가한 동료심사 원 논문이다."
       },
       "authors": [],
       "id": "SRC-E42CA8C4BD30",
@@ -1386,7 +1386,7 @@
         "assessed_at": "2026-07-11T17:17:11+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "speaker is the method author and promoter"
+          "발표자가 해당 방법의 저자이자 홍보자임"
         ],
         "quality_markers": [
           "date verified",
@@ -1394,7 +1394,7 @@
           "linked preprint",
           "public video"
         ],
-        "rationale": "First-party practitioner workshop with a linked preprint and public implementation, useful for design facts; convergence and efficacy remain author-reported and non-independent."
+        "rationale": "연결된 사전 공개 논문과 공개 구현이 있어 설계 사실을 확인하는 데 유용한 실무자 제작사 1차 워크숍이다. 수렴과 효과는 여전히 저자 보고에만 근거하며 독립적이지 않다."
       },
       "authors": [
         "Raj Navakoti"
@@ -1402,7 +1402,7 @@
       "id": "SRC-F55FED177366",
       "independence_group": "ddc-authors",
       "license": "YouTube Standard License",
-      "notes": "Metadata-only. Public automatic captions could not be retrieved without authentication and are not treated as preserved evidence.",
+      "notes": "메타데이터만 보존했다. 인증 없이는 공개 자동 자막을 가져올 수 없었으며 보존된 증거로 취급하지 않는다.",
       "publication_status": "published video",
       "published_at": "2026-05-05",
       "publisher": "AI Engineer",
@@ -1423,7 +1423,7 @@
           "preregistered",
           "primary-study"
         ],
-        "rationale": "compiled wiki와 RAG를 직접 비교하지만 단일 저자·소규모·LLM judge의 preprint다."
+        "rationale": "컴파일된 Wiki와 RAG를 직접 비교하지만 단일 저자·소규모·LLM 심사 방식의 사전 공개 논문이다."
       },
       "authors": [],
       "id": "SRC-F73B1F038B37",
@@ -1455,7 +1455,7 @@
         "assessed_at": "2026-07-11T17:17:12+00:00",
         "assessed_by": "agent:codex",
         "conflicts_of_interest": [
-          "no material product conflict identified"
+          "중대한 제품 관련 이해상충을 확인하지 못함"
         ],
         "quality_markers": [
           "comparative experiments",
@@ -1463,7 +1463,7 @@
           "peer-reviewed",
           "user-controllable intervention"
         ],
-        "rationale": "Peer-reviewed primary study showing that all-or-nothing memory use can anchor or underuse history and testing explicit user control; personalization benchmarks do not directly establish factual Wiki quality."
+        "rationale": "메모리를 전부 사용하거나 전혀 사용하지 않는 방식이 과거에 고착되거나 과거를 충분히 쓰지 못하게 할 수 있음을 보이고 명시적인 사용자 제어를 시험한 동료심사 1차 연구다. 개인화 벤치마크는 사실 기반 Wiki의 품질을 직접 입증하지 않는다."
       },
       "authors": [
         "Changze Lv",
@@ -1480,7 +1480,7 @@
       "id": "SRC-F9BA839FA59D",
       "independence_group": "steem-memory-control",
       "license": "CC BY 4.0",
-      "notes": "Artifact is pypdf 5.9.0 extracted text with page markers; original PDF was rejected by size gate and was not promoted (ADM-630AF6D54A6B).",
+      "notes": "원문 산출물은 pypdf 5.9.0으로 추출하고 페이지 표식을 넣은 텍스트다. 원본 PDF는 크기 게이트에서 거부되어 승격하지 않았다(ADM-630AF6D54A6B).",
       "publication_status": "peer-reviewed ACL 2026 main conference",
       "published_at": "2026-07",
       "publisher": "Association for Computational Linguistics",

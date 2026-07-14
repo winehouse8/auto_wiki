@@ -1,19 +1,19 @@
 ---
 type: Contradiction Register
-title: Contradictions and tensions
+title: 모순과 긴장
 description: 숨기지 않고 추적하는 claim 충돌, 철학적 긴장, 현재 해소 방식.
 tags: [contradictions, epistemics, governance]
 timestamp: '2026-07-12T18:30:00+09:00'
 claim_ids: [CLM-6DDD53332A40, CLM-F79558D817DF, CLM-EC52C0576A28]
 ---
 
-# Contradictions and tensions
+# 모순과 긴장
 
-## Raw source: source of truth인가 evidence인가
+## 원문 출처는 진실의 원천인가, 근거인가
 
 - Karpathy의 Gist는 불변 raw sources를 “source of truth”라고 부른다. (`SRC-CFB88DDE3FF1`, Architecture)
 - 이 Wiki는 raw source를 “감사 가능한 evidence”로 부른다. 원문도 틀리거나 편향되거나 철회될 수 있기 때문이다. W3C PROV는 provenance를 표현할 뿐 truth를 인증하지 않고, 2026 웹 검색 신뢰도 연구는 검색된 출처 자체가 비신뢰일 수 있음을 보여준다.
-- 판정: 실질적 모순이라기보다 용어와 안전 경계의 차이다. `CLM-6DDD53332A40`은 이를 숨기지 않기 위해 `contested`로 유지한다.
+- 판정: 실질적 모순이라기보다 용어와 안전 경계의 차이다. [CLM-6DDD53332A40](claims/clm-6ddd53332a40.md)은 이를 숨기지 않기 위해 `contested`로 유지한다.
 
 ## Human/Agent parity와 인간 승인권
 
@@ -39,7 +39,7 @@ claim_ids: [CLM-6DDD53332A40, CLM-F79558D817DF, CLM-EC52C0576A28]
 - 완전한 fresh-start는 같은 조사 비용을 반복하고 이미 알려진 반증을 놓칠 수 있다.
 - 해소: 모든 모드에서 index는 읽되, `fresh-check`는 기존 결론을 괄호에 둔 독립 조사 뒤 차이를 비교한다. feedback은 이 절차의 결과를 감사할 뿐 ranking·trust를 자동 변경하지 않는다.
 
-# Citations
+# 인용
 
 [1] [Karpathy LLM Wiki](sources/karpathy-llm-wiki.md)
 [2] [W3C PROV-O](https://www.w3.org/TR/prov-o/)

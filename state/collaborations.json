@@ -2,7 +2,7 @@
   "collaborations": [
     {
       "actor_id": "human:owner",
-      "content": "ai.engineer 채널의 2026-04-01 이후 memory, wiki, second brain 및 직접 인접 주제 영상을 비판적으로 조사하고, 독립 원자료로 신뢰 검증된 개선만 Living Wiki 콘텐츠와 하네스에 반영한다.",
+      "content": "ai.engineer 채널의 2026-04-01 이후 메모리, 위키, 세컨드 브레인 및 직접 인접 주제 영상을 비판적으로 조사하고, 독립 원자료로 신뢰 검증된 개선만 Living Wiki 콘텐츠와 하네스에 반영한다.",
       "created_at": "2026-07-11T17:06:07+00:00",
       "id": "COL-0B8170AE658D",
       "intent": "direction",
@@ -11,7 +11,7 @@
       },
       "record_kind": "contribution",
       "schema_version": 1,
-      "stance": "practitioner talks are leads; implementation changes require primary corroboration, counter-search, regression tests, and rollback",
+      "stance": "실무자 발표는 조사 단서이며, 구현 변경에는 1차 자료의 교차 검증·반증 검색·회귀 테스트·롤백이 필요함",
       "status": "active",
       "supersedes": [],
       "targets": [
@@ -22,8 +22,72 @@
       "updated_at": "2026-07-11T17:06:07+00:00"
     },
     {
+      "actor_id": "human:owner",
+      "content": "Codex Scheduled Tasks가 호출할 Living Wiki 관리인 Skill을 SPEC-LWS-001 기반 명세 주도 테스트 개발 방식으로 만들고, 위생·지속 연구·보수적 자기진화를 하나의 자연어 중심 작업 절차로 제공한다.",
+      "created_at": "2026-07-12T02:42:48+00:00",
+      "id": "COL-0D2790565E92",
+      "intent": "direction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": null,
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "skills/living-wiki-steward",
+        "wiki/specs/harness-ux.md",
+        "wiki/specs/living-wiki-steward-skill.md"
+      ],
+      "updated_at": "2026-07-12T02:42:48+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "content": "winehouse8/auto_wiki를 Living Wiki의 승인된 GitHub 전달 저장소로 사용한다. 자동 실행이 실제 파일을 바꾸면 반드시 고유 브랜치와 PR 기록을 남기고, 헌장이 자동 적용을 허용한 저위험 변경만 필수 검증 뒤 squash 자동 병합한다. 사람 판단이 필요한 제어면·의미·권한 변경은 검토 이유와 방법을 한국어로 적은 PR을 남기되 Agent가 병합하지 않는다. 제공된 classic PAT는 이 저장소의 초기 게시와 전달 작업에만 프로세스 단위로 사용하고 저장·출력·커밋하지 않는다.",
+      "created_at": "2026-07-12T13:57:55+00:00",
+      "id": "COL-27B9ADD786ED",
+      "intent": "direction",
+      "metadata": {
+        "priority": 100.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": null,
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "https://github.com/winehouse8/auto_wiki",
+        "skills/living-wiki-steward/SKILL.md",
+        "wiki/specs/github-delivery.md"
+      ],
+      "updated_at": "2026-07-12T13:57:55+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "content": "Living Wiki와 하네스의 사람이 읽는 모든 문서는 한국어를 기본 언어로 사용한다. 코드, 명령, ID, URL, 해시, 스키마 값, 외부 원제와 정확한 원문 인용만 추적성과 호환성을 위해 원형을 보존한다.",
+      "created_at": "2026-07-12T03:02:15+00:00",
+      "id": "COL-388AF1C1528A",
+      "intent": "correction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": "영문 중심 문서와 생성 라벨을 전면 교정하고 회귀 검사를 둔다.",
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "skills/living-wiki-steward/SKILL.md",
+        "wiki/specs/harness-ux.md",
+        "wiki/specs/korean-documentation-policy.md",
+        "wiki/specs/living-wiki-steward-skill.md"
+      ],
+      "updated_at": "2026-07-12T03:02:15+00:00"
+    },
+    {
       "actor_id": "agent:codex",
-      "content": "v4.1 implementation audit found that a v3.1 rollback reader can silently reactivate inactive lifecycle records. The release rehearsal now fails closed whenever inactive claim/source records exist until an explicit migration or v4.1-compatible rollback reader preserves lifecycle semantics.",
+      "content": "v4.1 구현 감사에서 v3.1 롤백 판독기가 비활성 생명주기 기록을 조용히 다시 활성화할 수 있음을 확인했다. 명시적 마이그레이션이나 v4.1 호환 롤백 판독기가 생명주기 의미를 보존할 때까지, 릴리스 예행연습은 비활성 주장·출처 기록이 있으면 안전하게 실패한다.",
       "created_at": "2026-07-11T18:04:29+00:00",
       "id": "COL-50BA42D348AA",
       "intent": "correction",
@@ -32,7 +96,7 @@
       },
       "record_kind": "review",
       "schema_version": 1,
-      "stance": "implementation-caveat",
+      "stance": "구현상 주의 사항",
       "status": "active",
       "supersedes": [],
       "targets": [
@@ -42,8 +106,49 @@
       "updated_at": "2026-07-11T18:04:29+00:00"
     },
     {
+      "actor_id": "agent:codex",
+      "content": "RFC-03F4FE85BB44의 claim 전용 evidence 필드에 설명문과 URL이 한 항목으로 들어가 린트 오류와 깨진 링크가 생겼다. 승인 방향 COL-27B9ADD786ED와 승인 사유는 그대로 보존하고, 해당 필드를 기존 활성 주장 CLM-207429D54323·CLM-A49ACF085321·CLM-DA7C92E9A901·CLM-F464CCF0AA1A로 정규화했다. 위험 목록은 같은 승인 범위의 원자적 문장으로만 재구성했으며 C/S 단계와 생명주기는 바꾸지 않았다.",
+      "created_at": "2026-07-12T14:45:09+00:00",
+      "id": "COL-66C09135A9E0",
+      "intent": "correction",
+      "metadata": {
+        "priority": 0.9
+      },
+      "record_kind": "review",
+      "schema_version": 1,
+      "stance": null,
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "RFC-03F4FE85BB44",
+        "state/proposals.json"
+      ],
+      "updated_at": "2026-07-12T14:45:09+00:00"
+    },
+    {
       "actor_id": "human:owner",
-      "content": "해야 할 작업을 순서대로 수행해 Living Wiki 프로젝트와 하네스를 완결성 있게 완수한다. 품질·보안·rollback gate를 통과한 상태만 완결로 보고한다.",
+      "content": "Living Wiki 관리인 Skill은 사용자에게 예약 또는 수동이라는 단순한 진입점만 보여주고, 내부 작업 종류와 Wiki 의존도 정책을 분리해 자연어 의도를 라우팅하도록 사용자 경험을 최적화한다.",
+      "created_at": "2026-07-12T12:21:56+00:00",
+      "id": "COL-BCA354BA1655",
+      "intent": "direction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": "support",
+      "status": "acknowledged",
+      "supersedes": [],
+      "targets": [
+        "skills/living-wiki-steward/SKILL.md",
+        "skills/living-wiki-steward/references/scheduled-task-prompt.md",
+        "wiki/specs/living-wiki-steward-skill.md"
+      ],
+      "updated_at": "2026-07-12T12:21:56+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "content": "해야 할 작업을 순서대로 수행해 Living Wiki 프로젝트와 하네스를 완결성 있게 완수한다. 품질·보안·롤백 게이트를 통과한 상태만 완결로 보고한다.",
       "created_at": "2026-07-11T15:56:45+00:00",
       "id": "COL-BE633C25320D",
       "intent": "direction",
@@ -54,14 +159,14 @@
             "actor_id": "agent:codex",
             "at": "2026-07-11T16:35:02+00:00",
             "from": "active",
-            "reason": "All scoped v4 mechanisms, admission/security/runtime gates, migration, documentation, rollback rehearsal, and integrated pre-closure release gate passed; no external publication, credentials, paid work, or production certification was claimed.",
+            "reason": "범위에 포함된 모든 v4 장치, 입수·보안·실행 환경 게이트, 마이그레이션, 문서화, 롤백 예행연습과 종료 전 통합 릴리스 게이트를 통과했다. 외부 공개, 자격증명, 유료 작업이나 운영 환경 인증을 주장하지 않았다.",
             "to": "resolved"
           }
         ]
       },
       "record_kind": "commitment",
       "schema_version": 1,
-      "stance": "approve",
+      "stance": "승인",
       "status": "resolved",
       "supersedes": [],
       "targets": [
@@ -71,6 +176,72 @@
         "RFC-69828EB38078"
       ],
       "updated_at": "2026-07-11T16:35:02+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "content": "정기 위생은 오래됨뿐 아니라 관련 문서의 미연결, 고립 문서와 분류 체계 변화를 탐지해야 하며, 자연어로 등록한 연구 주제와 자기개선 주제가 주기에 따라 계속 실행될 수 있어야 한다.",
+      "created_at": "2026-07-12T02:31:04+00:00",
+      "id": "COL-D604CF2B8FDC",
+      "intent": "correction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": null,
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "RFC-486C24C969AE",
+        "config/interests.json",
+        "tools/memory_hygiene.py",
+        "wiki/specs/harness-ux.md"
+      ],
+      "updated_at": "2026-07-12T02:31:04+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "content": "Codex 전용 자연어 사용자 경험을 기본으로 하고 신뢰 단계, 정기 및 누적 변경 기반 위생, 지속 연구, 보수적 자기개선과 중앙 명세 주도 테스트 개발 계약을 설계하며 README와 AGENTS에서 즉시 찾을 수 있게 한다.",
+      "created_at": "2026-07-12T02:20:09+00:00",
+      "id": "COL-F2D41B74B3BC",
+      "intent": "direction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": null,
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "AGENTS.md",
+        "README.md",
+        "RFC-486C24C969AE",
+        "wiki/specs/harness-ux.md"
+      ],
+      "updated_at": "2026-07-12T02:20:09+00:00"
+    },
+    {
+      "actor_id": "human:owner",
+      "content": "위키 위생을 값싼 전수 구조 검사, 시간 기반 후보 선별, 범위 제한 2-hop 그래프 확장, 검토 전용 논리 충돌 후보와 명시적 시간 메타데이터로 구현한다. Codex 예약 작업을 호출 계층으로 유지하고 데몬·자동 신뢰 변경·자동 의미 수정을 도입하지 않는다.",
+      "created_at": "2026-07-12T13:21:28+00:00",
+      "id": "COL-F697B6B6F7BF",
+      "intent": "direction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": "support",
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "RFC-925A95472E90",
+        "wiki/okf-profile.md",
+        "wiki/specs/harness-ux.md",
+        "wiki/specs/living-wiki-steward-skill.md"
+      ],
+      "updated_at": "2026-07-12T13:21:28+00:00"
     }
   ],
   "version": 1

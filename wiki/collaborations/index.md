@@ -1,5 +1,13 @@
-# Collaboration Records
+# 협업 기록
 
-* [COL-0B8170AE658D](col-0b8170ae658d.md) - ai.engineer 채널의 2026-04-01 이후 memory, wiki, second brain 및 직접 인접 주제 영상을 비판적으로 조사하고, 독립 원자료로 신뢰 검증된 개선만 Living Wiki 콘텐츠와 하네스에 반영한다.
-* [COL-50BA42D348AA](col-50ba42d348aa.md) - v4.1 implementation audit found that a v3.1 rollback reader can silently reactivate inactive lifecycle records. The release rehearsal now fails closed whenever inactive claim/source records exist until an explicit migration or v4.1-compatible rollback reader preserves lifecycle semantics.
-* [COL-BE633C25320D](col-be633c25320d.md) - 해야 할 작업을 순서대로 수행해 Living Wiki 프로젝트와 하네스를 완결성 있게 완수한다. 품질·보안·rollback gate를 통과한 상태만 완결로 보고한다.
+* [COL-0B8170AE658D](col-0b8170ae658d.md) - 협업 기록 COL-0B8170AE658D의 방향·기여·검토와 전이 이력.
+* [COL-0D2790565E92](col-0d2790565e92.md) - 협업 기록 COL-0D2790565E92의 방향·기여·검토와 전이 이력.
+* [COL-27B9ADD786ED](col-27b9add786ed.md) - 협업 기록 COL-27B9ADD786ED의 방향·기여·검토와 전이 이력.
+* [COL-388AF1C1528A](col-388af1c1528a.md) - 협업 기록 COL-388AF1C1528A의 방향·기여·검토와 전이 이력.
+* [COL-50BA42D348AA](col-50ba42d348aa.md) - 협업 기록 COL-50BA42D348AA의 방향·기여·검토와 전이 이력.
+* [COL-66C09135A9E0](col-66c09135a9e0.md) - 협업 기록 COL-66C09135A9E0의 방향·기여·검토와 전이 이력.
+* [COL-BCA354BA1655](col-bca354ba1655.md) - 협업 기록 COL-BCA354BA1655의 방향·기여·검토와 전이 이력.
+* [COL-BE633C25320D](col-be633c25320d.md) - 협업 기록 COL-BE633C25320D의 방향·기여·검토와 전이 이력.
+* [COL-D604CF2B8FDC](col-d604cf2b8fdc.md) - 협업 기록 COL-D604CF2B8FDC의 방향·기여·검토와 전이 이력.
+* [COL-F2D41B74B3BC](col-f2d41b74b3bc.md) - 협업 기록 COL-F2D41B74B3BC의 방향·기여·검토와 전이 이력.
+* [COL-F697B6B6F7BF](col-f697b6b6f7bf.md) - 협업 기록 COL-F697B6B6F7BF의 방향·기여·검토와 전이 이력.

@@ -1,74 +1,74 @@
-# v4 — Closed-loop human–Agent research harness
+# v4 — 폐쇄 순환형 인간–Agent 연구 하네스
 
-## Why v4 exists
+## v4가 필요한 이유
 
-v3.1 had a provenance-aware ledger, governed campaigns, and a portable OKF bundle, but the research loop was still open. Calibration was not measured, source admission and poisoning checks were not writer gates, human direction lacked one shared lifecycle object, recurring interests could stop after the last campaign, and no single release decision combined structural, security, runtime, and regression evidence.
+v3.1에는 출처 이력을 고려한 원장, 통제된 캠페인, 이식 가능한 OKF 번들이 있었지만 연구 순환은 아직 닫히지 않았다. 보정 수준을 측정하지 않았고, 출처 입수와 오염 검사가 작성 게이트가 아니었으며, 인간의 방향 제시에 공유 수명주기 객체가 없었다. 반복 관심사는 마지막 캠페인 뒤 중단될 수 있었고, 구조·보안·실행 시간·회귀 근거를 하나로 결합한 릴리스 결정도 없었다.
 
-`RFC-69828EB38078` authorized an additive v4 control plane. It did not authorize external publication, credential use, paid work, raw deletion, or silent trust-policy changes.
+`RFC-69828EB38078`은 추가형 v4 제어면을 승인했다. 외부 공개, 자격증명 사용, 유료 작업, 원문 삭제, 조용한 신뢰 정책 변경은 승인하지 않았다.
 
-## Implemented loop
+## 구현한 순환
 
-1. `collaboration-add` records human and Agent direction/correction/lead/objection with the same schema.
-2. `interest-seed` turns cadence-due interest questions into bounded campaigns. It does no research.
-3. `run-plan` emits only `external.research.plan` actions and a hash-chained receipt. Runtime side effects stay zero.
-4. `security-screen` stores a content-addressed quarantine copy, separates normalized text, and evaluates write/retrieve/activate gates without executing payloads.
-5. `admission-check` canonicalizes source identity, checks provenance/status/counter-search, clusters likely dependency, and returns allow/review/reject.
-6. `source-add` requires an event-anchored source-admission allow. File-backed sources also require a matching SHA-256 security allow.
-7. Atomic claims, exact evidence locators, independent review, contradiction retention, evaluation, render, and OKF validation remain the epistemic core.
-8. `search` and `impact` provide deterministic lexical retrieval and dependency/conflict candidates; neither makes semantic truth decisions.
-9. `run-action-report` attributes external results, accounts campaign budget only on completed reports, and anchors a report digest. The report remains explicitly `unverified_report`.
-10. `release-check` combines structural/event validation, OKF core/profile validation, pinned calibration/security/runtime fixtures, receipt-chain checks, and the actual unit-test result.
+1. `collaboration-add`는 사람과 Agent의 방향·교정·단서·이의를 같은 스키마로 기록한다.
+2. `interest-seed`는 실행 주기가 된 관심 질문을 범위 제한 캠페인으로 바꾼다. 조사를 직접 수행하지는 않는다.
+3. `run-plan`은 `external.research.plan` 동작과 해시 체인 영수증만 출력한다. 실행 시간의 부수 효과는 0으로 유지한다.
+4. `security-screen`은 콘텐츠 주소 기반 격리 사본을 저장하고 정규화한 텍스트를 분리하며, 내용물을 실행하지 않고 쓰기·검색·활성화 게이트를 평가한다.
+5. `admission-check`는 출처 신원을 정규화하고 출처 이력·상태·반증 검색을 확인하며, 의존 가능성이 있는 항목을 묶어 허용·검토·거부를 반환한다.
+6. `source-add`는 사건에 고정된 출처 입수 허용을 요구한다. 파일 기반 출처에는 일치하는 SHA-256 보안 허용도 필요하다.
+7. 원자적 주장, 정확한 증거 위치, 독립 검토, 모순 보존, 평가, 렌더링, OKF 검증은 인식론적 핵심으로 유지한다.
+8. `search`와 `impact`는 결정론적 어휘 검색과 의존·충돌 후보를 제공하며, 어느 쪽도 의미적 진실을 판정하지 않는다.
+9. `run-action-report`는 외부 결과를 귀속하고 완료 보고서에만 캠페인 예산을 반영하며 보고서 해시를 고정한다. 보고서는 명시적으로 `unverified_report`를 유지한다.
+10. `release-check`는 구조·사건 검증, OKF 핵심·프로필 검증, 고정 보정·보안·실행 시간 fixture, 영수증 체인 검사, 실제 단위 테스트 결과를 결합한다.
 
-## Additive state and projection migration
+## 추가형 상태와 투영 마이그레이션
 
-v4 adds canonical ledgers for `collaborations`, `admissions`, and `runs`. Their generated OKF views live under `wiki/collaborations/`, `wiki/admissions/`, and `wiki/runs/`. JSON, quarantine artifacts, executable code, secrets, and receipts remain outside the `wiki/` bundle.
+v4는 `collaborations`, `admissions`, `runs` 정식 원장을 추가한다. 생성된 OKF 뷰는 `wiki/collaborations/`, `wiki/admissions/`, `wiki/runs/`에 둔다. JSON, 격리 자료, 실행 코드, 비밀, 영수증은 `wiki/` 번들 밖에 남긴다.
 
-Existing v3.1 source records are not rewritten to pretend that they passed a gate which did not exist. Exactly 35 pre-v4 source IDs are listed in `migrations/v3.1-source-grandfather.json`. The manifest file hash is pinned in the validator. An admission-less source outside that finite set is a hard error. Grandfathering neither upgrades trust nor supplies a missing immutable artifact.
+기존 v3.1 출처 기록을 존재하지 않았던 게이트를 통과한 것처럼 다시 쓰지 않는다. v4 이전 출처 ID 정확히 35개를 `migrations/v3.1-source-grandfather.json`에 열거한다. manifest 파일 해시는 검증기에 고정한다. 이 유한 집합 밖에서 입수 기록이 없는 출처는 치명적 오류다. 기존 항목 예외 처리는 신뢰를 올리지도, 누락된 불변 자료를 제공하지도 않는다.
 
-The source grandfather manifest SHA-256 is:
+기존 출처 예외 manifest의 SHA-256은 다음과 같다.
 
 ```text
-6c7ecd0c7a99a679534de7ca265fb3254b4091720c98f168619c6cf60c792dac
+기존 출처 예외 명세의 SHA-256: 6c7ecd0c7a99a679534de7ca265fb3254b4091720c98f168619c6cf60c792dac
 ```
 
-## Pinned regression fixtures
+## 고정한 회귀 fixture
 
-The release gate rejects silent fixture weakening. It pins canonical JSON hashes rather than treating any easier replacement corpus as equivalent.
+릴리스 게이트는 조용한 fixture 약화를 거부한다. 더 쉬운 대체 말뭉치를 동등하게 취급하지 않고 정식 JSON 해시를 고정한다.
 
-| Fixture | Pinned canonical SHA-256 | Meaning |
+| Fixture 종류 | 고정 정식 SHA-256 | 의미 |
 |---|---|---|
-| calibration | `7d3674bb803f1f23bf67c1191d3b017f3b22df1b5a2d26fe6eedda9b3726782d` | 15-case smoke/pilot only |
-| security | `38c337f61795f67ee7b0893b3bb81f19ebab7368136a1657022882ae56f30eea` | 31-case lexical regression corpus |
-| runtime | `e5e6da8aa314d89f6e8e6f65351d105773f827b1c24dfb957c3eb5c5dd02521a` | actor parity, permission, schedule, receipt scenarios |
+| 보정 | `7d3674bb803f1f23bf67c1191d3b017f3b22df1b5a2d26fe6eedda9b3726782d` | 15건의 연기 시험·예비 평가 전용 |
+| 보안 | `38c337f61795f67ee7b0893b3bb81f19ebab7368136a1657022882ae56f30eea` | 31건의 어휘 회귀 말뭉치 |
+| 실행 시간 | `e5e6da8aa314d89f6e8e6f65351d105773f827b1c24dfb957c3eb5c5dd02521a` | 행위자 동등성, 권한, 일정, 영수증 시나리오 |
 
-Changing a fixture requires an explicit RFC, new benchmark evidence, and an updated pinned hash. A change that merely removes failing cases is not an improvement.
+fixture를 바꾸려면 명시적 RFC, 새 벤치마크 근거, 갱신된 고정 해시가 필요하다. 실패 사례를 단순히 제거한 변경은 개선이 아니다.
 
-## Rollback contract and rehearsal
+## 롤백 계약과 예행연습
 
-Rollback disables v4 commands and uses the committed v3.1 control plane against the preserved core state; it does not delete v4 events, raw artifacts, admission decisions, or receipts. The v3.1 code ignores the additive state files. Derived `wiki/` views may be regenerated from whichever control-plane version is active.
+롤백은 v4 명령을 비활성화하고 보존한 핵심 상태에 커밋된 v3.1 제어면을 사용한다. v4 사건, 원문 자료, 입수 결정, 영수증은 삭제하지 않는다. v3.1 코드는 추가형 상태 파일을 무시한다. 파생 `wiki/` 뷰는 활성화된 제어면 버전에서 다시 생성할 수 있다.
 
-The rehearsal procedure is:
+예행연습 절차는 다음과 같다.
 
-1. export committed v3.1 (`d18213a78376c0543a0aa590a3db7fcf7022c187`) to an isolated temporary directory;
-2. copy the current core v3-compatible ledgers and immutable raw artifacts into that directory;
-3. run the v3.1 `render --no-log`, `validate`, and `okf-validate` there;
-4. verify the live workspace was not changed;
-5. discard the temporary directory.
+1. 커밋된 v3.1(`d18213a78376c0543a0aa590a3db7fcf7022c187`)을 격리된 임시 디렉터리로 내보낸다.
+2. 현재 핵심 v3 호환 원장과 불변 원문 자료를 그 디렉터리에 복사한다.
+3. 그곳에서 v3.1 `render --no-log`, `validate`, `okf-validate`를 실행한다.
+4. 실제 작업 공간이 바뀌지 않았음을 확인한다.
+5. 임시 디렉터리를 폐기한다.
 
-The release report records the actual rehearsal result. A rollback is an operational fallback, not a deletion or history rewrite. New v4-only collaboration/admission/run state remains available for later forward recovery.
+릴리스 보고서는 실제 예행연습 결과를 기록한다. 롤백은 운영 대체 수단이지 삭제나 이력 다시 쓰기가 아니다. v4 전용 협업·입수·실행 상태는 이후 순방향 복구를 위해 남긴다.
 
-## Release meaning and limits
+## 릴리스 의미와 한계
 
-A passing v4 report uses readiness `closed_loop_harness_fixed_fixture_passed` and always says `production_certified=false`.
+통과한 v4 보고서는 준비 상태 `closed_loop_harness_fixed_fixture_passed`를 사용하고 항상 `production_certified=false`를 표시한다.
 
-Known limits remain:
+알려진 한계는 다음과 같다.
 
-- empirical calibration has 15 pilot items, not the designed 100-item independently adjudicated set;
-- fixed lexical rules do not cover unseen semantic, multilingual, multimodal, parser, or multi-turn attacks;
-- live Crossref/NCBI/GitHub status adapters are contracts/official-source research, not deployed network adapters;
-- canonical independent claim reviews are still absent, so C3/C4 remain empty;
-- BM25-like search is not semantic retrieval and conflict detection produces candidates only;
-- external executor, credential broker, publication path, signature, and multi-writer locking are not certified;
-- event and receipt hashes detect mutation but do not authenticate actor identity.
+- 실증 보정 자료는 독립 판정을 거친 목표 100건 집합이 아니라 예비 항목 15건이다.
+- 고정 어휘 규칙은 보지 못한 의미적·다국어·다중양식·파서·다중 대화 공격을 다루지 못한다.
+- 실제 Crossref·NCBI·GitHub 상태 어댑터는 계약과 공식 출처를 조사한 것이며 배포된 네트워크 어댑터가 아니다.
+- 정식 독립 주장 검토가 아직 없어 C3/C4는 비어 있다.
+- BM25 계열 검색은 의미 검색이 아니며 충돌 탐지는 후보만 만든다.
+- 외부 실행기, 자격증명 중개자, 공개 경로, 서명, 다중 작성자 잠금은 인증되지 않았다.
+- 사건·영수증 해시는 변경을 탐지하지만 행위자 신원을 인증하지 않는다.
 
-These are open operational and empirical research goals, not reasons to relabel fixed-fixture results as production evidence.
+이는 미해결 운영·실증 연구 목표이지, 고정 fixture 결과를 운영 환경 근거라고 다시 붙일 이유가 아니다.

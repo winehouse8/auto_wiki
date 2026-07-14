@@ -1,0 +1,4 @@
+interface:
+  display_name: "Living Wiki 관리인"
+  short_description: "예약과 자연어 요청을 한곳에서 처리하는 Living Wiki 관리인"
+  default_prompt: "$living-wiki-steward로 오늘 Living Wiki 상태를 점검하고 중요한 문제만 알려줘."

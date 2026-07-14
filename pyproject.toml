@@ -1,7 +1,7 @@
 [project]
 name = "living-wiki-harness"
-version = "4.1.0"
-description = "Local-first, provenance-aware human-agent living wiki"
+version = "4.3.0"
+description = "출처 추적성과 GitHub PR 감사 경계를 갖춘 사람-Agent Living Wiki 하네스"
 requires-python = ">=3.10"
 
 [tool.unittest]

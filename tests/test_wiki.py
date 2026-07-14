@@ -199,6 +199,246 @@ class EventChainTests(unittest.TestCase):
         self.assertTrue(any("invalid event_hash" in error for error in errors))
 
 
+class PortableQuarantineMetadataTests(unittest.TestCase):
+    @staticmethod
+    def policy():
+        return {
+            "mode": "local-only-metadata-in-git",
+            "path": "raw/quarantine",
+            "public_repository": "winehouse8/auto_wiki",
+            "missing_artifact_policy": "anchored-content-addressed-admission-only",
+            "default_validation_profile": "strict-local-custody",
+            "portable_validation_profile": "public-clean-clone",
+        }
+
+    @staticmethod
+    def admission():
+        digest = "a" * 64
+        source_ref = "https://example.org/source"
+        assessment = {
+            "schema_version": "living-wiki-security-gate/v1",
+            "classification": "untrusted_external_content",
+            "manifest": {
+                "classification": "untrusted_external_content",
+                "content_sha256": digest,
+                "size_bytes": 123,
+                "media_type": "text/vtt",
+                "source_ref": source_ref,
+            },
+            "invariants": {
+                "allow_means_data_use_only": True,
+                "credentials_accessed": False,
+                "network_used": False,
+                "payload_executed": False,
+            },
+            "gates": {"write": {"decision": "allow"}},
+        }
+        candidate = {
+            "id": "CAND-PORTABLE",
+            "source_ref": source_ref,
+            "quarantine_artifact": {
+                "path": f"raw/quarantine/{digest}/artifact.vtt",
+                "sha256": digest,
+                "size_bytes": 123,
+                "media_type": "text/vtt",
+            },
+        }
+        admission = {
+            "id": wiki.stable_id(
+                "ADM",
+                "security",
+                source_ref,
+                digest,
+                wiki.canonical_json(assessment),
+            ),
+            "created_by": "agent:codex",
+            "created_at": "2026-07-12T00:00:00+00:00",
+            "status": "allow",
+            "policy_effect": "quarantine_only_no_source_promotion",
+            "candidate": candidate,
+            "decision": {
+                "decision": "allow",
+                "stage": "write",
+                "security_assessment": assessment,
+            },
+        }
+        admission["record_digest"] = wiki.admission_record_digest(admission)
+        return admission
+
+    @staticmethod
+    def anchor(admission):
+        artifact = admission["candidate"]["quarantine_artifact"]
+        return {
+            "action": "security.candidate.screen",
+            "actor": admission["created_by"],
+            "subject": admission["id"],
+            "details": {
+                "decision": admission["status"],
+                "payload_executed": False,
+                "record_digest": admission["record_digest"],
+                "sha256": artifact["sha256"],
+            },
+        }
+
+    def test_local_only_quarantine_requires_exact_anchored_content_addressed_metadata(self):
+        admission = self.admission()
+        policy = self.policy()
+        anchor = self.anchor(admission)
+
+        self.assertTrue(
+            wiki.portable_quarantine_metadata(
+                admission,
+                policy,
+                validation_profile="public-clean-clone",
+                anchor_verified=wiki.quarantine_anchor_is_valid(admission, anchor),
+            )
+        )
+        self.assertFalse(
+            wiki.portable_quarantine_metadata(
+                admission,
+                policy,
+                validation_profile="strict-local-custody",
+                anchor_verified=True,
+            )
+        )
+
+        invalid = (
+            ({**policy, "mode": "track-payload"}, admission, True),
+            ({**policy, "unreviewed_extension": True}, admission, True),
+            (policy, admission, False),
+            (
+                policy,
+                {
+                    **admission,
+                    "candidate": {
+                        "quarantine_artifact": {
+                            **admission["candidate"]["quarantine_artifact"],
+                            "path": "raw/quarantine/not-a-digest/artifact.vtt",
+                        }
+                    },
+                },
+                True,
+            ),
+            (
+                policy,
+                {
+                    **admission,
+                    "candidate": {
+                        "quarantine_artifact": {
+                            **admission["candidate"]["quarantine_artifact"],
+                            "sha256": "c" * 64,
+                        }
+                    },
+                },
+                True,
+            ),
+            (policy, {**admission, "record_digest": "b" * 64}, True),
+            (
+                policy,
+                {
+                    **admission,
+                    "candidate": {
+                        "quarantine_artifact": {
+                            key: value
+                            for key, value in admission["candidate"]["quarantine_artifact"].items()
+                            if key != "media_type"
+                        }
+                    },
+                },
+                True,
+            ),
+            (
+                policy,
+                {
+                    **admission,
+                    "decision": {
+                        **admission["decision"],
+                        "security_assessment": {
+                            **admission["decision"]["security_assessment"],
+                            "gates": {"write": {"decision": "reject"}},
+                        },
+                    },
+                },
+                True,
+            ),
+            (
+                policy,
+                {
+                    **admission,
+                    "decision": {
+                        **admission["decision"],
+                        "security_assessment": {
+                            **admission["decision"]["security_assessment"],
+                            "manifest": {
+                                **admission["decision"]["security_assessment"]["manifest"],
+                                "size_bytes": 999,
+                            },
+                        },
+                    },
+                },
+                True,
+            ),
+            (
+                policy,
+                {
+                    **admission,
+                    "decision": {
+                        **admission["decision"],
+                        "security_assessment": {
+                            **admission["decision"]["security_assessment"],
+                            "invariants": {
+                                **admission["decision"]["security_assessment"]["invariants"],
+                                "network_used": True,
+                            },
+                        },
+                    },
+                },
+                True,
+            ),
+        )
+        for candidate_policy, candidate_admission, anchor_verified in invalid:
+            with self.subTest(policy=candidate_policy, anchor_verified=anchor_verified):
+                self.assertFalse(
+                    wiki.portable_quarantine_metadata(
+                        candidate_admission,
+                        candidate_policy,
+                        validation_profile="public-clean-clone",
+                        anchor_verified=anchor_verified,
+                    )
+                )
+
+    def test_anchor_requires_security_action_actor_digest_sha_and_decision(self):
+        admission = self.admission()
+        anchor = self.anchor(admission)
+        self.assertTrue(wiki.quarantine_anchor_is_valid(admission, anchor))
+
+        for field, value in (
+            ("action", "source.add"),
+            ("actor", "agent:other"),
+            ("subject", "ADM-OTHER"),
+        ):
+            with self.subTest(field=field):
+                self.assertFalse(
+                    wiki.quarantine_anchor_is_valid(
+                        admission,
+                        {**anchor, field: value},
+                    )
+                )
+        for field, value in (
+            ("record_digest", "b" * 64),
+            ("sha256", "c" * 64),
+            ("decision", "reject"),
+            ("payload_executed", True),
+        ):
+            with self.subTest(detail=field):
+                self.assertFalse(
+                    wiki.quarantine_anchor_is_valid(
+                        admission,
+                        {**anchor, "details": {**anchor["details"], field: value}},
+                    )
+                )
+
+
 class MemoryControlPlaneTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -355,6 +595,21 @@ class MemoryControlPlaneTests(unittest.TestCase):
 
 
 class ProposalGovernanceTests(unittest.TestCase):
+    MANDATORY_GATE_NAMES = (
+        "structural_and_ledger",
+        "okf_bundle",
+        "calibration",
+        "security",
+        "runtime",
+        "regression_tests",
+        "memory_feedback_lifecycle_hygiene",
+        "korean_documentation_contract",
+    )
+
+    @classmethod
+    def passing_gates(cls):
+        return [{"name": name, "passed": True} for name in cls.MANDATORY_GATE_NAMES]
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.old = (
@@ -443,6 +698,39 @@ class ProposalGovernanceTests(unittest.TestCase):
             {"actor": actor, "proposal": "RFC-1", "decision": decision, "rationale": "Explicit review"},
         )()
 
+    @staticmethod
+    def add_args(evidence):
+        return type(
+            "Args",
+            (),
+            {
+                "actor": "agent:writer",
+                "title": "근거 계약 시험",
+                "problem": "제안 근거가 claim ID가 아닌 설명문을 허용한다.",
+                "change": "제안 생성 전에 근거 claim ID를 검증한다.",
+                "evidence": evidence,
+                "benchmark": "잘못된 근거는 원장 쓰기 전에 거부한다.",
+                "risks": "기존 잘못된 입력이 드러남",
+                "rollback": "입력 검증을 제거한다.",
+            },
+        )()
+
+    def test_proposal_add_rejects_non_claim_evidence_before_write(self):
+        before = list(wiki.collection("proposals"))
+
+        with self.assertRaises(wiki.WikiError):
+            wiki.proposal_add(self.add_args("COL-INVALID; 설명문; https://example.org"))
+
+        self.assertEqual(wiki.collection("proposals"), before)
+
+    def test_proposal_add_accepts_existing_claim_ids(self):
+        wiki.save_collection("claims", [{"id": "CLM-VALID"}])
+
+        wiki.proposal_add(self.add_args("CLM-VALID"))
+
+        created = wiki.collection("proposals")[-1]
+        self.assertEqual(created["evidence"], ["CLM-VALID"])
+
     def test_policy_approver_can_approve(self):
         wiki.proposal_review(self.args())
         proposal = wiki.collection("proposals")[0]
@@ -461,7 +749,7 @@ class ProposalGovernanceTests(unittest.TestCase):
     def test_implemented_requires_passing_non_certifying_release_report(self):
         wiki.proposal_review(self.args())
         report_path = wiki.EVALUATION_REPORTS / "v4-release-report.json"
-        gates = [{"name": "memory_feedback_lifecycle_hygiene", "passed": True}]
+        gates = self.passing_gates()
         harness_manifest = wiki.harness_component_manifest()
         report = {
             "release_id": "living-wiki-v4",
@@ -494,10 +782,7 @@ class ProposalGovernanceTests(unittest.TestCase):
         self.assertEqual(proposal["status"], "implemented")
         self.assertFalse(proposal["implementation_evidence"]["production_certified"])
 
-        newer_gates = [
-            {"name": "memory_feedback_lifecycle_hygiene", "passed": True},
-            {"name": "regression_tests", "passed": True},
-        ]
+        newer_gates = [*self.passing_gates(), {"name": "extended_revalidation", "passed": True}]
         newer = {
             **{key: value for key, value in report.items() if key != "report_digest"},
             "component_fingerprint": wiki.digest_text(wiki.canonical_json(newer_gates)),
@@ -521,6 +806,46 @@ class ProposalGovernanceTests(unittest.TestCase):
             newer["component_fingerprint"],
         )
         self.assertIn("revalidated_at", resealed)
+
+    def test_implementation_rejects_missing_or_duplicate_mandatory_gates(self):
+        wiki.proposal_review(self.args())
+        report_path = wiki.EVALUATION_REPORTS / "v4-release-report.json"
+        harness_manifest = wiki.harness_component_manifest()
+        args = type(
+            "Args",
+            (),
+            {"actor": "human:owner", "proposal": "RFC-1", "release_report": str(report_path)},
+        )()
+        bad_gate_sets = [
+            [gate for gate in self.passing_gates() if gate["name"] != missing]
+            for missing in self.MANDATORY_GATE_NAMES
+        ]
+        bad_gate_sets.append([*self.passing_gates(), self.passing_gates()[0]])
+        for gates in bad_gate_sets:
+            with self.subTest(gates=[gate["name"] for gate in gates]):
+                report = {
+                    "release_id": "living-wiki-v4",
+                    "passed": True,
+                    "production_certified": False,
+                    "harness_version": "4.1.0",
+                    "component_fingerprint": wiki.digest_text(wiki.canonical_json(gates)),
+                    "gates": gates,
+                    "harness_manifest_sha256": wiki.digest_text(wiki.canonical_json(harness_manifest)),
+                    "harness_file_count": len(harness_manifest),
+                }
+                report["report_digest"] = wiki.digest_text(wiki.canonical_json(report))
+                wiki.atomic_write_json(report_path, report)
+                wiki.append_event(
+                    "human:owner",
+                    "release.evaluate",
+                    "living-wiki-v4",
+                    {
+                        "component_fingerprint": report["component_fingerprint"],
+                        "report_digest": report["report_digest"],
+                    },
+                )
+                with self.assertRaises(wiki.WikiError):
+                    wiki.proposal_implement(args)
 
     def test_implementation_rejects_unanchored_or_external_report(self):
         wiki.proposal_review(self.args())
@@ -752,6 +1077,289 @@ class IntegratedGateTests(unittest.TestCase):
         self.assertEqual(len(campaigns), 1)
         self.assertEqual(campaigns[0]["status"], "queued")
         self.assertEqual(campaigns[0]["max_sources"], 4)
+
+
+class TemporalMetadataContractTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.old = (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        )
+        root = Path(self.temp.name)
+        wiki.ROOT = root
+        wiki.STATE = root / "state"
+        wiki.RAW = root / "raw" / "sources"
+        wiki.QUARANTINE = root / "raw" / "quarantine"
+        wiki.WIKI = root / "wiki"
+        wiki.REPORTS = root / "reports"
+        wiki.EVALUATIONS = root / "evaluations"
+        wiki.EVALUATION_REPORTS = wiki.EVALUATIONS / "reports"
+        wiki.OKF_BUNDLE = wiki.WIKI
+        wiki.ensure_layout()
+        (wiki.ROOT / "config").mkdir(parents=True)
+        wiki.atomic_write_json(
+            wiki.ROOT / "config" / "trust-policy.json",
+            {
+                "source_levels": {"S0": "평가 전"},
+                "claim_levels": {"C0": "근거 없음"},
+                "principle": "표현된 확신은 증거가 아니다.",
+            },
+        )
+        (wiki.ROOT / "governance").mkdir(parents=True)
+        (wiki.ROOT / "governance" / "constitution.md").write_text(
+            "# 시험 헌장\n",
+            encoding="utf-8",
+        )
+        (wiki.ROOT / "governance" / "decision-log.md").write_text(
+            "# 시험 결정 기록\n",
+            encoding="utf-8",
+        )
+
+    def tearDown(self):
+        (
+            wiki.ROOT,
+            wiki.STATE,
+            wiki.RAW,
+            wiki.QUARANTINE,
+            wiki.WIKI,
+            wiki.REPORTS,
+            wiki.EVALUATIONS,
+            wiki.EVALUATION_REPORTS,
+            wiki.OKF_BUNDLE,
+        ) = self.old
+        self.temp.cleanup()
+
+    def seed_actor(self):
+        wiki.save_collection(
+            "actors",
+            [
+                {
+                    "id": "agent:test",
+                    "kind": "agent",
+                    "display_name": "시험 Agent",
+                    "roles": ["researcher"],
+                    "capabilities": ["submit"],
+                    "status": "active",
+                    "created_at": "2025-12-01T00:00:00+00:00",
+                    "metadata": {"independence_group": "test-group"},
+                }
+            ],
+        )
+
+    def claim(self, claim_id="CLM-TIME"):
+        return {
+            "id": claim_id,
+            "statement": "시간 메타데이터는 서로 다른 의미를 보존한다.",
+            "kind": "factual",
+            "scope": "시간 계약 시험",
+            "created_by": "agent:test",
+            "created_by_group": "test-group",
+            "created_at": "2026-01-01T00:00:00+00:00",
+            "content_updated_at": "2026-02-01T00:00:00+00:00",
+            "last_verified_at": "2026-05-01T00:00:00+00:00",
+            "freshness": "fast",
+            "valid_at": None,
+            "tags": ["time"],
+            "evidence": [],
+            "confidence": {
+                "level": "C0",
+                "status": "open",
+                "supporting_groups": 0,
+                "contradicting_groups": 0,
+                "independent_reviews": 0,
+                "rationale": "연결된 증거가 없음.",
+                "computed_at": "2026-04-01T00:00:00+00:00",
+            },
+            "supersedes": [],
+            "lifecycle_status": "active",
+            "lifecycle_updated_at": "2026-06-01T00:00:00+00:00",
+        }
+
+    def source(self, source_id="SRC-TIME", *, known_creation=True, semantic_timestamp=True):
+        item = {
+            "id": source_id,
+            "title": "시간 계약 시험 출처",
+            "url": "https://example.org/time-contract",
+            "source_type": "official-doc",
+            "authors": [],
+            "publisher": "시험 기관",
+            "published_at": "2025-12-01",
+            "retrieved_at": "2026-03-01T00:00:00+00:00",
+            "publication_status": "active",
+            "independence_group": source_id,
+            "source_level": "S2",
+            "assessment": {
+                "assessed_by": "agent:test",
+                "assessed_at": "2026-04-01T00:00:00+00:00",
+                "rationale": "직접 범위를 확인했다.",
+                "quality_markers": ["official"],
+                "conflicts_of_interest": [],
+            },
+            "artifact": None,
+            "status": "active",
+            "lifecycle_status": "active",
+            "lifecycle_updated_at": "2026-05-01T00:00:00+00:00",
+        }
+        if known_creation:
+            item["created_at"] = "2026-01-01T00:00:00+00:00"
+        if semantic_timestamp:
+            item["content_updated_at"] = "2026-02-01T00:00:00+00:00"
+        return item
+
+    def rendered_metadata(self, relative_path):
+        metadata, _, errors = wiki.split_okf_frontmatter(
+            (wiki.WIKI / relative_path).read_text(encoding="utf-8")
+        )
+        self.assertEqual(errors, [])
+        return metadata
+
+    def test_claim_projection_separates_semantic_change_from_verification_and_lifecycle(self):
+        self.seed_actor()
+        wiki.save_collection("claims", [self.claim()])
+
+        wiki.render_okf_state_projection()
+
+        metadata = self.rendered_metadata("claims/clm-time.md")
+        self.assertEqual(metadata["timestamp"], "2026-02-01T00:00:00+00:00")
+        self.assertEqual(metadata["created_at"], "2026-01-01T00:00:00+00:00")
+        self.assertEqual(metadata["last_verified_at"], "2026-05-01T00:00:00+00:00")
+        self.assertEqual(metadata["freshness"], "fast")
+        self.assertEqual(metadata["lifecycle_updated_at"], "2026-06-01T00:00:00+00:00")
+
+    def test_legacy_claim_timestamp_uses_known_change_events_not_verification_time(self):
+        self.seed_actor()
+        claim = self.claim("CLM-LEGACY")
+        claim.pop("content_updated_at")
+        claim["last_verified_at"] = "2026-07-01T00:00:00+00:00"
+        claim["evidence"] = [
+            {
+                "source_id": "SRC-TIME",
+                "relation": "supports",
+                "locator": "§1",
+                "strength": 2,
+                "added_by": "agent:test",
+                "added_at": "2026-03-01T00:00:00+00:00",
+            }
+        ]
+        claim["confidence"]["computed_at"] = "2026-04-01T00:00:00+00:00"
+        claim["lifecycle_updated_at"] = "2026-06-01T00:00:00+00:00"
+        wiki.save_collection("claims", [claim])
+        wiki.save_collection("sources", [self.source()])
+
+        wiki.render_okf_state_projection()
+
+        metadata = self.rendered_metadata("claims/clm-legacy.md")
+        self.assertEqual(metadata["timestamp"], "2026-06-01T00:00:00+00:00")
+        self.assertEqual(metadata["last_verified_at"], "2026-07-01T00:00:00+00:00")
+
+    def test_source_projection_preserves_known_times_without_inventing_creation(self):
+        self.seed_actor()
+        known = self.source()
+        legacy = self.source("SRC-LEGACY", known_creation=False, semantic_timestamp=False)
+        legacy["url"] = "https://example.org/legacy-time-contract"
+        wiki.save_collection("sources", [known, legacy])
+
+        wiki.render_okf_state_projection()
+
+        known_metadata = self.rendered_metadata("sources/src-time.md")
+        self.assertEqual(known_metadata["timestamp"], "2026-02-01T00:00:00+00:00")
+        self.assertEqual(known_metadata["created_at"], "2026-01-01T00:00:00+00:00")
+        self.assertEqual(known_metadata["retrieved_at"], "2026-03-01T00:00:00+00:00")
+        self.assertEqual(known_metadata["assessed_at"], "2026-04-01T00:00:00+00:00")
+        self.assertEqual(known_metadata["lifecycle_updated_at"], "2026-05-01T00:00:00+00:00")
+
+        legacy_metadata = self.rendered_metadata("sources/src-legacy.md")
+        self.assertEqual(legacy_metadata["timestamp"], "2026-05-01T00:00:00+00:00")
+        self.assertNotIn("created_at", legacy_metadata)
+        self.assertEqual(legacy_metadata["retrieved_at"], "2026-03-01T00:00:00+00:00")
+        self.assertEqual(legacy_metadata["assessed_at"], "2026-04-01T00:00:00+00:00")
+        self.assertEqual(legacy_metadata["lifecycle_updated_at"], "2026-05-01T00:00:00+00:00")
+
+    def test_okf_profile_requires_timezone_aware_temporal_metadata(self):
+        path = wiki.WIKI / "concepts" / "time-contract.md"
+        base = {
+            "type": "Concept",
+            "title": "시간 계약",
+            "description": "시간대가 있는 시각 메타데이터 시험.",
+            "tags": ["time"],
+            "timestamp": "2026-02-01T00:00:00+00:00",
+            "created_at": "2026-01-01T00:00:00+00:00",
+            "last_verified_at": "2026-03-01T09:00:00+09:00",
+            "retrieved_at": "2026-03-02T00:00:00Z",
+            "assessed_at": "2026-03-03T00:00:00+00:00",
+            "lifecycle_updated_at": "2026-03-04T00:00:00+00:00",
+        }
+        wiki.write_okf_concept(path, base, "# 시간 계약\n")
+        errors, _ = wiki.okf_profile_findings()
+        self.assertEqual(errors, [])
+
+        for field in (
+            "timestamp",
+            "created_at",
+            "last_verified_at",
+            "retrieved_at",
+            "assessed_at",
+            "lifecycle_updated_at",
+        ):
+            with self.subTest(field=field):
+                invalid = {**base, field: "2026-02-01T00:00:00"}
+                wiki.write_okf_concept(path, invalid, "# 시간 계약\n")
+                errors, _ = wiki.okf_profile_findings()
+                self.assertTrue(any(field in error for error in errors), errors)
+
+    def test_okf_profile_rejects_creation_after_semantic_timestamp(self):
+        wiki.write_okf_concept(
+            wiki.WIKI / "concepts" / "time-order.md",
+            {
+                "type": "Concept",
+                "title": "시간 순서",
+                "description": "생성 시각과 의미 변경 시각의 순서 시험.",
+                "tags": ["time"],
+                "timestamp": "2026-02-01T00:00:00+00:00",
+                "created_at": "2026-03-01T00:00:00+00:00",
+            },
+            "# 시간 순서\n",
+        )
+
+        errors, _ = wiki.okf_profile_findings()
+
+        self.assertTrue(
+            any("created_at" in error and "timestamp" in error for error in errors),
+            errors,
+        )
+
+    def test_evaluate_does_not_advance_evidence_verification_time(self):
+        self.seed_actor()
+        source = self.source()
+        claim = self.claim()
+        original_verified_at = claim["last_verified_at"]
+        claim["evidence"] = [
+            {
+                "source_id": source["id"],
+                "relation": "supports",
+                "locator": "§1",
+                "strength": 2,
+                "added_by": "agent:test",
+                "added_at": "2026-03-01T00:00:00+00:00",
+            }
+        ]
+        wiki.save_collection("sources", [source])
+        wiki.save_collection("claims", [claim])
+
+        wiki.evaluate(type("Args", (), {"actor": "agent:test"})())
+
+        evaluated = wiki.collection("claims")[0]
+        self.assertEqual(evaluated["confidence"]["level"], "C1")
+        self.assertEqual(evaluated["last_verified_at"], original_verified_at)
+        self.assertEqual(evaluated["content_updated_at"], "2026-02-01T00:00:00+00:00")
 
 
 class UtilityTests(unittest.TestCase):

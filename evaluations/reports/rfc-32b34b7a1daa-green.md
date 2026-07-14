@@ -1,0 +1,21 @@
+# RFC-32B34B7A1DAA Green 근거
+
+- 명세: `SPEC-LWS-001` v1.1.0
+- 구현: 하나의 공개 관리인 Skill 안에서 예약·수동 호출 방식, 네 작업 종류와 세 Wiki 의존도 정책을 별도 축으로 분리함
+- 예약 계약: 위생 → 도래한 관심사 → 캠페인 최대 하나 → 검증 → 차이 보고 순서를 Skill과 예약 프롬프트에 고정함
+- 수동 계약: 자연어 상태 점검, 지속 연구, 독립 검증과 하네스 개선을 내부 모드 선택 없이 라우팅함
+- 배포 계약: Skill·프롬프트 구현과 실제 Codex 예약 활성 상태를 분리하고 README에 설치·시험·활성화·평소 사용 여정을 추가함
+- UI: 기본 프롬프트를 단일 수동 위생 요청으로 명확히 함
+- 대상 테스트: `python3 -m unittest tests.test_living_wiki_steward_skill -v` — 14개 통과
+- Skill 검사: `quick_validate.py skills/living-wiki-steward` — 통과
+- 언어 검사: `python3 tools/wiki.py language-validate` — 통과
+- 독립 전진 시험: 수동 위생과 예약 통합 관리 두 경로 모두 읽기 전용으로 의도대로 라우팅됨
+- 전체 단위 테스트: `python3 -m unittest discover -s tests -v` — 291개 통과
+- 전체 릴리스: 구조·OKF·보정·보안·실행환경·회귀·메모리 위생·한국어 문서의 필수 게이트 8개 통과
+- 릴리스 보고서: `evaluations/reports/v4-release-57f37e63de782dca.json`
+- 구성요소 지문: `57f37e63de782dcaeeb45394bf3573bbc9dd8d96df95d1862eb27fe1f5712c5b`
+- RFC 상태: `RFC-32B34B7A1DAA` 구현 완료
+- 권한 변화: 없음
+- 신뢰 단계 변화: 없음
+- 운영 환경 인증: `production_certified=false`
+- 남은 경계: 실제 Scheduled Task 생성·활성화와 장기 실행은 Codex 제품의 별도 배포 상태이며 이번 로컬 Green 근거가 인증하지 않음

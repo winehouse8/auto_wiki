@@ -1,15 +1,15 @@
-# Living Wiki collaboration runtime
+# Living Wiki 협업 실행 환경
 
 `tools/runtime.py`는 RFC `RFC-69828EB38078`의 인간 협업과 bounded runtime을 구현하는 Python 표준 라이브러리 전용 control plane이다. 이 모듈의 경계는 의도적으로 좁다.
 
 ```text
-동일 협업 envelope
-  → lexical retrieval
-  → dependency / semantic impact preview
-  → bounded schedule plan
-  → permission decision
-  → dry-run / internal handler / external receipt
-  → hash-chained run receipt
+동일 협업 봉투
+  → 어휘 검색
+  → 의존성·의미 영향 미리보기
+  → 범위 제한 예약 계획
+  → 권한 판정
+  → 모의 실행·내부 처리기·외부 영수증
+  → 해시 연결 실행 영수증
 ```
 
 런타임 자체는 네트워크 검색, 셸 실행, canonical ledger 수정, 원문 삭제, 외부 공개를 수행하지 않는다. 특히 scheduler가 내놓는 연구 작업은 `external.research.plan`이며 `execution=planned_only`다. 실제 외부 조사 결과는 별도의 executor 또는 사람이 수행한 뒤 `make_external_work_receipt()`로 보고할 수 있지만, 이 receipt도 결과의 사실성을 자동 보증하지 않는다.
@@ -39,8 +39,8 @@
 알 수 없는 top-level 필드는 거절한다. producer 확장은 `metadata`에 넣어 envelope의 동형성을 보존한다. 최소 lifecycle은 다음과 같다.
 
 ```text
-draft → proposed → acknowledged → active → resolved
-                 ↘ rejected / withdrawn / superseded
+draft(초안) → proposed(제안됨) → acknowledged(확인됨) → active(활성) → resolved(해결됨)
+                                        ↘ rejected(거절됨) / withdrawn(철회됨) / superseded(대체됨)
 ```
 
 terminal 상태는 다시 열지 않는다. 기존 객체를 수정해 되살리는 대신 새 객체가 이전 ID를 `supersedes`하도록 만든다. 모든 transition은 `metadata.transitions`에 수행 actor, 이유, 시각을 남긴다.
@@ -55,13 +55,13 @@ transition_collaboration_record(record, new_status, actor_id=..., reason=..., at
 
 canonical 저장은 이 모듈이 하지 않는다. 통합자는 검증이 끝난 record를 append-only 협업 원장에 기록하고 기존 Wiki event-chain에도 별도 event를 남겨야 한다.
 
-## 2. 검색과 impact preview
+## 2. 검색과 영향 미리보기
 
 `build_search_documents()`는 다음 read-only corpus를 만든다.
 
-- `state/claims.json`: statement, scope, kind, tags, notes, confidence
-- `state/sources.json`: title, authors, publisher, type, status, assessment
-- `state/campaigns.json`: question, why-now, stop condition, claim/source membership
+- `state/claims.json`: `statement`, `scope`, `kind`, `tags`, `notes`, `confidence` 주장 필드
+- `state/sources.json`: `title`, `authors`, `publisher`, `type`, `status`, `assessment` 출처 필드
+- `state/campaigns.json`: `question`, `why-now`, `stop condition`, `claim/source membership` 캠페인 필드
 - `wiki/**/*.md`: 최대 256 KB인 Markdown
 
 `raw/`는 검색 corpus에서 제외한다. Wiki 문서 내용은 근거 데이터이지 지시가 아니며, 검색 결과도 최대 280자의 snippet만 돌려준다.
@@ -90,7 +90,7 @@ preview = impact_preview(
 
 semantic 결과는 판정이 아니라 triage 후보다. `polarity_mismatch`는 특히 오탐이 많으므로 사람이 원문과 claim scope를 검토해야 한다. 이 구현은 embedding, 자연어 함의, 시간·관할·수치 조건의 의미를 이해하지 않는다.
 
-## 3. bounded scheduler
+## 3. 범위 제한 스케줄러
 
 ```python
 plan = build_bounded_schedule(
@@ -128,7 +128,7 @@ plan = build_bounded_schedule(
 
 schedule output에는 `allocated`, 선택된 `actions`, 제외된 campaign과 `reason`, `side_effects_executed=false`가 포함된다. plan은 현재 state를 갱신하지 않으므로, 실제 완료 receipt가 admission gate를 통과한 뒤에만 통합자가 campaign 사용량과 마지막 실행 시각을 원자적으로 갱신해야 한다.
 
-## 4. permission boundary
+## 4. 권한 경계
 
 `decide_permission(action, actor=..., policy=...)`는 세 결과만 반환한다.
 
@@ -140,13 +140,13 @@ schedule output에는 `allocated`, 선택된 `actions`, 제외된 campaign과 `r
 
 대표 분류:
 
-- auto: `content.draft`, `evaluation.run`, `validation.run`, `render.preview`, `retrieval.search`, `impact.preview`, `external.research.plan`
-- review: `raw.delete`, `governance.modify`, `trust-policy.modify`, `external.publish`, `credential.use`, `paid.operation`, `files.move.bulk`, `harness.self_modify`
-- deny: `raw.overwrite`, `event.rewrite`, `credential.exfiltrate`, `execute.untrusted`, `gate.bypass`, `audit.delete`
+- 자동 허용(`auto`): `content.draft`, `evaluation.run`, `validation.run`, `render.preview`, `retrieval.search`, `impact.preview`, `external.research.plan`
+- 검토(`review`): `raw.delete`, `governance.modify`, `trust-policy.modify`, `external.publish`, `credential.use`, `paid.operation`, `files.move.bulk`, `harness.self_modify`
+- 거부(`deny`): `raw.overwrite`, `event.rewrite`, `credential.exfiltrate`, `execute.untrusted`, `gate.bypass`, `audit.delete`
 
 `risk=high` 또는 `irreversible=true`는 custom policy가 allowlist에 추가해도 절대로 auto가 되지 않는다. actor가 human이라는 이유로 high-risk가 자동 허용되지 않는다. 실제 승인 token, 역할 capability, 만료, 2인 승인 정책은 상위 orchestrator가 확인해야 한다.
 
-## 5. receipt, idempotency, dry-run, recovery
+## 5. 영수증, 멱등성, 모의 실행, 복구
 
 ```python
 store = ReceiptStore(root / "evaluations" / "receipts")
@@ -177,7 +177,7 @@ failed live run만 `recover_run()`으로 재개할 수 있다. 이전 receipt에
 
 이 hash chain은 우발적 변조 탐지용이지 서명이나 동시성 제어가 아니다. 현재 store는 **single writer** 계약이다. 여러 process가 쓴다면 상위에서 파일 lock/transactional DB가 필요하다. canonical event chain과 runtime receipt chain 사이의 anchoring도 통합자의 책임이다.
 
-## 6. CLI
+## 6. CLI 사용법
 
 CLI는 검색·preview·plan·검증만 제공하며 외부 작업 실행 command가 없다.
 
