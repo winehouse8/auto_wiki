@@ -3,13 +3,13 @@ type: Specification
 title: Living Wiki GitHub PR 전달과 위험 기반 자동 병합
 description: 자동 Wiki 변경을 GitHub 브랜치·PR·검증·조건부 병합으로 전달하는 사용자 경험과 보안 계약.
 tags: [github, pull-request, automation, audit, security, delivery]
-timestamp: '2026-07-13T00:49:45+09:00'
+timestamp: '2026-07-15T01:36:01+09:00'
 ---
 
 # Living Wiki GitHub PR 전달과 위험 기반 자동 병합
 
 - 명세 ID: `SPEC-GH-DELIVERY-001`
-- 버전: `1.1.0`
+- 버전: `1.2.0`
 - 상태: 사용자 지시에 따라 승인된 설계 계약
 - 승인 방향: `COL-27B9ADD786ED`
 - 연결 RFC: `RFC-03F4FE85BB44`
@@ -35,7 +35,7 @@ GitHub는 변경 전달·검증·검토·병합의 감사 제어면이다. Agent
 
 저장소·기준 브랜치·승인 근거가 정확히 일치하지 않으면 토큰을 읽기 전에 중단한다. 일반 다중 저장소 관리자, fork 자동 생성기와 임의 셸 실행기는 범위 밖이다.
 
-버전 `1.1.0`은 감사에서 확인한 fail-closed 결함을 좁게 보강한다. 기존 승인 저장소·브랜치·행위자·병합 방식과 RFC 승인 범위를 넓히지 않으며, production 인증도 추가하지 않는다.
+버전 `1.2.0`은 첫 통합 PR 병합 뒤 발견한 prospective gate의 자기 변경과 사람·비동기 자동 병합 영수증 재조정 결함을 좁게 보강한다. 현재 후속 실행은 begin 영수증과 운영 코드·설정의 `SPEC-GH-DELIVERY-001/v1.1.0` 식별자를 그대로 고정하고, 사람 검토 병합 뒤 별도 정책 버전 전환으로 v1.2를 활성화한다. 기존 승인 저장소·브랜치·행위자·병합 방식과 RFC 승인 범위를 넓히지 않으며, production 인증도 추가하지 않는다.
 
 ## 사용자에게 보이는 상태
 
@@ -106,6 +106,10 @@ classic PAT는 사람과 Agent를 GitHub에서 같은 `winehouse8` 계정으로 
 4. commit trailer와 PR 본문에는 run ID, actor, 호출 방식·작업 종류·Wiki 의존도, base/head/tree SHA, 파일 manifest, RFC·승인 근거, 게이트 digest, 위험 판정과 이유, C/S/lifecycle 영향, 미해결 항목과 롤백을 기록한다.
 5. PR 번호·URL·head SHA·라벨·draft 여부·auto-merge 요청·merge method·merge SHA·시각을 비밀 없는 delivery receipt로 보존한다.
 
+publish 내부의 prospective 품질 검증은 대상 작업 사본을 바꾸지 않아야 한다. `lint`와 통합 `release-check`는 check-only 모드에서 보고서·archive·event·파생 Wiki를 원본 작업 사본에 쓰지 않고 동일한 판정을 수행한다. 각 검증 단계 뒤의 실측 manifest가 gate 시작 전 manifest와 다르면 새 파일을 자동 수용하지 않고 stage 전에 차단한다. 날짜가 바뀌거나 사건 수가 달라져도 검증기 보고서의 자기 갱신이 저위험 변경을 사람 검토로 강등하거나 임의 파일을 commit하게 해서는 안 된다.
+
+사람 검토 PR이 외부에서 병합된 뒤 재조정할 때는 실제 merge SHA와 원격 상태를 기록하되 자동화가 auto-merge를 요청했다고 소급해 기록하지 않는다. 원격 `autoMergeRequest`나 기존 자동 요청 영수증이 없는 사람 검토 경로는 `merge_requested=false`를 보존한다. 반대로 같은 멱등성 키와 PR의 이전 safe 영수증이 auto-merge 요청을 증명하면 GitHub가 병합 뒤 활성 요청 필드를 비워도 `merge_requested=true`를 보존한다. classic PAT가 사람과 Agent 행위자를 구분하지 못하므로 병합 주체를 근거 없이 특정하지 않는다.
+
 멱등성 키는 `policy version + run ID + base SHA + tree SHA`다. timeout 뒤 생성·병합을 맹목적으로 재호출하지 않고 remote branch, PR marker와 merge 상태를 조회해 기존 작업을 재사용한다. 같은 키는 브랜치·PR·auto-merge 요청을 각각 최대 한 번만 만든다.
 
 GitHub의 auto-merge 요청 성공은 병합 완료가 아니다. 요청 직후 PR을 재조회해 `merged=true`와 merge SHA가 확인된 경우에만 완료로 기록한다. 아직 병합되지 않았으면 `자동 병합 대기` 영수증을 남기고, 후속 실행이 같은 멱등성 키와 원격 PR을 재조정한다. 이미 auto-merge가 활성화됐거나 요청 영수증이 있으면 요청을 다시 보내지 않으며, 재조정은 최종 merge SHA·차단 사유·계속 대기 중 하나로만 상태를 진전시킨다.
@@ -140,7 +144,7 @@ PR은 존재하는 기준 ref가 필요하다. 현재 빈 `winehouse8/auto_wiki`
 
 이 예외는 bootstrap receipt와 첫 PR 본문에 기록한다. 실제 seed `5f1d7f0b26a601f4e60a64713c30da8d7f10d1ff`와 소진된 예외는 [GitHub Issue #1](https://github.com/winehouse8/auto_wiki/issues/1)에 기록했다. 기준 ref가 생긴 뒤에는 예외가 소진되며 이후 `main` 직접 push는 정책 위반이다.
 
-첫 GitHub 통합 PR은 현재 dirty 기본 작업 사본에서 곧바로 stage하지 않는다. `origin/main`의 고정 SHA에서 별도의 clean linked worktree를 만들고, 그 안에서 `begin`을 성공시켜 기준 SHA·실행 ID·소유 브랜치가 있는 영수증을 먼저 남긴 다음 승인된 통합 patch만 적용한다. 시작 영수증 이전의 dirty 파일을 manifest로 추측해 가져오면 차단한다. 첫 통합 PR은 아직 자기 workflow를 원격 필수 check로 사용할 수 없으므로 로컬 전체 게이트와 사람 검토로만 병합한다. 병합 뒤 보호 규칙에 정확한 필수 check `전체 저장소 품질 게이트`를 추가하고 무해한 canary PR에서 check와 자동 병합 경로를 전진 검증한다.
+첫 GitHub 통합 [PR #2](https://github.com/winehouse8/auto_wiki/pull/2)는 `origin/main`의 고정 SHA와 clean 작업 사본에서 사람 검토로 병합했고, 보호 규칙에 정확한 필수 check `전체 저장소 품질 게이트`를 적용했다. 현재는 그 뒤 발견한 v1.2 제어면 결함의 후속 사람 검토 PR과 운영 정책 버전 전환을 같은 clean `begin` 계약으로 전달하는 단계다. 두 변경을 병합한 뒤 무해한 canary PR에서 check와 자동 병합 경로를 전진 검증한다. 시작 영수증 이전의 dirty 파일을 manifest로 추측해 가져오면 언제나 차단한다.
 
 ## 수용 기준
 
@@ -165,12 +169,15 @@ PR은 존재하는 기준 ref가 필요하다. 현재 빈 `winehouse8/auto_wiki`
 - `AC-GH-019`: 전체 게이트 뒤 base SHA 대비 실측 manifest가 caller boolean과 사전 manifest보다 권위 있으며, 불일치는 위험을 낮추지 않는다.
 - `AC-GH-020`: 금지 diff는 stage·commit 전에 차단되고, 실제 token의 exact scan은 후보 파일과 staged 내용에서 commit 전에 0회를 증명한다.
 - `AC-GH-021`: branch protection과 자동 병합 판정은 정확한 필수 check 이름 `전체 저장소 품질 게이트`만 인정한다.
-- `AC-GH-022`: auto-merge 요청 뒤 merge SHA가 없으면 `자동 병합 대기`로 남고, 재조정은 같은 멱등성 키의 auto-merge 요청을 중복 호출하지 않는다.
+- `AC-GH-022`: auto-merge 요청 뒤 merge SHA가 없으면 `자동 병합 대기`로 남고, 재조정은 같은 멱등성 키의 auto-merge 요청을 중복 호출하지 않으며 같은 PR의 기존 요청 영수증을 비동기 병합 완료 뒤에도 보존한다.
 - `AC-GH-023`: `차단`으로 끝난 CLI는 비밀 없는 영수증을 남기고 nonzero 종료 코드로 실패를 호출자에게 전달한다.
 - `AC-GH-024`: GitHub 자식 프로세스는 상속 helper를 process 범위에서 초기화하고 대상 helper만 사용하며 대화형 prompt와 영속 credential 변경이 0회다.
 - `AC-GH-025`: 첫 통합 PR은 `origin/main` 기준의 clean linked worktree에서 `begin` 영수증을 만든 뒤에만 patch를 적용한다.
 - `AC-GH-026`: 기본 `strict-local-custody`는 누락 격리 원문을 실패시키고, 명시적 `public-clean-clone`만 exact 정책·content-addressed artifact와 보안 manifest·전체 무부작용 불변조건·정규 ID/digest·상세 event anchor를 모두 만족한 누락을 경고로 검증하며 `quarantine_payload_verified=false`를 보고한다.
 - `AC-GH-027`: delivery adapter는 `raw/quarantine/**`의 모든 추적 변경을 stage·commit·token read·push·PR 전에 차단하며 사람 검토 경로로 공개하지 않는다.
+- `AC-GH-028`: publish와 PR Actions의 prospective `lint`·`release-check`는 check-only로 원본 작업 사본의 보고서·archive·event·파생 Wiki를 바꾸지 않고 같은 실패 판정을 반환한다.
+- `AC-GH-029`: 날짜·event 수·release fingerprint가 달라진 safe fixture도 전체 gate 전후 manifest가 같고, gate 자기 산출물이 safe canary diff에 추가되지 않는다.
+- `AC-GH-030`: 이미 병합된 사람 검토 PR을 재조정하면 실제 merge SHA를 기록하되 `merge_requested=false`를 유지하고 자동 병합 요청을 소급 주장하지 않는다.
 
 ## 실패와 롤백
 

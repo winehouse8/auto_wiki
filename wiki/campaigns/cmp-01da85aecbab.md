@@ -6,6 +6,7 @@ tags: ["research-campaign", "completed", "INT-SELF-EVOLVING-WIKI"]
 timestamp: "2026-07-11T18:24:24+00:00"
 campaign_id: "CMP-01DA85AECBAB"
 generated: true
+project_id: "PRJ-WIKI-HARNESS"
 ---
 <!-- state/campaigns.json에서 자동 생성함. -->
 # CMP-01DA85AECBAB
@@ -17,6 +18,7 @@ generated: true
 | 항목 | 값 |
 |---|---|
 | 상태 | **completed** |
+| 프로젝트 | [PRJ-WIKI-HARNESS](../projects/prj-wiki-harness.md) |
 | 관심사 | `INT-SELF-EVOLVING-WIKI` |
 | 우선순위 | 1.0 |
 | 생성자 | [human:owner](../actors/actor-human-owner.md) |

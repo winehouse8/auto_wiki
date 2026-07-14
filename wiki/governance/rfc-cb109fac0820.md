@@ -1,0 +1,56 @@
+---
+type: "Harness Proposal"
+title: "RFC-CB109FAC0820: 하네스 제안"
+description: "하네스 제안 RFC-CB109FAC0820의 문제·변경·검토·구현 근거."
+tags: ["governance", "harness-proposal", "approved"]
+timestamp: "2026-07-14T15:55:05+00:00"
+generated: true
+lifecycle_status: "approved"
+proposal_id: "RFC-CB109FAC0820"
+---
+<!-- state/proposals.json에서 자동 생성함. -->
+# RFC-CB109FAC0820: 하네스 제안 — 매일 20시 이중 연구 포트폴리오와 자원 제한 논문화 루프
+
+- 상태: **approved**
+- 제안자: [agent:codex](../actors/actor-agent-codex.md)
+- 생성 시각: `2026-07-14T15:54:58+00:00`
+
+## 문제
+
+기록된 문제: 기존 예약 계약은 캠페인 최대 하나만 고정하지만 여러 관심사가 동시에 도래할 때 정적 priority와 ID 순서로 한 트랙이 굶을 수 있고, 선택된 캠페인이 관심사의 장기 목표·계산 제약·논문화 산출물을 반드시 읽는다는 계약도 없다. Codex 관리 사본이 이전 실행 브랜치에 남거나 managed worktree에서 로컬 token을 잃으면 다음 일일 실행도 시작할 수 없다.
+
+## 제안 변경
+
+기록된 변경안: SPEC-LWS-001과 예약 프롬프트를 개정해 Asia/Seoul 20:00의 하루 한 실행, 위생 선행, 성공 시계와 배정 시계를 분리한 starvation-resistant 관심사 선택, interest 연구 brief의 캠페인 전달, Apple M4·16GB 자원 한계와 탑티어 논문 단계별 산출물, 깨끗한 전용 로컬 사본의 비파괴 main 재진입을 고정한다. 두 관심사를 등록하고 매 실행 연구 최대 하나·반증 검색·입수 gate·GitHub PR 전달 경계를 유지한다.
+
+## 근거 주장
+
+- [CLM-1EB8BD726482](../claims/clm-1eb8bd726482.md)
+- [CLM-207429D54323](../claims/clm-207429d54323.md)
+- [CLM-95A38CACF2CD](../claims/clm-95a38cacf2cd.md)
+- [CLM-F464CCF0AA1A](../claims/clm-f464ccf0aa1a.md)
+
+## 수용 게이트
+
+기록된 수용 기준: Red에서 동률 daily 관심사 둘이 여러 지역 날짜에 굶지 않고 교대하며 blocked/failed가 성공 cadence와 질문 사용량을 소진하지 않는 fixture, research brief가 캠페인에 보존되는 fixture, KST 20:00·하루 1회·위생 선행·M4 16GB·무료 또는 별도 승인 API·논문 산출물을 요구하는 계약 테스트, dirty 또는 diverged 전용 사본을 파괴하지 않는 예약 시작 계약을 고정한다. Green 후 대상 테스트, 전체 단위 테스트와 8개 릴리스 게이트를 통과한다.
+
+## 위험
+
+- 기록된 위험: 16GB 제약이 검증되지 않은 대형 실험을 허용하거나 유망 주제를 과도하게 배제할 수 있음
+- 기록된 위험: 구독과 API 사용 권한을 혼동해 무인 비용이 생길 수 있음
+- 기록된 위험: 선택 공정성이 긴급한 고우선순위 연구를 늦출 수 있음
+- 기록된 위험: 실제 Scheduled 생성 도구가 없는 표면에서 활성화됐다고 오인할 수 있음
+- 기록된 위험: 실패 재시도가 다른 트랙을 굶길 수 있음
+- 기록된 위험: 전용 checkout 재진입이 미완료 로컬 변경을 덮을 수 있음
+
+## 롤백
+
+기록된 롤백: Codex 예약 작업을 일시 정지하고 새 관심사와 포트폴리오 선택 변경을 되돌리는 사람 검토 PR을 만든다. 기존 Wiki, 원문, 사건·PR 이력은 보존하고 전용 자동화 clone은 열린 작업이 없는지 확인한 뒤 별도로 폐기한다.
+
+## 검토 결정
+
+- **approve** / 검토자 `human:owner` / 시각 `2026-07-14T15:55:05+00:00` — 기록된 사유: 사용자가 현재 요청에서 두 연구 트랙을 Living Wiki 관리인 Skill로 매일 KST 오후 8시에 한 번 실행하고, 매번 위생과 Wiki 누적을 포함하며, Apple M4·16GB 통합 메모리에서 가능한 실험과 최신 Agent/Training 논문을 바탕으로 탑티어 contribution과 논문까지 발전시키라고 명시적으로 지시했다. 승인은 하루 캠페인 최대 하나, 두 트랙 공정 라우팅, 자원·비용 경계, Wiki·PR 누적, 관련 명세·프롬프트·도구·테스트 구현에 한정한다. 자동 신뢰 승격, 원문 파괴, 무승인 유료 API, Scheduled 활성 상태 허위 주장과 사람 검토 PR 자동 병합은 제외한다.
+
+## 구현 근거
+
+- 아직 구현되지 않음.

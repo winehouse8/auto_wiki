@@ -8,6 +8,7 @@ timestamp: "2026-07-11T14:29:14+00:00"
 assessed_at: "2026-07-11T14:29:14+00:00"
 generated: true
 lifecycle_status: "active"
+project_ids: ["PRJ-WIKI-HARNESS"]
 retrieved_at: "2026-07-11T14:29:14+00:00"
 source_id: "SRC-E42CA8C4BD30"
 source_level: "S4"
@@ -48,6 +49,10 @@ source_level: "S4"
 ## 이 출처를 사용하는 주장
 
 - [CLM-4A3051A018DC](../claims/clm-4a3051a018dc.md)
+
+## 관련 연구 프로젝트
+
+- 연구 프로젝트: [PRJ-WIKI-HARNESS](../projects/prj-wiki-harness.md)
 
 # 인용
 

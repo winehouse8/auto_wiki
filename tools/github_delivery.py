@@ -1082,6 +1082,27 @@ def _pr_receipt(
     }
 
 
+def _prior_auto_merge_requested(
+    prior_receipt: Mapping[str, Any] | None,
+    *,
+    key: str,
+    risk: Mapping[str, Any],
+    existing: Mapping[str, Any],
+) -> bool:
+    """같은 safe PR의 이전 영수증만 auto-merge 요청 근거로 재사용한다."""
+
+    return bool(
+        isinstance(prior_receipt, Mapping)
+        and risk.get("route") == "safe"
+        and prior_receipt.get("route") == "safe"
+        and prior_receipt.get("status") in {"auto-merge-pending", "merged"}
+        and prior_receipt.get("idempotency_key") == key
+        and prior_receipt.get("pr_number") == existing.get("number")
+        and prior_receipt.get("merge_requested") is True
+        and prior_receipt.get("merge_method") == MERGE_METHOD
+    )
+
+
 def _required_text(request: Mapping[str, Any], name: str) -> str:
     value = request.get(name)
     if not isinstance(value, str) or not value:
@@ -1122,7 +1143,11 @@ def _required_checks_passed(value: Any, *, head_sha: str) -> bool:
 
 
 def _deliver_impl(
-    request: Mapping[str, Any], *, transport: Any, token_loader: Any
+    request: Mapping[str, Any],
+    *,
+    transport: Any,
+    token_loader: Any,
+    prior_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """분류→PR→검증→조건부 병합 상태기계를 실행한다.
 
@@ -1229,6 +1254,19 @@ def _deliver_impl(
         raise TransportError("기존 GitHub 전달 상태를 안전하게 조회하지 못함") from None
 
     if existing and existing.get("merged") and existing.get("merge_sha"):
+        merge_requested = bool(
+            risk["route"] == "safe"
+            and (
+                existing.get("auto_merge_enabled")
+                or existing.get("auto_merge_requested")
+                or _prior_auto_merge_requested(
+                    prior_receipt,
+                    key=key,
+                    risk=risk,
+                    existing=existing,
+                )
+            )
+        )
         return _pr_receipt(
             status="merged",
             key=key,
@@ -1236,7 +1274,7 @@ def _deliver_impl(
             pr=existing,
             branch=branch,
             labels=existing.get("labels") or labels,
-            merge_requested=True,
+            merge_requested=merge_requested,
         )
     if existing and existing.get("state") == "closed":
         return _blocked_receipt(
@@ -1513,7 +1551,11 @@ def _deliver_impl(
 
 
 def deliver(
-    request: Mapping[str, Any], *, transport: Any, token_loader: Any
+    request: Mapping[str, Any],
+    *,
+    transport: Any,
+    token_loader: Any,
+    prior_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """비밀 수명을 transport 호출 범위로 제한해 전달 상태기계를 실행한다."""
 
@@ -1522,6 +1564,7 @@ def deliver(
             request,
             transport=transport,
             token_loader=token_loader,
+            prior_receipt=prior_receipt,
         )
     finally:
         clearer = getattr(transport, "clear_token", None)
@@ -1918,23 +1961,18 @@ def _reconcile_post_gate_manifest(
     *,
     root: Path,
 ) -> dict[str, str]:
-    """선언 범위를 보존하면서 정확한 게이트 생성 archive만 추가한다."""
+    """게이트가 경로·상태를 하나도 바꾸지 않았을 때만 manifest를 보존한다."""
 
     if not isinstance(declared, Mapping) or not isinstance(actual, Mapping):
         raise DeliveryBlocked("게이트 후 manifest 구조가 잘못됨")
-    missing = set(declared) - set(actual)
-    if missing:
-        raise DeliveryBlocked("게이트 후 선언한 변경 경로가 누락됨")
-    for path in sorted(set(actual) - set(declared)):
-        observed = actual.get(path)
-        if not isinstance(observed, Mapping) or not _valid_post_gate_release_archive(
-            root, path, observed
-        ):
-            raise DeliveryBlocked("게이트가 허용되지 않은 새 경로를 만들었음")
-    return {
-        path: str(observed.get("status"))
-        for path, observed in actual.items()
+    observed = {
+        path: str(value.get("status"))
+        for path, value in actual.items()
+        if isinstance(value, Mapping)
     }
+    if len(observed) != len(actual) or observed != dict(declared):
+        raise DeliveryBlocked("게이트가 권위 manifest의 경로 또는 상태를 바꾸었음")
+    return dict(declared)
 
 
 _SECRET_BYTE_PATTERNS = (
@@ -2012,6 +2050,50 @@ def _git_worktree_changes(
                 raise DeliveryBlocked("미추적 변경 경로가 잘못되었거나 중복됨")
             changes[path] = {"status": "added", "git_status": "?"}
     return changes
+
+
+def _git_worktree_snapshot(
+    root: Path, runner: Any, *, base_sha: str
+) -> dict[str, dict[str, Any]]:
+    """경로·상태·현재 bytes를 함께 고정해 gate 자기 변경을 탐지한다."""
+
+    changes = _git_worktree_changes(root, runner, base_sha=base_sha)
+    snapshot: dict[str, dict[str, Any]] = {}
+    for relative, observed in sorted(changes.items()):
+        target = root / relative
+        status_value = observed.get("status")
+        if status_value == "deleted":
+            if target.exists() or target.is_symlink():
+                raise DeliveryBlocked(f"{relative}: 삭제 상태와 작업 사본이 일치하지 않음")
+            snapshot[relative] = {
+                "status": "deleted",
+                "git_status": observed.get("git_status"),
+                "sha256": None,
+                "size": 0,
+            }
+            continue
+        try:
+            metadata = target.lstat()
+        except OSError:
+            raise DeliveryBlocked(f"{relative}: 변경 파일을 읽지 못함") from None
+        if not stat.S_ISREG(metadata.st_mode):
+            raise DeliveryBlocked(f"{relative}: gate snapshot은 regular file만 허용함")
+        if metadata.st_size > MAX_TRACKED_FILE_BYTES:
+            raise DeliveryBlocked(f"{relative}: gate snapshot 파일 크기 상한을 넘음")
+        digest = hashlib.sha256()
+        try:
+            with target.open("rb") as handle:
+                for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                    digest.update(chunk)
+        except OSError:
+            raise DeliveryBlocked(f"{relative}: gate snapshot bytes를 읽지 못함") from None
+        snapshot[relative] = {
+            "status": status_value,
+            "git_status": observed.get("git_status"),
+            "sha256": digest.hexdigest(),
+            "size": metadata.st_size,
+        }
+    return snapshot
 
 
 def _git_base_text(root: Path, runner: Any, *, base_sha: str, path: str) -> bytes | None:
@@ -2277,7 +2359,7 @@ def quality_gate_commands(now: str) -> tuple[tuple[str, ...], ...]:
             "lint",
             "--quarantine-profile",
             "public-clean-clone",
-            "--no-log",
+            "--check-only",
         ),
         ("python3", "tools/wiki.py", "language-validate"),
         (
@@ -2295,7 +2377,7 @@ def quality_gate_commands(now: str) -> tuple[tuple[str, ...], ...]:
             "release-check",
             "--quarantine-profile",
             "public-clean-clone",
-            "--no-log",
+            "--check-only",
         ),
     )
 
@@ -2397,6 +2479,13 @@ def _publish_run_unlocked(
     resume_gate_digest: str | None = None
     run_id = str(context["run_id"])
     actor = str(context.get("actor", "agent:codex"))
+    prior_delivery_receipt: Mapping[str, Any] | None = None
+    prior_delivery_path = _delivery_receipt_path(root, run_id, runner=runner)
+    if prior_delivery_path.exists():
+        prior_delivery_receipt = _read_json_object(
+            prior_delivery_path,
+            purpose="이전 전달 영수증",
+        )
     if resume_owned_commit:
         if _rev_parse(root, runner, "HEAD^") != base_sha:
             raise DeliveryBlocked("재개 대상 HEAD가 begin 기준의 단일 자식 commit이 아님")
@@ -2447,6 +2536,13 @@ def _publish_run_unlocked(
         gate_digest = str(resume_gate_digest)
     else:
         gates = {}
+        gate_snapshot = _git_worktree_snapshot(
+            root,
+            runner,
+            base_sha=base_sha,
+        )
+        if set(gate_snapshot) != set(manifest):
+            raise DeliveryBlocked("gate 시작 snapshot이 권위 manifest 범위와 다름")
         for command in quality_gate_commands(gate_timestamp):
             try:
                 result = gate_runner.run(
@@ -2456,6 +2552,17 @@ def _publish_run_unlocked(
                 raise DeliveryBlocked("로컬 품질 gate를 실행하지 못함") from None
             if getattr(result, "returncode", None) != 0:
                 raise DeliveryBlocked("로컬 품질 gate가 실패하여 publish를 차단함")
+            if (
+                _git_worktree_snapshot(
+                    root,
+                    runner,
+                    base_sha=base_sha,
+                )
+                != gate_snapshot
+            ):
+                raise DeliveryBlocked(
+                    "로컬 품질 gate가 작업 사본의 경로·상태 또는 bytes를 바꾸었음"
+                )
             gates[" ".join(command)] = "success"
         gate_digest = _gate_digest(gates)
 
@@ -2463,11 +2570,7 @@ def _publish_run_unlocked(
         if _git_status(root, runner):
             raise DeliveryBlocked("재개 검증 gate가 commit 밖 변경을 만들었음")
     else:
-        manifest = _reconcile_post_gate_manifest(
-            manifest,
-            _git_worktree_changes(root, runner, base_sha=base_sha),
-            root=root,
-        )
+        post_gate_actual = _git_worktree_changes(root, runner, base_sha=base_sha)
     measured = inspect_actual_changes(
         repo_root=root,
         runner=runner,
@@ -2479,6 +2582,12 @@ def _publish_run_unlocked(
     if local_risk["route"] == "block":
         raise DeliveryBlocked(
             "실제 Git diff의 금지 위험 때문에 stage·commit 전에 publish를 차단함"
+        )
+    if not resume_owned_commit:
+        manifest = _reconcile_post_gate_manifest(
+            manifest,
+            post_gate_actual,
+            root=root,
         )
 
     # prefix가 없는 legacy classic PAT도 Git object 생성 전에 정확한 값으로 찾는다.
@@ -2589,6 +2698,7 @@ def _publish_run_unlocked(
         request,
         transport=delivery_transport,
         token_loader=token_loader,
+        prior_receipt=prior_delivery_receipt,
     )
     public_receipt = dict(delivery)
     public_receipt.update(

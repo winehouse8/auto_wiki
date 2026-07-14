@@ -119,11 +119,11 @@ Agent를 정해진 시각에 깨우는 주체는 **Codex 예약 작업**이고, 
 | `사람 검토 필요` | 제어면·의미·신뢰·생명주기·raw 또는 불확실한 변경을 상세 한국어 draft PR로 남기고 Agent는 ready·approve·merge하지 않음 |
 | `차단` | 저장소 불일치, 비밀 위험, 금지 변경이나 gate 실패를 직접 push로 우회하지 않고 원인·복구법을 보고 |
 
-빈 저장소에 기준 ref를 만드는 일회성 예외는 깨끗한 로컬 커밋 `5f1d7f0`만 `main`에 게시하면서 이미 소진했습니다. 공개 감사 영수증은 [GitHub 이슈 #1](https://github.com/winehouse8/auto_wiki/issues/1)입니다. 이후 자동 작업의 `main` 직접 push는 허용되지 않습니다. 첫 GitHub 통합 변경은 사람 검토 PR로 병합해야 하며, 그 뒤 별도의 무해한 canary PR에서 원격 check와 자동 병합을 전진 검증합니다.
+빈 저장소에 기준 ref를 만드는 일회성 예외는 깨끗한 로컬 커밋 `5f1d7f0`만 `main`에 게시하면서 이미 소진했습니다. 공개 감사 영수증은 [GitHub 이슈 #1](https://github.com/winehouse8/auto_wiki/issues/1)입니다. 이후 자동 작업의 `main` 직접 push는 허용되지 않습니다. 첫 GitHub 통합 변경 [PR #2](https://github.com/winehouse8/auto_wiki/pull/2)는 사람이 검토해 병합했습니다. 현재는 그 뒤 발견한 v1.2 제어면 결함의 후속 사람 검토 PR과 운영 정책 버전 전환을 마친 다음, 별도의 무해한 canary PR에서 원격 check와 자동 병합을 전진 검증하는 단계입니다.
 
 초기 자격증명은 로컬 `auth/github_token.yaml`의 classic PAT입니다. adapter는 정확한 저장소와 승인 근거를 먼저 확인한 뒤 토큰을 자식 프로세스 환경에만 넣고 값·해시·인증 URL을 Git, 로그, 영수증이나 PR 본문에 남기지 않습니다. classic PAT는 사람과 Agent를 같은 GitHub 계정으로 보이게 하고 권한도 넓으므로 행위자 분리와 최소 권한의 완성형이 아닙니다. 저장소 한정의 짧은 수명 GitHub App 또는 전용 machine user 전환은 후속 RFC입니다.
 
-현재 v4.3은 계약, 로컬 adapter와 fake transport 회귀검사를 구현하는 단계입니다. 일회성 seed와 branch protection은 적용됐지만, 첫 사람 검토 통합 PR 병합과 그 뒤 원격 canary가 아직 완료되지 않았으므로 자동 전달이 운영 환경에서 검증됐다고 말하지 않습니다. `production_certified=false`를 유지합니다. 상세 운영·복구 절차는 [GitHub PR 전달 운영 안내](docs/GITHUB_DELIVERY.md), 권위 계약은 [SPEC-GH-DELIVERY-001](wiki/specs/github-delivery.md)을 따릅니다.
+현재 v4.3은 첫 사람 검토 통합 PR 병합, 일회성 seed와 branch protection까지 적용했습니다. 다만 후속 v1.2 제어면 PR, 운영 정책 버전 전환, 무해한 원격 canary와 Codex 예약 활성화는 아직 완료되지 않았습니다. 따라서 자동 전달이나 예약 연구가 운영 환경에서 검증됐다고 말하지 않으며 `production_certified=false`를 유지합니다. 상세 운영·복구 절차는 [GitHub PR 전달 운영 안내](docs/GITHUB_DELIVERY.md), 권위 계약은 [SPEC-GH-DELIVERY-001](wiki/specs/github-delivery.md)을 따릅니다.
 
 공개 저장소에는 로컬 `raw/quarantine/` payload를 게시하지 않습니다. 로컬 보관 검증은 원문 누락을 실패시키고, exact delivery clean clone만 명시적 공개 프로필로 content-addressed admission 메타데이터와 사건 anchor를 검사하며 `quarantine_payload_verified=false`를 드러냅니다. delivery adapter는 격리 경로의 새 파일도 draft PR에 push하기 전에 차단합니다.
 
@@ -149,10 +149,12 @@ Codex 예약 작업과 수동 유지보수가 공유하는 Skill은 [Living Wiki
 
 1. `skills/living-wiki-steward/`의 canonical 원본을 가리키는 링크가 개인 Skill 경로에 있는지 확인합니다. 다른 기존 개인 Skill을 덮어쓰지 않습니다.
 2. 예약 프롬프트를 한 번 수동 시험합니다. 현재 Wiki 프로젝트에서 [일일 예약 프롬프트](skills/living-wiki-steward/references/scheduled-task-prompt.md)를 사용합니다.
-3. Codex 예약 작업 화면에서 이 프로젝트를 대상으로 일일 독립 작업을 만들고 같은 프롬프트를 사용합니다.
+3. Codex 예약 작업 화면에서 사람이 편집하지 않는 전용 자동화 checkout을 로컬 프로젝트로 선택하고, `Asia/Seoul` 매일 20:00의 일일 독립 작업을 만든 뒤 같은 프롬프트를 사용합니다.
 4. 최초 몇 차례의 결과를 검토한 뒤 범위, 권한과 실행 시각이 의도와 맞을 때 계속 활성화합니다.
 
 Skill과 프롬프트가 저장소에 있다는 사실만으로 예약 작업이 활성화되지는 않습니다. 활성 여부, 다음 실행 시각과 최근 결과는 Codex 예약 작업 화면에서 확인합니다. 저장소의 `cadence_days`는 실행된 관리인이 어떤 연구가 도래했는지 판단하는 규칙이지 Agent를 깨우는 시계가 아닙니다.
+
+기본 연구 포트폴리오는 [Wiki 하네스 연구](wiki/projects/prj-wiki-harness.md)와 [Agent/Training 논문 연구](wiki/projects/prj-agent-training-paper.md) 두 프로젝트입니다. 예약 실행은 두 프로젝트를 합쳐 지역 날짜마다 캠페인 최대 하나만 공정하게 선택합니다. 프로젝트는 탐색 단위이고, 출처와 주장은 전역 canonical 원장 하나를 공유하므로 같은 근거를 프로젝트별로 복사하거나 독립 증거로 중복 집계하지 않습니다. 논문 프로젝트는 Apple M4·16GB에서 재현 가능한 실험을 우선하며 ChatGPT·Codex 구독을 API credit으로 간주하지 않습니다.
 
 ### 평소 사용하기
 

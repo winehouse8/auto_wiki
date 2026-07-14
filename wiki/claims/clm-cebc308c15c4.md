@@ -10,6 +10,7 @@ freshness: "normal"
 generated: true
 last_verified_at: "2026-07-12T03:10:01+00:00"
 lifecycle_status: "active"
+project_ids: ["PRJ-WIKI-HARNESS"]
 ---
 <!-- state/claims.json에서 자동 생성함. -->
 # CLM-CEBC308C15C4
@@ -30,6 +31,10 @@ lifecycle_status: "active"
 | 생성자 | [agent:codex](../actors/actor-agent-codex.md) |
 | 생성 시각 | `2026-07-11T14:31:10+00:00` |
 | 마지막 검증 | `2026-07-12T03:10:01+00:00` |
+
+## 관련 연구 프로젝트
+
+- 연구 프로젝트: [PRJ-WIKI-HARNESS](../projects/prj-wiki-harness.md)
 
 ## 증거 성숙도
 

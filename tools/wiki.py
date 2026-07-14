@@ -9,6 +9,7 @@ tamper-evident events, validation, and derived dashboards.
 from __future__ import annotations
 
 import argparse
+import copy
 import datetime as dt
 import hashlib
 import io
@@ -17,6 +18,7 @@ import mimetypes
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tarfile
@@ -24,6 +26,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, Iterable
 from urllib.parse import urlparse
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 TOOLS_DIR = Path(__file__).resolve().parent
@@ -77,6 +80,8 @@ SOURCE_TYPES = {
     "note",
     "other",
 }
+RESEARCH_PORTFOLIO_SCHEMA_VERSION = "living-wiki-research-portfolio/v1"
+PROJECT_STATUSES = {"active", "paused", "archived"}
 
 
 class WikiError(RuntimeError):
@@ -541,6 +546,64 @@ def find(items: Iterable[dict[str, Any]], item_id: str, kind: str) -> dict[str, 
         if item.get("id") == item_id:
             return item
     raise WikiError(f"Unknown {kind}: {item_id}")
+
+
+def research_portfolio_config() -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
+    """프로젝트와 관심사 참조를 하나의 fail-closed 포트폴리오로 읽는다."""
+
+    payload = load_json(ROOT / "config" / "interests.json")
+    if not isinstance(payload, dict):
+        raise WikiError("config/interests.json must be an object")
+    if payload.get("schema_version") != RESEARCH_PORTFOLIO_SCHEMA_VERSION:
+        raise WikiError(
+            f"config/interests.json schema_version must be {RESEARCH_PORTFOLIO_SCHEMA_VERSION}"
+        )
+    projects = payload.get("projects")
+    interests = payload.get("interests")
+    if not isinstance(projects, list) or not projects:
+        raise WikiError("config/interests.json must contain a non-empty projects list")
+    if not isinstance(interests, list):
+        raise WikiError("config/interests.json must contain an interests list")
+
+    project_by_id: dict[str, dict[str, Any]] = {}
+    for project in projects:
+        if not isinstance(project, dict):
+            raise WikiError("each research project must be an object")
+        project_id = project.get("id")
+        if not isinstance(project_id, str) or re.fullmatch(
+            r"PRJ-[A-Z0-9]+(?:-[A-Z0-9]+)*",
+            project_id,
+        ) is None:
+            raise WikiError(
+                "each research project id must match PRJ-[A-Z0-9]+(?:-[A-Z0-9]+)*"
+            )
+        if project_id in project_by_id:
+            raise WikiError(f"duplicate research project id: {project_id}")
+        if not isinstance(project.get("name"), str) or not project["name"].strip():
+            raise WikiError(f"{project_id}: project name must be non-empty")
+        if project.get("status") not in PROJECT_STATUSES:
+            raise WikiError(f"{project_id}: invalid project status")
+        project_by_id[project_id] = project
+
+    interest_by_id: dict[str, dict[str, Any]] = {}
+    for interest in interests:
+        if not isinstance(interest, dict):
+            raise WikiError("each research interest must be an object")
+        interest_id = interest.get("id")
+        if not isinstance(interest_id, str) or not interest_id:
+            raise WikiError("each research interest id must be a non-empty string")
+        if interest_id in interest_by_id:
+            raise WikiError(f"duplicate research interest id: {interest_id}")
+        project_id = interest.get("project_id")
+        if not isinstance(project_id, str) or not project_id:
+            raise WikiError(f"{interest_id}: project_id must be a non-empty string")
+        if project_id not in project_by_id:
+            raise WikiError(f"{interest_id}: unknown project_id {project_id}")
+        research_brief = interest.get("research_brief", {})
+        if not isinstance(research_brief, dict):
+            raise WikiError(f"{interest_id}: research_brief must be an object")
+        interest_by_id[interest_id] = interest
+    return payload, project_by_id, interest_by_id
 
 
 def actor_exists(actor_id: str) -> bool:
@@ -1087,6 +1150,10 @@ def evaluate(args: argparse.Namespace) -> None:
 
 def campaign_add(args: argparse.Namespace) -> None:
     require_actor(args.actor)
+    _, _, interest_by_id = research_portfolio_config()
+    interest = interest_by_id.get(args.interest)
+    if interest is None:
+        raise WikiError(f"Unknown research interest: {args.interest}")
     campaign_id = stable_id("CMP", args.question.casefold(), args.interest)
     campaigns = collection("campaigns")
     if any(c.get("id") == campaign_id for c in campaigns):
@@ -1094,7 +1161,9 @@ def campaign_add(args: argparse.Namespace) -> None:
         return
     item = {
         "id": campaign_id,
+        "project_id": interest["project_id"],
         "interest_id": args.interest,
+        "research_brief": copy.deepcopy(interest.get("research_brief", {})),
         "question": args.question.strip(),
         "why_now": args.why,
         "priority": args.priority,
@@ -1112,8 +1181,49 @@ def campaign_add(args: argparse.Namespace) -> None:
     }
     campaigns.append(item)
     save_collection("campaigns", campaigns)
-    append_event(args.actor, "campaign.add", campaign_id, {"question": args.question})
+    append_event(
+        args.actor,
+        "campaign.add",
+        campaign_id,
+        {"question": args.question, "project_id": interest["project_id"]},
+    )
     print(campaign_id)
+
+
+def campaign_project_backfill(args: argparse.Namespace) -> None:
+    """기존 캠페인에 관심사가 가리키는 프로젝트를 한 번만 분류한다."""
+
+    require_actor(args.actor)
+    _, project_by_id, interest_by_id = research_portfolio_config()
+    campaigns = collection("campaigns")
+    changed: list[tuple[str, str, str]] = []
+    for campaign in campaigns:
+        campaign_id = str(campaign.get("id", ""))
+        interest_id = campaign.get("interest_id")
+        interest = interest_by_id.get(interest_id)
+        if interest is None:
+            raise WikiError(f"{campaign_id}: unknown interest_id {interest_id}")
+        expected = str(interest["project_id"])
+        current = campaign.get("project_id")
+        if current is not None and current not in project_by_id:
+            raise WikiError(f"{campaign_id}: unknown project_id {current}")
+        if current is None:
+            campaign["project_id"] = expected
+            changed.append((campaign_id, str(interest_id), expected))
+    if changed:
+        save_collection("campaigns", campaigns)
+        for campaign_id, interest_id, project_id in changed:
+            append_event(
+                args.actor,
+                "campaign.project.assign",
+                campaign_id,
+                {
+                    "interest_id": interest_id,
+                    "project_id": project_id,
+                    "migration": "research-project-portfolio/v1",
+                },
+            )
+    print(f"프로젝트를 분류한 캠페인: {len(changed)}개")
 
 
 def campaign_update(args: argparse.Namespace) -> None:
@@ -1164,46 +1274,123 @@ def interest_seed(args: argparse.Namespace) -> None:
         now = runtime.parse_time(args.now)
     except runtime.RuntimeErrorBase as exc:
         raise WikiError(str(exc)) from exc
-    config = load_json(ROOT / "config" / "interests.json")
-    interests = config.get("interests", [])
-    if not isinstance(interests, list):
-        raise WikiError("config/interests.json must contain an interests list")
+    config, project_by_id, interest_by_id = research_portfolio_config()
+    interests = list(interest_by_id.values())
+    wiki_config = load_json(ROOT / "config" / "wiki.json")
+    timezone_name = wiki_config.get("timezone")
+    if not isinstance(timezone_name, str) or not timezone_name.strip():
+        raise WikiError("config/wiki.json timezone must be a non-empty IANA timezone")
+    schedule = config.get("schedule", {})
+    if schedule is None:
+        schedule = {}
+    if not isinstance(schedule, dict):
+        raise WikiError("config/interests.json schedule must be an object")
+    configured_schedule_timezone = schedule.get("timezone")
+    if configured_schedule_timezone not in (None, timezone_name):
+        raise WikiError("interest schedule timezone must match config/wiki.json timezone")
+    try:
+        local_zone = ZoneInfo(timezone_name)
+    except ZoneInfoNotFoundError:
+        raise WikiError("config/wiki.json timezone is not available") from None
+    local_date = now.astimezone(local_zone).date()
+    cycle_key = local_date.isoformat()
+    daily_limit = schedule.get("max_campaigns_per_local_day", 1)
+    if isinstance(daily_limit, bool) or not isinstance(daily_limit, int) or daily_limit < 1:
+        raise WikiError("schedule.max_campaigns_per_local_day must be a positive integer")
     campaigns = collection("campaigns")
     created: list[str] = []
-    ordered_interests = sorted(
-        (item for item in interests if isinstance(item, dict) and item.get("id")),
-        key=lambda item: (-float(item.get("priority", 0.0)), str(item["id"])),
+
+    existing_local_cycles = sum(
+        1
+        for item in campaigns
+        if item.get("cycle_key") == cycle_key
     )
-    for interest in ordered_interests:
-        if len(created) >= args.max_campaigns:
-            break
+    available_slots = min(args.max_campaigns, daily_limit - existing_local_cycles)
+    if available_slots <= 0:
+        print("No interest is due for campaign seeding.")
+        return
+
+    def parsed_timestamp(value: Any) -> dt.datetime | None:
+        if not isinstance(value, str):
+            return None
+        try:
+            return runtime.parse_time(value)
+        except runtime.RuntimeErrorBase as exc:
+            raise WikiError(f"invalid campaign timestamp {value}") from exc
+
+    due_interests: list[
+        tuple[tuple[Any, ...], dict[str, Any], list[dict[str, Any]], dt.datetime | None, dt.datetime | None]
+    ] = []
+    for interest in interests:
+        if interest.get("status", "active") != "active":
+            continue
+        if project_by_id[str(interest["project_id"])].get("status") != "active":
+            continue
         interest_id = str(interest["id"])
         related = [item for item in campaigns if item.get("interest_id") == interest_id]
         if any(item.get("status") in {"queued", "active"} for item in related):
             continue
-        timestamps = []
-        for item in related:
-            value = item.get("updated_at") or item.get("created_at")
-            if isinstance(value, str):
-                try:
-                    timestamps.append(runtime.parse_time(value))
-                except runtime.RuntimeErrorBase:
-                    raise WikiError(f"{item.get('id')}: invalid campaign timestamp {value}")
+        attempts = [
+            value
+            for item in related
+            if (value := parsed_timestamp(item.get("created_at"))) is not None
+        ]
+        successes = [
+            value
+            for item in related
+            if item.get("status") == "completed"
+            and (
+                value := parsed_timestamp(item.get("updated_at") or item.get("created_at"))
+            )
+            is not None
+        ]
+        last_attempt = max(attempts) if attempts else None
+        last_success = max(successes) if successes else None
         cadence_days = max(0, int(interest.get("cadence_days", 0)))
-        if timestamps and now < max(timestamps) + dt.timedelta(days=cadence_days):
-            continue
+        if last_success is not None:
+            next_local_date = last_success.astimezone(local_zone).date() + dt.timedelta(
+                days=cadence_days
+            )
+            if local_date < next_local_date:
+                continue
         questions = [str(item).strip() for item in interest.get("questions", []) if str(item).strip()]
         if not questions:
             continue
-        usage = {question: sum(item.get("question") == question for item in related) for question in questions}
+        brief = interest.get("research_brief", {})
+        if not isinstance(brief, dict):
+            raise WikiError(f"{interest_id}: research_brief must be an object")
+        fairness_key = (
+            0 if last_attempt is None else 1,
+            last_attempt or dt.datetime.min.replace(tzinfo=dt.timezone.utc),
+            0 if last_success is None else 1,
+            last_success or dt.datetime.min.replace(tzinfo=dt.timezone.utc),
+            -float(interest.get("priority", 0.0)),
+            interest_id,
+        )
+        due_interests.append(
+            (fairness_key, interest, related, last_attempt, last_success)
+        )
+
+    due_interests.sort(key=lambda item: item[0])
+    for _, interest, related, last_attempt, last_success in due_interests:
+        if len(created) >= available_slots:
+            break
+        interest_id = str(interest["id"])
+        cadence_days = max(0, int(interest.get("cadence_days", 0)))
+        questions = [str(item).strip() for item in interest.get("questions", []) if str(item).strip()]
+        completed_related = [item for item in related if item.get("status") == "completed"]
+        usage = {
+            question: sum(item.get("question") == question for item in completed_related)
+            for question in questions
+        }
         question = min(questions, key=lambda value: (usage[value], questions.index(value)))
-        cycle_key = now.date().isoformat()
         campaign_id = stable_id("CMP", interest_id, question.casefold(), cycle_key)
         if any(item.get("id") == campaign_id for item in campaigns):
             continue
         limits = load_json(ROOT / "config" / "wiki.json").get("research_limits", {})
         item = {
             "id": campaign_id,
+            "project_id": str(interest["project_id"]),
             "interest_id": interest_id,
             "question": question,
             "why_now": f"{cadence_days}일 연구 주기가 {now.isoformat()}에 도래함.",
@@ -1213,6 +1400,17 @@ def interest_seed(args: argparse.Namespace) -> None:
             "created_at": now.isoformat(),
             "cadence_days": cadence_days,
             "cycle_key": cycle_key,
+            "schedule_timezone": timezone_name,
+            "research_brief": copy.deepcopy(interest.get("research_brief", {})),
+            "selection": {
+                "policy_version": "fair-interest-portfolio/v1",
+                "local_date": cycle_key,
+                "timezone": timezone_name,
+                "last_attempt_at": last_attempt.isoformat() if last_attempt else None,
+                "last_success_at": last_success.isoformat() if last_success else None,
+                "priority": float(interest.get("priority", 0.5)),
+                "completed_question_count": usage[question],
+            },
             "max_sources": int(limits.get("default_max_sources_per_cycle", 12)),
             "max_minutes": int(limits.get("default_max_minutes_per_cycle", 45)),
             "required_independent_groups": int(limits.get("min_independent_source_groups", 2)),
@@ -1234,7 +1432,17 @@ def interest_seed(args: argparse.Namespace) -> None:
             args.actor,
             "campaign.seed",
             campaign_id,
-            {"interest_id": interest_id, "cycle_key": cycle_key, "cadence_days": cadence_days},
+            {
+                "interest_id": interest_id,
+                "project_id": str(interest["project_id"]),
+                "cycle_key": cycle_key,
+                "cadence_days": cadence_days,
+                "schedule_timezone": timezone_name,
+                "selection_policy": "fair-interest-portfolio/v1",
+                "last_attempt_at": last_attempt.isoformat() if last_attempt else None,
+                "last_success_at": last_success.isoformat() if last_success else None,
+                "completed_question_count": usage[question],
+            },
         )
     if created:
         print("\n".join(created))
@@ -2545,6 +2753,9 @@ def release_check(args: argparse.Namespace) -> None:
     """Orchestrate validators, tests, and fixed fixtures into a truthful v4 gate."""
 
     require_actor(args.actor)
+    if getattr(args, "check_only", False):
+        _release_check_in_shadow(args)
+        return
     import release_gate
     import korean_docs
 
@@ -2661,6 +2872,125 @@ def release_check(args: argparse.Namespace) -> None:
     print(json_path.relative_to(ROOT))
     if not report["passed"]:
         raise WikiError("Living Wiki v4 release gate did not pass")
+
+
+def _safe_git_paths(*, include_untracked: bool) -> list[str]:
+    command = ["git", "ls-files", "-z"]
+    if include_untracked:
+        command = ["git", "ls-files", "--others", "--exclude-standard", "-z", "--"]
+    result = subprocess.run(
+        command,
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise WikiError("check-only 작업 사본 경로를 Git에서 읽지 못함")
+    values = result.stdout.split("\0")
+    if values[-1] != "":
+        raise WikiError("check-only Git NUL 경로 출력이 잘못됨")
+    paths: list[str] = []
+    for value in values[:-1]:
+        candidate = Path(value)
+        if (
+            not value
+            or candidate.is_absolute()
+            or ".." in candidate.parts
+            or candidate.parts[0] in {".git", "auth"}
+        ):
+            raise WikiError("check-only에 안전하지 않은 Git 경로가 포함됨")
+        paths.append(candidate.as_posix())
+    return sorted(set(paths))
+
+
+def _overlay_regular_path(source: Path, destination: Path) -> None:
+    if not source.exists() and not source.is_symlink():
+        if destination.is_dir() and not destination.is_symlink():
+            shutil.rmtree(destination)
+        elif destination.exists() or destination.is_symlink():
+            destination.unlink()
+        return
+    metadata = source.lstat()
+    if not stat.S_ISREG(metadata.st_mode):
+        raise WikiError(f"check-only는 regular file만 복제함: {source.relative_to(ROOT)}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if destination.exists() and destination.is_dir():
+        shutil.rmtree(destination)
+    shutil.copy2(source, destination, follow_symlinks=False)
+
+
+def _copy_local_quarantine_to_shadow(shadow: Path) -> None:
+    if not QUARANTINE.exists():
+        return
+    for source in sorted(QUARANTINE.rglob("*"), key=lambda item: item.as_posix()):
+        if source.is_dir() and not source.is_symlink():
+            continue
+        if source.is_symlink() or not source.is_file():
+            raise WikiError("check-only 격리 원문에는 symlink나 irregular file을 허용하지 않음")
+        relative = source.relative_to(ROOT)
+        _overlay_regular_path(source, shadow / relative)
+
+
+def _release_check_in_shadow(args: argparse.Namespace) -> None:
+    """현재 변경을 임시 detached worktree에서 검사하고 원본에는 쓰지 않는다."""
+
+    tracked = _safe_git_paths(include_untracked=False)
+    untracked = _safe_git_paths(include_untracked=True)
+    with tempfile.TemporaryDirectory(prefix="wiki-release-check-") as temporary:
+        shadow = Path(temporary) / "worktree"
+        add = subprocess.run(
+            ("git", "worktree", "add", "--detach", str(shadow), "HEAD"),
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if add.returncode != 0:
+            raise WikiError("check-only 임시 Git worktree를 만들지 못함")
+        try:
+            for relative in tracked:
+                _overlay_regular_path(ROOT / relative, shadow / relative)
+            for relative in untracked:
+                _overlay_regular_path(ROOT / relative, shadow / relative)
+            if args.quarantine_profile == STRICT_QUARANTINE_PROFILE:
+                _copy_local_quarantine_to_shadow(shadow)
+            command = [
+                sys.executable,
+                "tools/wiki.py",
+                "release-check",
+                "--actor",
+                args.actor,
+                "--test-timeout",
+                str(args.test_timeout),
+                "--quarantine-profile",
+                args.quarantine_profile,
+                "--no-log",
+            ]
+            environment = dict(os.environ)
+            environment.pop("GH_TOKEN", None)
+            result = subprocess.run(
+                command,
+                cwd=shadow,
+                env=environment,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if result.stdout:
+                sys.stdout.write(result.stdout)
+            if result.stderr:
+                sys.stderr.write(result.stderr)
+            if result.returncode != 0:
+                raise WikiError("check-only 임시 작업 사본의 릴리스 게이트가 실패함")
+        finally:
+            subprocess.run(
+                ("git", "worktree", "remove", "--force", str(shadow)),
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
 
 
 def verify_event_chain(errors: list[str]) -> int:
@@ -2862,6 +3192,12 @@ def validation_findings(
         )
     except (OSError, json.JSONDecodeError, WikiError) as exc:
         return [f"격리 원문 배포 정책을 읽지 못함: {exc}"], [], {}
+    try:
+        _, project_by_id, interest_by_id = research_portfolio_config()
+    except (OSError, json.JSONDecodeError, WikiError) as exc:
+        errors.append(f"연구 프로젝트 설정을 읽지 못함: {exc}")
+        project_by_id = {}
+        interest_by_id = {}
 
     def duplicate_ids(items: list[dict[str, Any]], label: str) -> None:
         ids = [item.get("id") for item in items]
@@ -3111,6 +3447,13 @@ def validation_findings(
             errors.append(f"{review.get('id')}: unknown claim")
 
     for campaign in campaigns:
+        project_id = campaign.get("project_id")
+        interest_id = campaign.get("interest_id")
+        if project_id not in project_by_id:
+            errors.append(f"{campaign.get('id')}: unknown or missing project_id {project_id}")
+        interest = interest_by_id.get(interest_id)
+        if interest is None:
+            errors.append(f"{campaign.get('id')}: unknown interest_id {interest_id}")
         for source_id in campaign.get("source_ids", []):
             if source_id not in source_ids:
                 errors.append(f"{campaign.get('id')}: unknown source {source_id}")
@@ -3281,6 +3624,7 @@ def validation_findings(
         "claims": len(claims),
         "reviews": len(reviews),
         "campaigns": len(campaigns),
+        "projects": len(project_by_id),
         "proposals": len(proposals),
         "collaborations": len(collaborations),
         "admissions": len(admissions),
@@ -3364,6 +3708,7 @@ def render_index(
     feedback_records: list[dict[str, Any]] | None = None,
 ) -> None:
     feedback_records = feedback_records or []
+    _, project_by_id, _ = research_portfolio_config()
     timestamp = latest_meaningful_timestamp(claims, sources, campaigns, feedback_records)
     body = f"""<!-- tools/wiki.py가 자동 생성함. 직접 수정하지 마세요. -->
 # Living Wiki 색인
@@ -3382,6 +3727,7 @@ def render_index(
 * [주장](claims/index.md) - 원자적 주장과 정확한 근거 투영.
 * [행위자](actors/index.md) - 사람과 Agent 기여자 등록부.
 * [협업](collaborations/index.md) - 행위자 중립의 방향·단서·교정·이의 원장.
+* [연구 프로젝트](projects/index.md) - 두 연구 축의 관심사·캠페인·실행·공유 근거 탐색.
 * [캠페인](campaigns/index.md) - 범위가 제한된 자율 연구 대기열.
 * [입수 판정](admissions/index.md) - 자동 승격 없는 출처·보안 입수 판정.
 * [실행 기록](runs/index.md) - 제한된 계획과 귀속된 외부 작업 기록.
@@ -3397,6 +3743,10 @@ def render_index(
 - 활성·대기 캠페인: {sum(c.get('status') in {'active', 'queued'} for c in campaigns)}
 - 메모리 피드백 기록: {len(feedback_records)}
 
+## 연구 프로젝트
+
+{chr(10).join(f"* [{project['name']}](projects/{project_id.lower()}.md) - {project.get('description', '')}" for project_id, project in sorted(project_by_id.items()))}
+
 ## 출처 문서
 
 """
@@ -3407,6 +3757,151 @@ def render_index(
     body += "\n".join(f"* [{page.stem}](concepts/{page.name})" for page in pages if page.name not in {"index.md", "log.md"}) or "* 아직 없음"
     body += "\n"
     atomic_write_text(WIKI / "index.md", body)
+
+
+def render_project_views() -> None:
+    """프로젝트별 탐색 뷰를 만들되 claim/source 정규 객체는 복제하지 않는다."""
+
+    _, project_by_id, interest_by_id = research_portfolio_config()
+    campaigns = collection("campaigns")
+    runs = collection("runs")
+    folder = WIKI / "projects"
+    folder.mkdir(parents=True, exist_ok=True)
+    expected_paths = {folder / f"{project_id.lower()}.md" for project_id in project_by_id}
+
+    for campaign in campaigns:
+        campaign_id = str(campaign.get("id", ""))
+        project_id = campaign.get("project_id")
+        if project_id not in project_by_id:
+            raise WikiError(f"{campaign_id}: unknown or missing project_id {project_id}")
+
+    for project_id, project in sorted(project_by_id.items()):
+        project_interests = [
+            item for item in interest_by_id.values() if item.get("project_id") == project_id
+        ]
+        project_campaigns = [
+            item for item in campaigns if item.get("project_id") == project_id
+        ]
+        project_campaign_ids = {str(item["id"]) for item in project_campaigns}
+        project_runs: list[dict[str, Any]] = []
+        evidence_refs: set[str] = set()
+        for run in runs:
+            actions = run.get("plan", {}).get("actions", [])
+            related_action_ids = {
+                str(action.get("id"))
+                for action in actions
+                if action.get("campaign_id") in project_campaign_ids
+            }
+            if not related_action_ids:
+                continue
+            project_runs.append(run)
+            for report in run.get("external_receipts", []):
+                if report.get("action_id") in related_action_ids:
+                    evidence_refs.update(str(item) for item in report.get("evidence_refs", []))
+
+        claim_ids = sorted(
+            {
+                str(claim_id)
+                for campaign in project_campaigns
+                for claim_id in campaign.get("claim_ids", [])
+            }
+        )
+        source_ids = sorted(
+            {
+                str(source_id)
+                for campaign in project_campaigns
+                for source_id in campaign.get("source_ids", [])
+            }
+        )
+        timestamp = record_latest_timestamp(
+            project.get("updated_at"),
+            project.get("created_at"),
+            *(item.get("updated_at") for item in project_interests),
+            *(item.get("created_at") for item in project_interests),
+            *(item.get("updated_at") for item in project_campaigns),
+            *(item.get("created_at") for item in project_campaigns),
+            *(item.get("updated_at") for item in project_runs),
+            *(item.get("created_at") for item in project_runs),
+            *(item.get("plan", {}).get("generated_at") for item in project_runs),
+            *(
+                receipt.get("usage_accounted_at") or receipt.get("created_at")
+                for item in project_runs
+                for receipt in item.get("external_receipts", [])
+            ),
+            "2026-07-15T00:00:00+09:00",
+        )
+        body = f"""<!-- config/interests.json과 정규 상태에서 자동 생성함. -->
+# {project['name']}
+
+> {project.get('description', '')}
+
+## 프로젝트 목표
+
+{project.get('objective') or '목표 기록 없음.'}
+
+| 항목 | 값 |
+|---|---|
+| 프로젝트 ID | `{project_id}` |
+| 상태 | **{project.get('status', '-')}** |
+| 관심사 수 | {len(project_interests)} |
+| 캠페인 수 | {len(project_campaigns)} |
+| 실행 수 | {len(project_runs)} |
+
+## 관심사
+
+{chr(10).join(f"- `{item['id']}` — {item.get('name', '이름 없음')} / 상태 `{item.get('status', 'active')}`" for item in sorted(project_interests, key=lambda value: value['id'])) or '- 아직 없음'}
+
+## 캠페인
+
+{chr(10).join(f"- [{item['id']}](../campaigns/{item['id'].lower()}.md) — {item.get('question', '')} / 상태 `{item.get('status', '-')}`" for item in sorted(project_campaigns, key=lambda value: value['id'])) or '- 아직 없음'}
+
+## 실행
+
+{chr(10).join(f"- [{item['id']}](../runs/{item['id'].lower()}.md) — 상태 `{item.get('status', '-')}`" for item in sorted(project_runs, key=lambda value: value['id'])) or '- 아직 없음'}
+
+## 공유 근거
+
+출처와 주장은 프로젝트별 사본이 아니라 전역 canonical 원장을 공유한다. 아래 링크가 여러 프로젝트에 나타나도 독립 증거가 늘어난 것으로 세지 않는다.
+
+### 주장
+
+{chr(10).join(f'- [{item}](../claims/{item.lower()}.md)' for item in claim_ids) or '- 아직 없음'}
+
+### 출처
+
+{chr(10).join(f'- [{item}](../sources/{item.lower()}.md)' for item in source_ids) or '- 아직 없음'}
+
+### 실행 보고 근거 참조
+
+{chr(10).join(f'- `{item}`' for item in sorted(evidence_refs)) or '- 아직 없음'}
+"""
+        write_okf_concept(
+            folder / f"{project_id.lower()}.md",
+            {
+                "type": "Research Project",
+                "title": project["name"],
+                "description": project.get("description", ""),
+                "tags": ["research-project", project.get("status", "unknown")],
+                "timestamp": timestamp,
+                "project_id": project_id,
+                "generated": True,
+            },
+            body,
+        )
+
+    for path in sorted(folder.glob("prj-*.md")):
+        if path in expected_paths:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if "config/interests.json과 정규 상태에서 자동 생성함" not in text:
+            raise WikiError(f"생성 문서가 아닌 프로젝트 페이지를 자동 삭제할 수 없음: {path}")
+        path.unlink()
+
+    entries = [
+        f"* [{project['name']}]({project_id.lower()}.md) - {project.get('description', '')}"
+        for project_id, project in sorted(project_by_id.items())
+    ]
+    atomic_write_text(folder / "index.md", "# 연구 프로젝트\n\n" + "\n".join(entries) + "\n")
 
 
 def render_okf_state_projection() -> None:
@@ -3421,6 +3916,17 @@ def render_okf_state_projection() -> None:
     runs = collection("runs")
     feedback_records = collection("memory_feedback")
     source_by_id = {source["id"]: source for source in sources}
+    campaign_by_id = {campaign["id"]: campaign for campaign in campaigns}
+    project_ids_by_claim: dict[str, set[str]] = {}
+    project_ids_by_source: dict[str, set[str]] = {}
+    for campaign in campaigns:
+        project_id = campaign.get("project_id")
+        if not isinstance(project_id, str) or not project_id:
+            continue
+        for claim_id in campaign.get("claim_ids", []):
+            project_ids_by_claim.setdefault(str(claim_id), set()).add(project_id)
+        for source_id in campaign.get("source_ids", []):
+            project_ids_by_source.setdefault(str(source_id), set()).add(project_id)
     claims_by_source: dict[str, list[str]] = {}
     for claim in claims:
         for evidence in claim.get("evidence", []):
@@ -3473,6 +3979,9 @@ def render_okf_state_projection() -> None:
             "lifecycle_status": source_lifecycle,
             "generated": True,
         }
+        related_project_ids = sorted(project_ids_by_source.get(source["id"], set()))
+        if related_project_ids:
+            metadata["project_ids"] = related_project_ids
         source_times = {
             "created_at": source.get("created_at"),
             "retrieved_at": source.get("retrieved_at"),
@@ -3523,6 +4032,10 @@ def render_okf_state_projection() -> None:
 ## 이 출처를 사용하는 주장
 
 {chr(10).join(f'- [{claim_id}](../claims/{claim_id.lower()}.md)' for claim_id in sorted(set(claims_by_source.get(source['id'], [])))) or '- 없음'}
+
+## 관련 연구 프로젝트
+
+{chr(10).join(f'- 연구 프로젝트: [{project_id}](../projects/{project_id.lower()}.md)' for project_id in related_project_ids) or '- 공통·제어면 지식'}
 """
         if source.get("url"):
             body += f"\n# 인용\n\n[1] [{source.get('title') or source['id']}]({source['url']})\n"
@@ -3542,6 +4055,9 @@ def render_okf_state_projection() -> None:
             "lifecycle_status": claim_lifecycle,
             "generated": True,
         }
+        related_project_ids = sorted(project_ids_by_claim.get(claim["id"], set()))
+        if related_project_ids:
+            metadata["project_ids"] = related_project_ids
         project_known_fields(
             metadata,
             claim,
@@ -3581,6 +4097,10 @@ def render_okf_state_projection() -> None:
 | 생성자 | [{claim.get('created_by', '-')}]({creator_path}) |
 | 생성 시각 | `{claim.get('created_at', '-')}` |
 | 마지막 검증 | `{claim.get('last_verified_at') or '검증되지 않음'}` |
+
+## 관련 연구 프로젝트
+
+{chr(10).join(f'- 연구 프로젝트: [{project_id}](../projects/{project_id.lower()}.md)' for project_id in related_project_ids) or '- 공통·제어면 지식'}
 
 ## 증거 성숙도
 
@@ -3634,6 +4154,7 @@ def render_okf_state_projection() -> None:
         write_okf_concept(WIKI / "reviews" / f"{review['id'].lower()}.md", metadata, body)
 
     for campaign in campaigns:
+        project_id = campaign.get("project_id")
         metadata = {
             "type": "Research Campaign",
             "title": campaign["id"],
@@ -3641,6 +4162,7 @@ def render_okf_state_projection() -> None:
             "tags": ["research-campaign", campaign.get("status", "unknown"), campaign.get("interest_id", "unknown")],
             "timestamp": campaign.get("updated_at") or campaign.get("created_at") or "2026-07-11T00:00:00+09:00",
             "campaign_id": campaign["id"],
+            "project_id": project_id,
             "generated": True,
         }
         source_links = [f"[{item}](../sources/{item.lower()}.md)" for item in campaign.get("source_ids", [])]
@@ -3655,6 +4177,7 @@ def render_okf_state_projection() -> None:
 | 항목 | 값 |
 |---|---|
 | 상태 | **{campaign.get('status', '-')}** |
+| 프로젝트 | {f'[{project_id}](../projects/{str(project_id).lower()}.md)' if project_id else '-'} |
 | 관심사 | `{campaign.get('interest_id', '-')}` |
 | 우선순위 | {campaign.get('priority', '-')} |
 | 생성자 | [{campaign.get('created_by', '-')}](../actors/{actor_page_name(campaign.get('created_by', 'unknown'))}) |
@@ -3835,10 +4358,20 @@ def render_okf_state_projection() -> None:
 
     for run in runs:
         action_rows = []
+        run_project_ids: set[str] = set()
         for action in run.get("plan", {}).get("actions", []):
             budget = action.get("budget", {})
+            action_campaign = campaign_by_id.get(action.get("campaign_id"), {})
+            project_id = action_campaign.get("project_id")
+            project_cell = (
+                f"[{project_id}](../projects/{str(project_id).lower()}.md)"
+                if project_id
+                else "-"
+            )
+            if project_id:
+                run_project_ids.add(str(project_id))
             action_rows.append(
-                f"| `{action.get('id', '-')}` | `{action.get('campaign_id', '-')}` | `{action.get('execution', '-')}` | "
+                f"| `{action.get('id', '-')}` | {project_cell} | `{action.get('campaign_id', '-')}` | `{action.get('execution', '-')}` | "
                 f"{budget.get('minutes', 0)} | {budget.get('sources', 0)} |"
             )
         report_rows = []
@@ -3861,9 +4394,9 @@ def render_okf_state_projection() -> None:
 
 ## 계획 전용 작업
 
-| 작업 | 캠페인 | 실행 방식 | 시간(분) | 출처 수 |
-|---|---|---|---:|---:|
-{chr(10).join(action_rows) or '| - | - | - | - | - |'}
+| 작업 | 프로젝트 | 캠페인 | 실행 방식 | 시간(분) | 출처 수 |
+|---|---|---|---|---:|---:|
+{chr(10).join(action_rows) or '| - | - | - | - | - | - |'}
 
 ## 귀속된 외부 작업 보고
 
@@ -3882,6 +4415,7 @@ def render_okf_state_projection() -> None:
                 "tags": ["runtime", "receipt", run.get("status", "unknown")],
                 "timestamp": run.get("updated_at") or run.get("created_at") or "2026-07-11T00:00:00+09:00",
                 "lifecycle_status": run.get("status", "unknown"),
+                "project_ids": sorted(run_project_ids),
                 "generated": True,
             },
             body,
@@ -4003,6 +4537,7 @@ def render_okf_subindexes() -> None:
         ("claims", "주장"),
         ("actors", "행위자"),
         ("reviews", "검토"),
+        ("projects", "연구 프로젝트"),
         ("campaigns", "연구 캠페인"),
         ("collaborations", "협업 기록"),
         ("admissions", "입수 판정"),
@@ -4050,6 +4585,7 @@ def render_all(actor: str, log: bool = True) -> None:
     feedback_records = collection("memory_feedback")
     render_epistemic_dashboard(claims, sources)
     render_okf_state_projection()
+    render_project_views()
     for proposal in collection("proposals"):
         render_proposal_record(proposal)
     render_index(claims, sources, campaigns, feedback_records)
@@ -4129,8 +4665,10 @@ def lint(args: argparse.Namespace) -> None:
 
 경고는 자동 삭제나 자동 강등 명령이 아니다. 담당 actor가 원문과 scope를 확인한 뒤 evidence, status, freshness를 갱신해야 한다.
 """
-    atomic_write_text(REPORTS / "latest-lint.md", report)
-    if not args.no_log:
+    check_only = bool(getattr(args, "check_only", False))
+    if not check_only:
+        atomic_write_text(REPORTS / "latest-lint.md", report)
+    if not check_only and not args.no_log:
         append_event(
             args.actor,
             "wiki.lint",
@@ -4144,7 +4682,10 @@ def lint(args: argparse.Namespace) -> None:
                 "quarantine_missing": counts.get("quarantine_artifacts_missing", 0),
             },
         )
-    print(f"Wrote reports/latest-lint.md ({len(errors)} errors, {len(warnings) + len(extra)} warnings/findings)")
+    if check_only:
+        print(f"Wiki lint 검사 완료 ({len(errors)} errors, {len(warnings) + len(extra)} warnings/findings)")
+    else:
+        print(f"Wrote reports/latest-lint.md ({len(errors)} errors, {len(warnings) + len(extra)} warnings/findings)")
     if errors:
         raise WikiError("Lint found structural errors")
 
@@ -4336,6 +4877,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--note")
     p.set_defaults(func=campaign_update)
 
+    p = sub.add_parser(
+        "campaign-project-backfill",
+        help="관심사 레지스트리를 기준으로 기존 캠페인 프로젝트를 멱등 분류",
+    )
+    p.add_argument("--actor", default="agent:codex")
+    p.set_defaults(func=campaign_project_backfill)
+
     p = sub.add_parser("next-task", help="show the highest-priority research campaign")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=next_task)
@@ -4504,6 +5052,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="격리 원문 검증 프로필. 로컬 보관은 strict가 기본값이다.",
     )
     p.add_argument("--no-log", action="store_true", help="publish 재검증에서 중복 사건을 남기지 않음")
+    p.add_argument(
+        "--check-only",
+        action="store_true",
+        help="현재 변경을 임시 Git worktree에서 검사하고 원본 작업 사본을 바꾸지 않음",
+    )
     p.set_defaults(func=release_check)
 
     p = sub.add_parser("render", help="regenerate deterministic human-readable views")
@@ -4523,6 +5076,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="격리 원문 검증 프로필. 공개 clean clone만 portable 값을 사용한다.",
     )
     p.add_argument("--no-log", action="store_true", help="publish 재검증에서 중복 사건을 남기지 않음")
+    p.add_argument(
+        "--check-only",
+        action="store_true",
+        help="판정만 수행하고 보고서와 사건 원장을 쓰지 않음",
+    )
     p.set_defaults(func=lint)
 
     p = sub.add_parser("validate", help="validate references, hashes, schemas, and event chain")

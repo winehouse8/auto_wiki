@@ -15,6 +15,7 @@
 * [주장](claims/index.md) - 원자적 주장과 정확한 근거 투영.
 * [행위자](actors/index.md) - 사람과 Agent 기여자 등록부.
 * [협업](collaborations/index.md) - 행위자 중립의 방향·단서·교정·이의 원장.
+* [연구 프로젝트](projects/index.md) - 두 연구 축의 관심사·캠페인·실행·공유 근거 탐색.
 * [캠페인](campaigns/index.md) - 범위가 제한된 자율 연구 대기열.
 * [입수 판정](admissions/index.md) - 자동 승격 없는 출처·보안 입수 판정.
 * [실행 기록](runs/index.md) - 제한된 계획과 귀속된 외부 작업 기록.
@@ -29,6 +30,11 @@
 - 연구 캠페인: 7
 - 활성·대기 캠페인: 0
 - 메모리 피드백 기록: 1
+
+## 연구 프로젝트
+
+* [Agent/Training 논문 연구](projects/prj-agent-training-paper.md) - Agent/Training 최신 원 논문을 추적하고 제한된 로컬 자원에서 검증 가능한 기여를 찾아 탑티어 논문으로 발전시킨다.
+* [Wiki 하네스 연구](projects/prj-wiki-harness.md) - Living Wiki의 연구 품질·기억·위생·거버넌스·자동 전달 하네스를 재현 가능한 평가로 개선한다.
 
 ## 출처 문서
 

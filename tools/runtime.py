@@ -387,7 +387,19 @@ def build_search_documents(
         "campaigns": (
             "campaigns",
             "campaign",
-            ("id", "question", "why_now", "notes", "stop_conditions", "claim_ids", "source_ids", "status"),
+            (
+                "id",
+                "project_id",
+                "interest_id",
+                "question",
+                "why_now",
+                "research_brief",
+                "notes",
+                "stop_conditions",
+                "claim_ids",
+                "source_ids",
+                "status",
+            ),
         ),
     }
     for file_stem, (list_key, kind, fields) in state_specs.items():

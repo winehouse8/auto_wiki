@@ -74,7 +74,7 @@ class GitHubDeliverySpecificationContractTests(unittest.TestCase):
         prd = read(LWS_PRD)
 
         self.assertIn("SPEC-GH-DELIVERY-001", github_spec)
-        self.assertIn("버전: `1.1.0`", github_spec)
+        self.assertIn("버전: `1.2.0`", github_spec)
         self.assertIn("github-delivery.md", harness)
         self.assertIn("github-delivery.md", prd)
         self.assertIn("SPEC-GH-DELIVERY-001", prd)
@@ -82,7 +82,7 @@ class GitHubDeliverySpecificationContractTests(unittest.TestCase):
         acceptance_ids = re.findall(r"`(AC-GH-\d{3})`:", github_spec)
         self.assertEqual(
             acceptance_ids,
-            [f"AC-GH-{number:03d}" for number in range(1, 28)],
+            [f"AC-GH-{number:03d}" for number in range(1, 31)],
         )
 
     def test_lws_prd_connects_delivery_acceptance_criteria_23_through_28(self):
@@ -228,6 +228,20 @@ class GitHubPullRequestQualityWorkflowContractTests(unittest.TestCase):
         self.assertIn(
             "python3 tools/wiki.py release-check --quarantine-profile public-clean-clone",
             self.text,
+        )
+        self.assertRegex(
+            self.text,
+            r"python3 tools/wiki\.py lint --quarantine-profile public-clean-clone --check-only",
+        )
+        self.assertRegex(
+            self.text,
+            r"python3 tools/wiki\.py release-check --quarantine-profile public-clean-clone --check-only",
+        )
+        release_position = self.text.index("release-check --quarantine-profile public-clean-clone --check-only")
+        self.assertIn("git diff --exit-code", self.text[release_position:])
+        self.assertIn(
+            "git status --porcelain=v1 --untracked-files=all",
+            self.text[release_position:],
         )
         self.assertNotRegex(
             self.text,
