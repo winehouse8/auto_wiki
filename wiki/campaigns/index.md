@@ -3,6 +3,7 @@
 * [CMP-01DA85AECBAB](cmp-01da85aecbab.md) - 연구 캠페인 CMP-01DA85AECBAB의 질문·예산·종료 조건 기록.
 * [CMP-0619AC235CCA](cmp-0619ac235cca.md) - 연구 캠페인 CMP-0619AC235CCA의 질문·예산·종료 조건 기록.
 * [CMP-088A51571084](cmp-088a51571084.md) - 연구 캠페인 CMP-088A51571084의 질문·예산·종료 조건 기록.
+* [CMP-71625FA84C2B](cmp-71625fa84c2b.md) - 연구 캠페인 CMP-71625FA84C2B의 질문·예산·종료 조건 기록.
 * [CMP-76BD99582F70](cmp-76bd99582f70.md) - 연구 캠페인 CMP-76BD99582F70의 질문·예산·종료 조건 기록.
 * [CMP-7A543D820D83](cmp-7a543d820d83.md) - 연구 캠페인 CMP-7A543D820D83의 질문·예산·종료 조건 기록.
 * [CMP-94D41EAD577D](cmp-94d41ead577d.md) - 연구 캠페인 CMP-94D41EAD577D의 질문·예산·종료 조건 기록.

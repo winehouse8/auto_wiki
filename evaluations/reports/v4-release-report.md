@@ -7,16 +7,16 @@
 - 보안: `fixed_corpus_regression_only`
 - 메모리 위생: `fixed_fixture_and_bounded_live_read_only_observation`
 - 범위 제한 후보 계획: `결정론적·읽기 전용·예산 제한 통과`
-- 격리 검증 프로필: `public-clean-clone`
-- 격리 payload bytes 검증: **false** (전체 54개, 실제 확인 0개, 누락 54개)
+- 격리 검증 프로필: `strict-local-custody`
+- 격리 payload bytes 검증: **true** (전체 54개, 실제 확인 54개, 누락 0개)
 - 하네스 버전: `4.3.0`
-- 하네스 명세표: `16d16d9b6bf1f2680af8ef13042d92f293f6c2d90120302bc0479d74a4f8ed4e` (파일 63개)
-- 구성요소 지문: `2594895b36bbff88a2180f104f4f923e77a521b98e225848730cb2aafef7d157`
-- 보고서 다이제스트: `5eed4a7b7c2ca17ba06d0a10b4c2fd7677303415feb58dbce0259574853bf03a`
+- 하네스 명세표: `8fbc934070193fe0f25c327bd6f02d96f12ab265e8dab92971d7a20525d861f9` (파일 63개)
+- 구성요소 지문: `afa0e2218cd9f28d3c2ccc575a49dc62f0a140fe8f0031c4faa93b0958b2ead5`
+- 보고서 다이제스트: `92d4342590f4c606340235cf599c6d03fed0c5f936c3c6f35b4b416a4615c8b2`
 
 | 게이트 | 결과 | 오류 | 경고 |
 |---|---|---:|---:|
-| `structural_and_ledger` | 통과 | 0 | 99 |
+| `structural_and_ledger` | 통과 | 0 | 45 |
 | `okf_bundle` | 통과 | 0 | 0 |
 | `calibration` | 통과 | 0 | 1 |
 | `security` | 통과 | 0 | 2 |
