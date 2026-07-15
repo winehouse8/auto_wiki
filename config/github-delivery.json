@@ -1,5 +1,5 @@
 {
-  "policy_version": "SPEC-GH-DELIVERY-001/v1.1.0",
+  "policy_version": "SPEC-GH-DELIVERY-001/v1.2.0",
   "repository": "winehouse8/auto_wiki",
   "base_branch": "main",
   "branch_prefix": "wiki-auto/",
@@ -33,7 +33,7 @@
     "schema_version": "github-delivery-policy-transition/v1",
     "from_policy_version": "SPEC-GH-DELIVERY-001/v1.1.0",
     "to_policy_version": "SPEC-GH-DELIVERY-001/v1.2.0",
-    "state": "armed",
+    "state": "consumed",
     "mode": "human-review-only",
     "approval_refs": [
       "COL-27B9ADD786ED",
