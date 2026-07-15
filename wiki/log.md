@@ -1,6 +1,14 @@
 # Living Wiki 갱신 기록
 
 ## 2026-07-14
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
+* **wiki.lint**: `all` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **wiki.render**: `derived-views` / 처리자 `agent:codex`.
+* **proposal.review**: `RFC-7A0959853525` / 처리자 `human:owner`.
+* **proposal.add**: `RFC-7A0959853525` / 처리자 `agent:codex`.
+* **collaboration.add**: `COL-B80046FC1C56` / 처리자 `human:owner`.
 * **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.
 * **wiki.lint**: `all` / 처리자 `agent:codex`.
 * **release.evaluate**: `living-wiki-v4` / 처리자 `agent:codex`.

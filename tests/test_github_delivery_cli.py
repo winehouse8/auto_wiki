@@ -68,6 +68,7 @@ class _FakeRunner:
         root,
         *,
         origin_url="https://github.com/winehouse8/auto_wiki.git",
+        push_url=None,
         status="",
         local_head=BASE_SHA,
         remote_head=BASE_SHA,
@@ -79,6 +80,7 @@ class _FakeRunner:
     ):
         self.root = Path(root)
         self.origin_url = origin_url
+        self.push_url = push_url or origin_url
         self.status = status
         self.local_head = local_head
         self.remote_head = remote_head
@@ -115,6 +117,17 @@ class _FakeRunner:
 
         if args[:4] == ("git", "remote", "get-url", "origin"):
             return _Result(args, stdout=self.origin_url + "\n")
+        if args == ("git", "remote", "get-url", "--all", "origin"):
+            return _Result(args, stdout=self.origin_url + "\n")
+        if args == (
+            "git",
+            "remote",
+            "get-url",
+            "--push",
+            "--all",
+            "origin",
+        ):
+            return _Result(args, stdout=self.push_url + "\n")
         if args[:2] == ("git", "status"):
             return _Result(args, stdout=self.status)
         if args[:2] == ("git", "diff") and "--name-status" in args:
@@ -790,7 +803,19 @@ class GitHubDeliveryPublishRedTests(unittest.TestCase):
             transport = _FakeTransport()
             token_calls = []
 
-            with self.assertRaises(github_delivery.DeliveryBlocked):
+            origin = {
+                "fetch_url": "https://github.com/winehouse8/auto_wiki.git",
+                "push_url": "https://github.com/winehouse8/auto_wiki.git",
+            }
+            with mock.patch.object(
+                github_delivery,
+                "_validate_origin_identity",
+                return_value=origin,
+            ), mock.patch.object(
+                github_delivery,
+                "_refresh_and_validate_base",
+                return_value=None,
+            ), self.assertRaises(github_delivery.DeliveryBlocked):
                 _api("publish_run")(
                     _context(
                         changes=[
@@ -1310,8 +1335,7 @@ class GitHubDeliveryPublishRedTests(unittest.TestCase):
                 (
                     "git",
                     "push",
-                    "--set-upstream",
-                    "origin",
+                    "https://github.com/winehouse8/auto_wiki.git",
                     f"{BRANCH}:{BRANCH}",
                 ),
             )
@@ -1705,6 +1729,9 @@ class GitHubCliTransportSecretBoundaryRedTests(unittest.TestCase):
             self.assertEqual(push_call["env"].get("GIT_TERMINAL_PROMPT"), "0")
             self.assertEqual(push_call["env"].get("GCM_INTERACTIVE"), "Never")
             self.assertEqual(push_call["env"].get("GH_PROMPT_DISABLED"), "1")
+            self.assertEqual(
+                push_call["env"].get("GIT_NO_REPLACE_OBJECTS"), "1"
+            )
 
             pr_create = next(
                 call

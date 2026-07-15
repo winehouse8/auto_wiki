@@ -7,6 +7,7 @@
 * [COL-388AF1C1528A](col-388af1c1528a.md) - 협업 기록 COL-388AF1C1528A의 방향·기여·검토와 전이 이력.
 * [COL-50BA42D348AA](col-50ba42d348aa.md) - 협업 기록 COL-50BA42D348AA의 방향·기여·검토와 전이 이력.
 * [COL-66C09135A9E0](col-66c09135a9e0.md) - 협업 기록 COL-66C09135A9E0의 방향·기여·검토와 전이 이력.
+* [COL-B80046FC1C56](col-b80046fc1c56.md) - 협업 기록 COL-B80046FC1C56의 방향·기여·검토와 전이 이력.
 * [COL-BCA354BA1655](col-bca354ba1655.md) - 협업 기록 COL-BCA354BA1655의 방향·기여·검토와 전이 이력.
 * [COL-BE633C25320D](col-be633c25320d.md) - 협업 기록 COL-BE633C25320D의 방향·기여·검토와 전이 이력.
 * [COL-D604CF2B8FDC](col-d604cf2b8fdc.md) - 협업 기록 COL-D604CF2B8FDC의 방향·기여·검토와 전이 이력.

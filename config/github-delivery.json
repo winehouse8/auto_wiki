@@ -29,6 +29,21 @@
     "COL-27B9ADD786ED",
     "RFC-03F4FE85BB44"
   ],
+  "policy_transition": {
+    "schema_version": "github-delivery-policy-transition/v1",
+    "from_policy_version": "SPEC-GH-DELIVERY-001/v1.1.0",
+    "to_policy_version": "SPEC-GH-DELIVERY-001/v1.2.0",
+    "state": "armed",
+    "mode": "human-review-only",
+    "approval_refs": [
+      "COL-27B9ADD786ED",
+      "COL-B80046FC1C56"
+    ],
+    "rfc_ids": [
+      "RFC-03F4FE85BB44",
+      "RFC-7A0959853525"
+    ]
+  },
   "safe_path_patterns": [
     "wiki/index.md",
     "wiki/log.md",

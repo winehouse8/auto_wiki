@@ -149,6 +149,28 @@
     },
     {
       "actor_id": "human:owner",
+      "content": "PR #3 병합 뒤 Codex 예약 기능을 이용한 자동 연구를 활성화한다. 먼저 GitHub 전달 정책의 검토 가능한 버전 전환과 무해한 자동 병합 canary를 통과시키고, 전용 로컬 checkout에서 매일 Asia/Seoul 20:00에 위생 후 두 연구 프로젝트 합계 캠페인 최대 하나를 실행한다.",
+      "created_at": "2026-07-14T18:22:13+00:00",
+      "id": "COL-B80046FC1C56",
+      "intent": "direction",
+      "metadata": {
+        "priority": 1.0
+      },
+      "record_kind": "commitment",
+      "schema_version": 1,
+      "stance": "제어면 전환은 draft PR의 사람 검토를 유지하고 실제 예약 활성 상태와 다음 실행 시각은 Codex Scheduled 화면에서 확인한다.",
+      "status": "active",
+      "supersedes": [],
+      "targets": [
+        "config/github-delivery.json",
+        "skills/living-wiki-steward/references/scheduled-task-prompt.md",
+        "wiki/specs/github-delivery.md",
+        "wiki/specs/living-wiki-steward-skill.md"
+      ],
+      "updated_at": "2026-07-14T18:22:13+00:00"
+    },
+    {
+      "actor_id": "human:owner",
       "content": "Living Wiki 관리인 Skill은 사용자에게 예약 또는 수동이라는 단순한 진입점만 보여주고, 내부 작업 종류와 Wiki 의존도 정책을 분리해 자연어 의도를 라우팅하도록 사용자 경험을 최적화한다.",
       "created_at": "2026-07-12T12:21:56+00:00",
       "id": "COL-BCA354BA1655",
