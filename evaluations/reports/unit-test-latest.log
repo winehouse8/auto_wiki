@@ -1,7 +1,7 @@
 CMP-528FD74E0388
 프로젝트를 분류한 캠페인: 0개
-EXT-B48071FE54AE
-EXT-B48071FE54AE
+EXT-562CCC6F482B
+EXT-562CCC6F482B
 CMP-528FD74E0388
 CMP-528FD74E0388
 No interest is due for campaign seeding.
@@ -431,6 +431,6 @@ test_shared_tag_is_a_weak_review_candidate_not_an_automatic_graph_edge (test_wik
 test_strong_typed_edges_use_bounded_bfs_paths_and_report_node_truncation (test_wiki_hygiene.WikiHygienePlanContractTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 403 tests in 4.804s
+Ran 403 tests in 4.847s
 
 OK

@@ -2,6 +2,237 @@
   "runs": [
     {
       "actor_id": "agent:codex",
+      "created_at": "2026-07-15T00:59:52+00:00",
+      "external_receipts": [],
+      "id": "RUN-039F23E27CE8",
+      "plan": {
+        "actions": [],
+        "allocated": {
+          "actions": 0,
+          "campaigns": 0,
+          "minutes": 0,
+          "sources": 0
+        },
+        "generated_at": "2026-07-15T00:59:52+00:00",
+        "kind": "bounded_schedule",
+        "limits": {
+          "action_minutes": 15,
+          "max_actions": 1,
+          "max_campaigns": 1,
+          "max_minutes": 45,
+          "max_sources": 3,
+          "sources_per_action": 1
+        },
+        "plan_id": "PLAN-F9A4E180820E",
+        "schema_version": 1,
+        "side_effects_executed": false,
+        "skipped": [
+          {
+            "campaign_id": "CMP-01DA85AECBAB",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-0619AC235CCA",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-088A51571084",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-76BD99582F70",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-7A543D820D83",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-94D41EAD577D",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-C31903B13965",
+            "reason": "lifecycle:completed"
+          }
+        ]
+      },
+      "receipt": {
+        "actions": [],
+        "attempt": 1,
+        "budget": {
+          "actions": 0,
+          "campaigns": 0,
+          "minutes": 0,
+          "sources": 0
+        },
+        "completed_at": "2026-07-15T00:59:52+00:00",
+        "created_at": "2026-07-15T00:59:52+00:00",
+        "dry_run": true,
+        "idempotency_key": "KEY-50BC53D9A89C",
+        "plan_hash": "6d15c9a903242c170e6621e42a116b975b76ea86a8abccede9236fbba48fea05",
+        "plan_id": "PLAN-F9A4E180820E",
+        "prev_receipt_hash": "2c61843bae73a1e05fc790beeb9453b7cfe7c992289d1596d2bcff531557cd3f",
+        "receipt_hash": "e540fa7984226c9fdb6091ff21d3e65860d647a5cdadab32a92083ed6813d2ed",
+        "recovery_of": null,
+        "run_id": "RUN-039F23E27CE8",
+        "schema_version": 1,
+        "side_effect_count": 0,
+        "status": "dry_run"
+      },
+      "status": "dry_run"
+    },
+    {
+      "actor_id": "agent:codex",
+      "created_at": "2026-07-15T00:59:52+00:00",
+      "external_receipts": [
+        {
+          "action_id": "ACT-7ECEE1EBBB7F",
+          "actor_id": "agent:codex",
+          "campaign_id": "CMP-71625FA84C2B",
+          "created_at": "2026-07-15T01:10:40+00:00",
+          "evidence_refs": [],
+          "execution_performed_by_runtime": false,
+          "notes": "외부 연구를 시작하기 전에 GitHub begin 영수증의 작업 종류가 위생으로 고정된 반면 예약 절차는 연구까지 포함한다는 감사 범위 모호성을 확인해 실행하지 않음.",
+          "receipt_id": "EXT-0D8EDB53AEEE",
+          "report_digest": "903a328a1fcb0f9cbcfca9ededf3f43cade994b4bf2b57d5bc7b8bbf543fe557",
+          "schema_version": 1,
+          "status": "cancelled",
+          "usage": {
+            "minutes": 0,
+            "sources": 0
+          },
+          "verification_status": "unverified_report"
+        }
+      ],
+      "id": "RUN-16D60AE09924",
+      "plan": {
+        "actions": [
+          {
+            "action_type": "external.research.plan",
+            "budget": {
+              "minutes": 15,
+              "sources": 1
+            },
+            "campaign_id": "CMP-71625FA84C2B",
+            "execution": "planned_only",
+            "external_work": true,
+            "id": "ACT-7ECEE1EBBB7F",
+            "permission": {
+              "action_type": "external.research.plan",
+              "actor_id": null,
+              "actor_kind_used_for_decision": false,
+              "decision": "auto",
+              "reasons": [
+                "allowlisted low-risk reversible control-plane action"
+              ],
+              "risk": "low"
+            },
+            "priority": 1.0,
+            "question": "최근 Agent·Training 연구에서 강한 기준선으로 아직 설명되지 않은 재현 가능한 성능·비용·신뢰성 공백은 무엇인가?",
+            "stop_conditions": [
+              "반증 검색 완료",
+              "새 주장이 없는 상태가 2회 지속됨",
+              "예산 소진"
+            ]
+          }
+        ],
+        "allocated": {
+          "actions": 1,
+          "campaigns": 1,
+          "minutes": 15,
+          "sources": 1
+        },
+        "generated_at": "2026-07-15T00:59:52+00:00",
+        "kind": "bounded_schedule",
+        "limits": {
+          "action_minutes": 15,
+          "max_actions": 1,
+          "max_campaigns": 1,
+          "max_minutes": 45,
+          "max_sources": 3,
+          "sources_per_action": 1
+        },
+        "plan_id": "PLAN-4B24C80E44FF",
+        "schema_version": 1,
+        "side_effects_executed": false,
+        "skipped": [
+          {
+            "campaign_id": "CMP-01DA85AECBAB",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-0619AC235CCA",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-088A51571084",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-76BD99582F70",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-7A543D820D83",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-94D41EAD577D",
+            "reason": "lifecycle:completed"
+          },
+          {
+            "campaign_id": "CMP-C31903B13965",
+            "reason": "lifecycle:completed"
+          }
+        ]
+      },
+      "receipt": {
+        "actions": [
+          {
+            "action_id": "ACT-7ECEE1EBBB7F",
+            "action_type": "external.research.plan",
+            "campaign_id": "CMP-71625FA84C2B",
+            "permission": {
+              "action_type": "external.research.plan",
+              "actor_id": "agent:codex",
+              "actor_kind_used_for_decision": false,
+              "decision": "auto",
+              "reasons": [
+                "allowlisted low-risk reversible control-plane action"
+              ],
+              "risk": "low"
+            },
+            "side_effect": false,
+            "status": "planned"
+          }
+        ],
+        "attempt": 1,
+        "budget": {
+          "actions": 1,
+          "campaigns": 1,
+          "minutes": 15,
+          "sources": 1
+        },
+        "completed_at": "2026-07-15T00:59:52+00:00",
+        "created_at": "2026-07-15T00:59:52+00:00",
+        "dry_run": true,
+        "idempotency_key": "KEY-75BA806049DA",
+        "plan_hash": "0425e71a21a8deed4f3e522778fd09bd2b1eb80ee687a406513c100e007dd0cc",
+        "plan_id": "PLAN-4B24C80E44FF",
+        "prev_receipt_hash": "e540fa7984226c9fdb6091ff21d3e65860d647a5cdadab32a92083ed6813d2ed",
+        "receipt_hash": "01b46de2caa53a516e0153dcae01f7521809726fd296a86814bf5f3f9352358d",
+        "recovery_of": null,
+        "run_id": "RUN-16D60AE09924",
+        "schema_version": 1,
+        "side_effect_count": 0,
+        "status": "planned"
+      },
+      "status": "closed-with-findings",
+      "updated_at": "2026-07-15T01:10:40+00:00"
+    },
+    {
+      "actor_id": "agent:codex",
       "created_at": "2026-07-11T16:00:00+00:00",
       "external_receipts": [
         {

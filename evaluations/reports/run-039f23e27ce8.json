@@ -1,0 +1,77 @@
+{
+  "plan": {
+    "actions": [],
+    "allocated": {
+      "actions": 0,
+      "campaigns": 0,
+      "minutes": 0,
+      "sources": 0
+    },
+    "generated_at": "2026-07-15T00:59:52+00:00",
+    "kind": "bounded_schedule",
+    "limits": {
+      "action_minutes": 15,
+      "max_actions": 1,
+      "max_campaigns": 1,
+      "max_minutes": 45,
+      "max_sources": 3,
+      "sources_per_action": 1
+    },
+    "plan_id": "PLAN-F9A4E180820E",
+    "schema_version": 1,
+    "side_effects_executed": false,
+    "skipped": [
+      {
+        "campaign_id": "CMP-01DA85AECBAB",
+        "reason": "lifecycle:completed"
+      },
+      {
+        "campaign_id": "CMP-0619AC235CCA",
+        "reason": "lifecycle:completed"
+      },
+      {
+        "campaign_id": "CMP-088A51571084",
+        "reason": "lifecycle:completed"
+      },
+      {
+        "campaign_id": "CMP-76BD99582F70",
+        "reason": "lifecycle:completed"
+      },
+      {
+        "campaign_id": "CMP-7A543D820D83",
+        "reason": "lifecycle:completed"
+      },
+      {
+        "campaign_id": "CMP-94D41EAD577D",
+        "reason": "lifecycle:completed"
+      },
+      {
+        "campaign_id": "CMP-C31903B13965",
+        "reason": "lifecycle:completed"
+      }
+    ]
+  },
+  "receipt": {
+    "actions": [],
+    "attempt": 1,
+    "budget": {
+      "actions": 0,
+      "campaigns": 0,
+      "minutes": 0,
+      "sources": 0
+    },
+    "completed_at": "2026-07-15T00:59:52+00:00",
+    "created_at": "2026-07-15T00:59:52+00:00",
+    "dry_run": true,
+    "idempotency_key": "KEY-50BC53D9A89C",
+    "plan_hash": "6d15c9a903242c170e6621e42a116b975b76ea86a8abccede9236fbba48fea05",
+    "plan_id": "PLAN-F9A4E180820E",
+    "prev_receipt_hash": "2c61843bae73a1e05fc790beeb9453b7cfe7c992289d1596d2bcff531557cd3f",
+    "receipt_hash": "e540fa7984226c9fdb6091ff21d3e65860d647a5cdadab32a92083ed6813d2ed",
+    "recovery_of": null,
+    "run_id": "RUN-039F23E27CE8",
+    "schema_version": 1,
+    "side_effect_count": 0,
+    "status": "dry_run"
+  }
+}

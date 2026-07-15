@@ -162,6 +162,80 @@
       "why_now": "현재 보안은 정책과 구조 수준이며 공격 실행 검증이 없다."
     },
     {
+      "cadence_days": 1,
+      "claim_ids": [],
+      "counter_search_required": true,
+      "created_at": "2026-07-15T00:59:52+00:00",
+      "created_by": "agent:codex",
+      "cycle_key": "2026-07-15",
+      "id": "CMP-71625FA84C2B",
+      "interest_id": "INT-RESOURCE-BOUNDED-AGENT-RESEARCH",
+      "max_minutes": 45,
+      "max_sources": 12,
+      "notes": [
+        {
+          "actor": "agent:codex",
+          "at": "2026-07-15T01:10:40+00:00",
+          "text": "예약 프롬프트의 --work-type <작업 종류>가 무인 통합 실행에서 결정되지 않아 begin은 위생으로 기록됐고 연구 단계의 감사 범위를 정확히 증명할 수 없음. 외부 검색·자격증명·비용 사용 없이 중단했으며 프롬프트 계약 수정 후 다음 지역 날짜에 재시도한다."
+        }
+      ],
+      "priority": 1.0,
+      "project_id": "PRJ-AGENT-TRAINING-PAPER",
+      "question": "최근 Agent·Training 연구에서 강한 기준선으로 아직 설명되지 않은 재현 가능한 성능·비용·신뢰성 공백은 무엇인가?",
+      "required_independent_groups": 2,
+      "research_brief": {
+        "constraints": [
+          "기본 실험 장비는 Apple M4와 16GB 통합 메모리다.",
+          "전체 사전학습과 메모리 적합성을 측정하지 않은 대형 fine-tuning을 계획하지 않는다.",
+          "작은 모델·양자화·LoRA·추론 시점 하네스·공개 API 대체 fixture를 우선한다.",
+          "ChatGPT·Codex 구독을 API credit으로 간주하지 않는다.",
+          "유료 API·새 자격증명·비용 증가는 별도 사람 승인 전에는 실행하지 않는다.",
+          "학회 이름보다 novelty, 반증 가능성, 강한 baseline, 재현성과 음성 결과 보존을 우선한다."
+        ],
+        "milestones": [
+          "최근 원 논문 landscape와 중복·철회·반대 결과 지도",
+          "후보별 novelty·contribution·실현 가능성·위험 행렬",
+          "반증 가능한 핵심 가설과 강한 baseline·평가 프로토콜",
+          "16GB 메모리·시간 예산을 계측한 최소 pilot",
+          "재현 반복·ablation·failure slice·통계와 비용 비교",
+          "논문 초고·관련 연구·한계·윤리·재현성 부록",
+          "내부 반박 검토와 예상 reviewer objection 대응"
+        ],
+        "objective": "매일 최신 원 논문을 근거로 탐색하되, 작은 로컬 실험으로도 반증할 수 있는 새로운 Agent/Training contribution을 선정하고 탑티어 제출 가능한 논문 패키지로 단계적으로 발전시킨다.",
+        "success_criteria": [
+          "기존 연구와 구분되는 한 문장 contribution과 반증 조건이 있다.",
+          "강한 최신 baseline 및 단순 비용 일치 기준선과 공정하게 비교한다.",
+          "M4·16GB에서 핵심 결과를 재실행할 수 있고 시간·메모리·토큰 비용을 기록한다.",
+          "양성 결과뿐 아니라 실패 영역·ablation·대안 설명을 보존한다.",
+          "원고의 모든 중요한 사실·수치·관련 연구 주장에 원문 locator가 있다."
+        ]
+      },
+      "runtime": {
+        "met_stop_conditions": [],
+        "used_minutes": 0,
+        "used_sources": 0
+      },
+      "schedule_timezone": "Asia/Seoul",
+      "selection": {
+        "completed_question_count": 0,
+        "last_attempt_at": null,
+        "last_success_at": null,
+        "local_date": "2026-07-15",
+        "policy_version": "fair-interest-portfolio/v1",
+        "priority": 1.0,
+        "timezone": "Asia/Seoul"
+      },
+      "source_ids": [],
+      "status": "blocked",
+      "stop_conditions": [
+        "반증 검색 완료",
+        "새 주장이 없는 상태가 2회 지속됨",
+        "예산 소진"
+      ],
+      "updated_at": "2026-07-15T01:10:40+00:00",
+      "why_now": "1일 연구 주기가 2026-07-15T00:59:52+00:00에 도래함."
+    },
+    {
       "claim_ids": [],
       "counter_search_required": true,
       "created_at": "2026-07-11T14:33:16+00:00",
